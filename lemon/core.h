@@ -164,7 +164,7 @@ namespace lemon {
   typedef BpGraph::RedIt RedIt;                                         \
   typedef BpGraph::RedMap<bool> BoolRedMap;                             \
   typedef BpGraph::RedMap<int> IntRedMap;                               \
-  typedef BpGraph::RedMap<double> DoubleRedMap                          \
+  typedef BpGraph::RedMap<double> DoubleRedMap;                         \
   typedef BpGraph::BlueNode BlueNode;                                   \
   typedef BpGraph::BlueIt BlueIt;                                       \
   typedef BpGraph::BlueMap<bool> BoolBlueMap;                           \

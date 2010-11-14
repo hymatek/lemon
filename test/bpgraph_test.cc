@@ -19,7 +19,7 @@
 #include <lemon/concepts/bpgraph.h>
 //#include <lemon/list_graph.h>
 #include <lemon/smart_graph.h>
-//#include <lemon/full_graph.h>
+#include <lemon/full_graph.h>
 
 #include "test_tools.h"
 #include "graph_test.h"
@@ -250,11 +250,89 @@ void checkConcepts() {
   }
 }
 
+void checkFullBpGraph(int redNum, int blueNum) {
+  typedef FullBpGraph BpGraph;
+  BPGRAPH_TYPEDEFS(BpGraph);
+
+  BpGraph G(redNum, blueNum);
+  checkGraphNodeList(G, redNum + blueNum);
+  checkGraphRedNodeList(G, redNum);
+  checkGraphBlueNodeList(G, blueNum);
+  checkGraphEdgeList(G, redNum * blueNum);
+  checkGraphArcList(G, 2 * redNum * blueNum);
+
+  G.resize(redNum, blueNum);
+  checkGraphNodeList(G, redNum + blueNum);
+  checkGraphRedNodeList(G, redNum);
+  checkGraphBlueNodeList(G, blueNum);
+  checkGraphEdgeList(G, redNum * blueNum);
+  checkGraphArcList(G, 2 * redNum * blueNum);
+
+  for (RedIt n(G); n != INVALID; ++n) {
+    checkGraphOutArcList(G, n, blueNum);
+    checkGraphInArcList(G, n, blueNum);
+    checkGraphIncEdgeList(G, n, blueNum);
+  }
+
+  for (BlueIt n(G); n != INVALID; ++n) {
+    checkGraphOutArcList(G, n, redNum);
+    checkGraphInArcList(G, n, redNum);
+    checkGraphIncEdgeList(G, n, redNum);
+  }
+
+  checkGraphConArcList(G, 2 * redNum * blueNum);
+  checkGraphConEdgeList(G, redNum * blueNum);
+
+  checkArcDirections(G);
+
+  checkNodeIds(G);
+  checkRedNodeIds(G);
+  checkBlueNodeIds(G);
+  checkArcIds(G);
+  checkEdgeIds(G);
+
+  checkGraphNodeMap(G);
+  checkGraphRedMap(G);
+  checkGraphBlueMap(G);
+  checkGraphArcMap(G);
+  checkGraphEdgeMap(G);
+
+  for (int i = 0; i < G.redNum(); ++i) {
+    check(G.red(G.redNode(i)), "Wrong node");
+    check(G.redIndex(G.redNode(i)) == i, "Wrong index");
+  }
+
+  for (int i = 0; i < G.blueNum(); ++i) {
+    check(G.blue(G.blueNode(i)), "Wrong node");
+    check(G.blueIndex(G.blueNode(i)) == i, "Wrong index");
+  }
+
+  for (NodeIt u(G); u != INVALID; ++u) {
+    for (NodeIt v(G); v != INVALID; ++v) {
+      Edge e = G.edge(u, v);
+      Arc a = G.arc(u, v);
+      if (G.red(u) == G.red(v)) {
+        check(e == INVALID, "Wrong edge lookup");
+        check(a == INVALID, "Wrong arc lookup");
+      } else {
+        check((G.u(e) == u && G.v(e) == v) ||
+              (G.u(e) == v && G.v(e) == u), "Wrong edge lookup");
+        check(G.source(a) == u && G.target(a) == v, "Wrong arc lookup");
+      }
+    }
+  }
+
+}
+
 void checkGraphs() {
   { // Checking SmartGraph
     checkBpGraphBuild<SmartBpGraph>();
     checkBpGraphSnapshot<SmartBpGraph>();
     checkBpGraphValidity<SmartBpGraph>();
+  }
+  { // Checking FullBpGraph
+    checkFullBpGraph(6, 8);
+    checkFullBpGraph(7, 4);
   }
 }
 

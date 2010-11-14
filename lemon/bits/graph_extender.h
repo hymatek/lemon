@@ -841,11 +841,14 @@ namespace lemon {
       return Parent::edgeFromId(id);
     }
 
+    Node u(Edge e) const { return this->redNode(e); }
+    Node v(Edge e) const { return this->blueNode(e); }
+
     Node oppositeNode(const Node &n, const Edge &e) const {
-      if( n == Parent::u(e))
-        return Parent::v(e);
-      else if( n == Parent::v(e))
-        return Parent::u(e);
+      if( n == u(e))
+        return v(e);
+      else if( n == v(e))
+        return u(e);
       else
         return INVALID;
     }
@@ -856,7 +859,7 @@ namespace lemon {
 
     using Parent::direct;
     Arc direct(const Edge &edge, const Node &node) const {
-      return Parent::direct(edge, Parent::u(edge) == node);
+      return Parent::direct(edge, Parent::redNode(edge) == node);
     }
 
     // Alterable extension

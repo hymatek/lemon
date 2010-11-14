@@ -925,9 +925,6 @@ namespace lemon {
     Node redNode(Edge e) const { return Node(arcs[2 * e._id].target); }
     Node blueNode(Edge e) const { return Node(arcs[2 * e._id + 1].target); }
 
-    Node u(Edge e) const { return redNode(e); }
-    Node v(Edge e) const { return blueNode(e); }
-
     static bool direction(Arc a) {
       return (a._id & 1) == 1;
     }
@@ -1101,22 +1098,22 @@ namespace lemon {
 
   /// \ingroup graphs
   ///
-  /// \brief A smart undirected graph class.
+  /// \brief A smart undirected bipartite graph class.
   ///
-  /// \ref SmartBpGraph is a simple and fast graph implementation.
+  /// \ref SmartBpGraph is a simple and fast bipartite graph implementation.
   /// It is also quite memory efficient but at the price
   /// that it does not support node and edge deletion
   /// (except for the Snapshot feature).
   ///
-  /// This type fully conforms to the \ref concepts::Graph "Graph concept"
+  /// This type fully conforms to the \ref concepts::BpGraph "BpGraph concept"
   /// and it also provides some additional functionalities.
   /// Most of its member functions and nested classes are documented
   /// only in the concept class.
   ///
   /// This class provides constant time counting for nodes, edges and arcs.
   ///
-  /// \sa concepts::Graph
-  /// \sa SmartDigraph
+  /// \sa concepts::BpGraph
+  /// \sa SmartGraph
   class SmartBpGraph : public ExtendedSmartBpGraphBase {
     typedef ExtendedSmartBpGraphBase Parent;
 
