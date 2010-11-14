@@ -148,6 +148,48 @@ namespace lemon {
   typedef typename Graph::template EdgeMap<int> IntEdgeMap;             \
   typedef typename Graph::template EdgeMap<double> DoubleEdgeMap
 
+  ///Create convenience typedefs for the bipartite graph types and iterators
+
+  ///This \c \#define creates the same convenient type definitions as defined
+  ///by \ref GRAPH_TYPEDEFS(BpGraph) and ten more, namely it creates
+  ///\c RedNode, \c RedIt, \c BoolRedMap, \c IntRedMap, \c DoubleRedMap,
+  ///\c BlueNode, \c BlueIt, \c BoolBlueMap, \c IntBlueMap, \c DoubleBlueMap.
+  ///
+  ///\note If the graph type is a dependent type, ie. the graph type depend
+  ///on a template parameter, then use \c TEMPLATE_BPGRAPH_TYPEDEFS()
+  ///macro.
+#define BPGRAPH_TYPEDEFS(BpGraph)                                       \
+  GRAPH_TYPEDEFS(BpGraph);                                              \
+  typedef BpGraph::RedNode RedNode;                                     \
+  typedef BpGraph::RedIt RedIt;                                         \
+  typedef BpGraph::RedMap<bool> BoolRedMap;                             \
+  typedef BpGraph::RedMap<int> IntRedMap;                               \
+  typedef BpGraph::RedMap<double> DoubleRedMap                          \
+  typedef BpGraph::BlueNode BlueNode;                                   \
+  typedef BpGraph::BlueIt BlueIt;                                       \
+  typedef BpGraph::BlueMap<bool> BoolBlueMap;                           \
+  typedef BpGraph::BlueMap<int> IntBlueMap;                             \
+  typedef BpGraph::BlueMap<double> DoubleBlueMap
+
+  ///Create convenience typedefs for the bipartite graph types and iterators
+
+  ///\see BPGRAPH_TYPEDEFS
+  ///
+  ///\note Use this macro, if the graph type is a dependent type,
+  ///ie. the graph type depend on a template parameter.
+#define TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph)                              \
+  TEMPLATE_GRAPH_TYPEDEFS(BpGraph);                                     \
+  typedef typename BpGraph::RedNode RedNode;                            \
+  typedef typename BpGraph::RedIt RedIt;                                \
+  typedef typename BpGraph::template RedMap<bool> BoolRedMap;           \
+  typedef typename BpGraph::template RedMap<int> IntRedMap;             \
+  typedef typename BpGraph::template RedMap<double> DoubleRedMap;       \
+  typedef typename BpGraph::BlueNode BlueNode;                          \
+  typedef typename BpGraph::BlueIt BlueIt;                              \
+  typedef typename BpGraph::template BlueMap<bool> BoolBlueMap;         \
+  typedef typename BpGraph::template BlueMap<int> IntBlueMap;           \
+  typedef typename BpGraph::template BlueMap<double> DoubleBlueMap
+
   /// \brief Function to count the items in a graph.
   ///
   /// This function counts the items (nodes, arcs etc.) in a graph.
@@ -197,6 +239,74 @@ namespace lemon {
   template <typename Graph>
   inline int countNodes(const Graph& g) {
     return _core_bits::CountNodesSelector<Graph>::count(g);
+  }
+
+  namespace _graph_utils_bits {
+    
+    template <typename Graph, typename Enable = void>
+    struct CountRedNodesSelector {
+      static int count(const Graph &g) {
+        return countItems<Graph, typename Graph::RedNode>(g);
+      }
+    };
+
+    template <typename Graph>
+    struct CountRedNodesSelector<
+      Graph, typename 
+      enable_if<typename Graph::NodeNumTag, void>::type> 
+    {
+      static int count(const Graph &g) {
+        return g.redNum();
+      }
+    };    
+  }
+
+  /// \brief Function to count the red nodes in the graph.
+  ///
+  /// This function counts the red nodes in the graph.
+  /// The complexity of the function is O(n) but for some
+  /// graph structures it is specialized to run in O(1).
+  ///
+  /// If the graph contains a \e redNum() member function and a 
+  /// \e NodeNumTag tag then this function calls directly the member
+  /// function to query the cardinality of the node set.
+  template <typename Graph>
+  inline int countRedNodes(const Graph& g) {
+    return _graph_utils_bits::CountRedNodesSelector<Graph>::count(g);
+  }
+
+  namespace _graph_utils_bits {
+    
+    template <typename Graph, typename Enable = void>
+    struct CountBlueNodesSelector {
+      static int count(const Graph &g) {
+        return countItems<Graph, typename Graph::BlueNode>(g);
+      }
+    };
+
+    template <typename Graph>
+    struct CountBlueNodesSelector<
+      Graph, typename 
+      enable_if<typename Graph::NodeNumTag, void>::type> 
+    {
+      static int count(const Graph &g) {
+        return g.blueNum();
+      }
+    };    
+  }
+
+  /// \brief Function to count the blue nodes in the graph.
+  ///
+  /// This function counts the blue nodes in the graph.
+  /// The complexity of the function is O(n) but for some
+  /// graph structures it is specialized to run in O(1).
+  ///
+  /// If the graph contains a \e blueNum() member function and a 
+  /// \e NodeNumTag tag then this function calls directly the member
+  /// function to query the cardinality of the node set.
+  template <typename Graph>
+  inline int countBlueNodes(const Graph& g) {
+    return _graph_utils_bits::CountBlueNodesSelector<Graph>::count(g);
   }
 
   // Arc counting:
@@ -1257,7 +1367,7 @@ namespace lemon {
 
     /// The Digraph type
     typedef GR Digraph;
-
+    
   protected:
 
     class AutoNodeMap : public ItemSetTraits<GR, Node>::template Map<Arc>::Type

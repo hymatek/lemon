@@ -405,8 +405,6 @@ namespace lemon {
     std::vector<NodeT> nodes;
     std::vector<ArcT> arcs;
 
-    int first_free_arc;
-
   public:
 
     typedef SmartGraphBase Graph;
@@ -804,6 +802,514 @@ namespace lemon {
 
       ///This function undos the changes until the last snapshot
       ///created by save() or Snapshot(SmartGraph&).
+      void restore()
+      {
+        _graph->restoreSnapshot(*this);
+      }
+    };
+  };
+
+  class SmartBpGraphBase {
+
+  protected:
+
+    struct NodeT {
+      int first_out;
+      int partition_next;
+      int partition_index;
+      bool red;
+    };
+
+    struct ArcT {
+      int target;
+      int next_out;
+    };
+
+    std::vector<NodeT> nodes;
+    std::vector<ArcT> arcs;
+
+    int first_red, first_blue;
+
+  public:
+
+    typedef SmartBpGraphBase Graph;
+
+    class Node;
+    class Arc;
+    class Edge;
+
+    class Node {
+      friend class SmartBpGraphBase;
+    protected:
+
+      int _id;
+      explicit Node(int id) { _id = id;}
+
+    public:
+      Node() {}
+      Node (Invalid) { _id = -1; }
+      bool operator==(const Node& node) const {return _id == node._id;}
+      bool operator!=(const Node& node) const {return _id != node._id;}
+      bool operator<(const Node& node) const {return _id < node._id;}
+    };
+
+    class Edge {
+      friend class SmartBpGraphBase;
+    protected:
+
+      int _id;
+      explicit Edge(int id) { _id = id;}
+
+    public:
+      Edge() {}
+      Edge (Invalid) { _id = -1; }
+      bool operator==(const Edge& arc) const {return _id == arc._id;}
+      bool operator!=(const Edge& arc) const {return _id != arc._id;}
+      bool operator<(const Edge& arc) const {return _id < arc._id;}
+    };
+
+    class Arc {
+      friend class SmartBpGraphBase;
+    protected:
+
+      int _id;
+      explicit Arc(int id) { _id = id;}
+
+    public:
+      operator Edge() const {
+        return _id != -1 ? edgeFromId(_id / 2) : INVALID;
+      }
+
+      Arc() {}
+      Arc (Invalid) { _id = -1; }
+      bool operator==(const Arc& arc) const {return _id == arc._id;}
+      bool operator!=(const Arc& arc) const {return _id != arc._id;}
+      bool operator<(const Arc& arc) const {return _id < arc._id;}
+    };
+
+
+
+    SmartBpGraphBase()
+      : nodes(), arcs(), first_red(-1), first_blue(-1) {}
+
+    typedef True NodeNumTag;
+    typedef True EdgeNumTag;
+    typedef True ArcNumTag;
+
+    int nodeNum() const { return nodes.size(); }
+    int redNum() const {
+      return first_red == -1 ? 0 : nodes[first_red].partition_index + 1;
+    }
+    int blueNum() const {
+      return first_blue == -1 ? 0 : nodes[first_blue].partition_index + 1;
+    }
+    int edgeNum() const { return arcs.size() / 2; }
+    int arcNum() const { return arcs.size(); }
+
+    int maxNodeId() const { return nodes.size()-1; }
+    int maxRedId() const {
+      return first_red == -1 ? -1 : nodes[first_red].partition_index;
+    }
+    int maxBlueId() const {
+      return first_blue == -1 ? -1 : nodes[first_blue].partition_index;
+    }
+    int maxEdgeId() const { return arcs.size() / 2 - 1; }
+    int maxArcId() const { return arcs.size()-1; }
+
+    bool red(Node n) const { return nodes[n._id].red; }
+    bool blue(Node n) const { return !nodes[n._id].red; }
+
+    Node source(Arc a) const { return Node(arcs[a._id ^ 1].target); }
+    Node target(Arc a) const { return Node(arcs[a._id].target); }
+
+    Node redNode(Edge e) const { return Node(arcs[2 * e._id].target); }
+    Node blueNode(Edge e) const { return Node(arcs[2 * e._id + 1].target); }
+
+    Node u(Edge e) const { return redNode(e); }
+    Node v(Edge e) const { return blueNode(e); }
+
+    static bool direction(Arc a) {
+      return (a._id & 1) == 1;
+    }
+
+    static Arc direct(Edge e, bool d) {
+      return Arc(e._id * 2 + (d ? 1 : 0));
+    }
+
+    void first(Node& node) const {
+      node._id = nodes.size() - 1;
+    }
+
+    static void next(Node& node) {
+      --node._id;
+    }
+
+    void firstRed(Node& node) const {
+      node._id = first_red;
+    }
+
+    void nextRed(Node& node) const {
+      node._id = nodes[node._id].partition_next;
+    }
+
+    void firstBlue(Node& node) const {
+      node._id = first_blue;
+    }
+
+    void nextBlue(Node& node) const {
+      node._id = nodes[node._id].partition_next;
+    }
+
+    void first(Arc& arc) const {
+      arc._id = arcs.size() - 1;
+    }
+
+    static void next(Arc& arc) {
+      --arc._id;
+    }
+
+    void first(Edge& arc) const {
+      arc._id = arcs.size() / 2 - 1;
+    }
+
+    static void next(Edge& arc) {
+      --arc._id;
+    }
+
+    void firstOut(Arc &arc, const Node& v) const {
+      arc._id = nodes[v._id].first_out;
+    }
+    void nextOut(Arc &arc) const {
+      arc._id = arcs[arc._id].next_out;
+    }
+
+    void firstIn(Arc &arc, const Node& v) const {
+      arc._id = ((nodes[v._id].first_out) ^ 1);
+      if (arc._id == -2) arc._id = -1;
+    }
+    void nextIn(Arc &arc) const {
+      arc._id = ((arcs[arc._id ^ 1].next_out) ^ 1);
+      if (arc._id == -2) arc._id = -1;
+    }
+
+    void firstInc(Edge &arc, bool& d, const Node& v) const {
+      int de = nodes[v._id].first_out;
+      if (de != -1) {
+        arc._id = de / 2;
+        d = ((de & 1) == 1);
+      } else {
+        arc._id = -1;
+        d = true;
+      }
+    }
+    void nextInc(Edge &arc, bool& d) const {
+      int de = (arcs[(arc._id * 2) | (d ? 1 : 0)].next_out);
+      if (de != -1) {
+        arc._id = de / 2;
+        d = ((de & 1) == 1);
+      } else {
+        arc._id = -1;
+        d = true;
+      }
+    }
+
+    static int id(Node v) { return v._id; }
+    int redId(Node v) const {
+      LEMON_DEBUG(nodes[v._id].red, "Node has to be red");
+      return nodes[v._id].partition_index;
+    }
+    int blueId(Node v) const {
+      LEMON_DEBUG(nodes[v._id].red, "Node has to be blue");
+      return nodes[v._id].partition_index;
+    }
+    static int id(Arc e) { return e._id; }
+    static int id(Edge e) { return e._id; }
+
+    static Node nodeFromId(int id) { return Node(id);}
+    static Arc arcFromId(int id) { return Arc(id);}
+    static Edge edgeFromId(int id) { return Edge(id);}
+
+    bool valid(Node n) const {
+      return n._id >= 0 && n._id < static_cast<int>(nodes.size());
+    }
+    bool valid(Arc a) const {
+      return a._id >= 0 && a._id < static_cast<int>(arcs.size());
+    }
+    bool valid(Edge e) const {
+      return e._id >= 0 && 2 * e._id < static_cast<int>(arcs.size());
+    }
+
+    Node addRedNode() {
+      int n = nodes.size();
+      nodes.push_back(NodeT());
+      nodes[n].first_out = -1;
+      nodes[n].red = true;
+      if (first_red == -1) {
+        nodes[n].partition_index = 0;
+      } else {
+        nodes[n].partition_index = nodes[first_red].partition_index + 1;
+      }
+      nodes[n].partition_next = first_red;
+      first_red = n;
+
+      return Node(n);
+    }
+
+    Node addBlueNode() {
+      int n = nodes.size();
+      nodes.push_back(NodeT());
+      nodes[n].first_out = -1;
+      nodes[n].red = false;
+      if (first_blue == -1) {
+        nodes[n].partition_index = 0;
+      } else {
+        nodes[n].partition_index = nodes[first_blue].partition_index + 1;
+      }
+      nodes[n].partition_next = first_blue;
+      first_blue = n;
+
+      return Node(n);
+    }
+
+    Edge addEdge(Node u, Node v) {
+      int n = arcs.size();
+      arcs.push_back(ArcT());
+      arcs.push_back(ArcT());
+
+      arcs[n].target = u._id;
+      arcs[n | 1].target = v._id;
+
+      arcs[n].next_out = nodes[v._id].first_out;
+      nodes[v._id].first_out = n;
+
+      arcs[n | 1].next_out = nodes[u._id].first_out;
+      nodes[u._id].first_out = (n | 1);
+
+      return Edge(n / 2);
+    }
+
+    void clear() {
+      arcs.clear();
+      nodes.clear();
+      first_red = -1;
+      first_blue = -1;
+    }
+
+  };
+
+  typedef BpGraphExtender<SmartBpGraphBase> ExtendedSmartBpGraphBase;
+
+  /// \ingroup graphs
+  ///
+  /// \brief A smart undirected graph class.
+  ///
+  /// \ref SmartBpGraph is a simple and fast graph implementation.
+  /// It is also quite memory efficient but at the price
+  /// that it does not support node and edge deletion
+  /// (except for the Snapshot feature).
+  ///
+  /// This type fully conforms to the \ref concepts::Graph "Graph concept"
+  /// and it also provides some additional functionalities.
+  /// Most of its member functions and nested classes are documented
+  /// only in the concept class.
+  ///
+  /// This class provides constant time counting for nodes, edges and arcs.
+  ///
+  /// \sa concepts::Graph
+  /// \sa SmartDigraph
+  class SmartBpGraph : public ExtendedSmartBpGraphBase {
+    typedef ExtendedSmartBpGraphBase Parent;
+
+  private:
+    /// Graphs are \e not copy constructible. Use GraphCopy instead.
+    SmartBpGraph(const SmartBpGraph &) : ExtendedSmartBpGraphBase() {};
+    /// \brief Assignment of a graph to another one is \e not allowed.
+    /// Use GraphCopy instead.
+    void operator=(const SmartBpGraph &) {}
+
+  public:
+
+    /// Constructor
+
+    /// Constructor.
+    ///
+    SmartBpGraph() {}
+
+    /// \brief Add a new red node to the graph.
+    ///
+    /// This function adds a red new node to the graph.
+    /// \return The new node.
+    Node addRedNode() { return Parent::addRedNode(); }
+
+    /// \brief Add a new blue node to the graph.
+    ///
+    /// This function adds a blue new node to the graph.
+    /// \return The new node.
+    Node addBlueNode() { return Parent::addBlueNode(); }
+
+    /// \brief Add a new edge to the graph.
+    ///
+    /// This function adds a new edge to the graph between nodes
+    /// \c u and \c v with inherent orientation from node \c u to
+    /// node \c v.
+    /// \return The new edge.
+    Edge addEdge(Node red, Node blue) {
+      LEMON_DEBUG(Parent::red(red) && Parent::blue(blue),
+                  "Edge has to be formed by a red and a blue nodes");
+      return Parent::addEdge(red, blue);
+    }
+
+    /// \brief Node validity check
+    ///
+    /// This function gives back \c true if the given node is valid,
+    /// i.e. it is a real node of the graph.
+    ///
+    /// \warning A removed node (using Snapshot) could become valid again
+    /// if new nodes are added to the graph.
+    bool valid(Node n) const { return Parent::valid(n); }
+
+    /// \brief Edge validity check
+    ///
+    /// This function gives back \c true if the given edge is valid,
+    /// i.e. it is a real edge of the graph.
+    ///
+    /// \warning A removed edge (using Snapshot) could become valid again
+    /// if new edges are added to the graph.
+    bool valid(Edge e) const { return Parent::valid(e); }
+
+    /// \brief Arc validity check
+    ///
+    /// This function gives back \c true if the given arc is valid,
+    /// i.e. it is a real arc of the graph.
+    ///
+    /// \warning A removed arc (using Snapshot) could become valid again
+    /// if new edges are added to the graph.
+    bool valid(Arc a) const { return Parent::valid(a); }
+
+    ///Clear the graph.
+
+    ///This function erases all nodes and arcs from the graph.
+    ///
+    void clear() {
+      Parent::clear();
+    }
+
+    /// Reserve memory for nodes.
+
+    /// Using this function, it is possible to avoid superfluous memory
+    /// allocation: if you know that the graph you want to build will
+    /// be large (e.g. it will contain millions of nodes and/or edges),
+    /// then it is worth reserving space for this amount before starting
+    /// to build the graph.
+    /// \sa reserveEdge()
+    void reserveNode(int n) { nodes.reserve(n); };
+
+    /// Reserve memory for edges.
+
+    /// Using this function, it is possible to avoid superfluous memory
+    /// allocation: if you know that the graph you want to build will
+    /// be large (e.g. it will contain millions of nodes and/or edges),
+    /// then it is worth reserving space for this amount before starting
+    /// to build the graph.
+    /// \sa reserveNode()
+    void reserveEdge(int m) { arcs.reserve(2 * m); };
+
+  public:
+
+    class Snapshot;
+
+  protected:
+
+    void saveSnapshot(Snapshot &s)
+    {
+      s._graph = this;
+      s.node_num = nodes.size();
+      s.arc_num = arcs.size();
+    }
+
+    void restoreSnapshot(const Snapshot &s)
+    {
+      while(s.arc_num<arcs.size()) {
+        int n=arcs.size()-1;
+        Edge arc=edgeFromId(n/2);
+        Parent::notifier(Edge()).erase(arc);
+        std::vector<Arc> dir;
+        dir.push_back(arcFromId(n));
+        dir.push_back(arcFromId(n-1));
+        Parent::notifier(Arc()).erase(dir);
+        nodes[arcs[n-1].target].first_out=arcs[n].next_out;
+        nodes[arcs[n].target].first_out=arcs[n-1].next_out;
+        arcs.pop_back();
+        arcs.pop_back();
+      }
+      while(s.node_num<nodes.size()) {
+        int n=nodes.size()-1;
+        Node node = nodeFromId(n);
+        if (Parent::red(node)) {
+          first_red = nodes[n].partition_next;
+          Parent::notifier(RedNode()).erase(node);          
+        } else {
+          first_blue = nodes[n].partition_next;
+          Parent::notifier(BlueNode()).erase(node);
+        }
+        Parent::notifier(Node()).erase(node);
+        nodes.pop_back();
+      }
+    }
+
+  public:
+
+    ///Class to make a snapshot of the graph and to restore it later.
+
+    ///Class to make a snapshot of the graph and to restore it later.
+    ///
+    ///The newly added nodes and edges can be removed using the
+    ///restore() function. This is the only way for deleting nodes and/or
+    ///edges from a SmartBpGraph structure.
+    ///
+    ///\note After a state is restored, you cannot restore a later state,
+    ///i.e. you cannot add the removed nodes and edges again using
+    ///another Snapshot instance.
+    ///
+    ///\warning The validity of the snapshot is not stored due to
+    ///performance reasons. If you do not use the snapshot correctly,
+    ///it can cause broken program, invalid or not restored state of
+    ///the graph or no change.
+    class Snapshot
+    {
+      SmartBpGraph *_graph;
+    protected:
+      friend class SmartBpGraph;
+      unsigned int node_num;
+      unsigned int arc_num;
+    public:
+      ///Default constructor.
+
+      ///Default constructor.
+      ///You have to call save() to actually make a snapshot.
+      Snapshot() : _graph(0) {}
+      ///Constructor that immediately makes a snapshot
+
+      /// This constructor immediately makes a snapshot of the given graph.
+      ///
+      Snapshot(SmartBpGraph &gr) {
+        gr.saveSnapshot(*this);
+      }
+
+      ///Make a snapshot.
+
+      ///This function makes a snapshot of the given graph.
+      ///It can be called more than once. In case of a repeated
+      ///call, the previous snapshot gets lost.
+      void save(SmartBpGraph &gr)
+      {
+        gr.saveSnapshot(*this);
+      }
+
+      ///Undo the changes until the last snapshot.
+
+      ///This function undos the changes until the last snapshot
+      ///created by save() or Snapshot(SmartBpGraph&).
       void restore()
       {
         _graph->restoreSnapshot(*this);

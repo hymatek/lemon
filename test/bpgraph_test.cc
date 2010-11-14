@@ -18,16 +18,200 @@
 
 #include <lemon/concepts/bpgraph.h>
 //#include <lemon/list_graph.h>
-//#include <lemon/smart_graph.h>
+#include <lemon/smart_graph.h>
 //#include <lemon/full_graph.h>
-//#include <lemon/grid_graph.h>
-//#include <lemon/hypercube_graph.h>
 
 #include "test_tools.h"
 #include "graph_test.h"
 
 using namespace lemon;
 using namespace lemon::concepts;
+
+template <class BpGraph>
+void checkBpGraphBuild() {
+  TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
+
+  BpGraph G;
+  checkGraphNodeList(G, 0);
+  checkGraphRedNodeList(G, 0);
+  checkGraphBlueNodeList(G, 0);
+  checkGraphEdgeList(G, 0);
+  checkGraphArcList(G, 0);
+
+  G.reserveNode(3);
+  G.reserveEdge(3);
+
+  Node
+    rn1 = G.addRedNode();
+  checkGraphNodeList(G, 1);
+  checkGraphRedNodeList(G, 1);
+  checkGraphBlueNodeList(G, 0);
+  checkGraphEdgeList(G, 0);
+  checkGraphArcList(G, 0);
+
+  Node
+    bn1 = G.addBlueNode(),
+    bn2 = G.addBlueNode();
+  checkGraphNodeList(G, 3);
+  checkGraphRedNodeList(G, 1);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 0);
+  checkGraphArcList(G, 0);
+
+  Edge e1 = G.addEdge(rn1, bn2);
+  check(G.redNode(e1) == rn1 && G.blueNode(e1) == bn2, "Wrong edge");
+  check(G.u(e1) == rn1 && G.v(e1) == bn2, "Wrong edge");
+
+  checkGraphNodeList(G, 3);
+  checkGraphRedNodeList(G, 1);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 1);
+  checkGraphArcList(G, 2);
+
+  checkGraphIncEdgeArcLists(G, rn1, 1);
+  checkGraphIncEdgeArcLists(G, bn1, 0);
+  checkGraphIncEdgeArcLists(G, bn2, 1);
+
+  checkGraphConEdgeList(G, 1);
+  checkGraphConArcList(G, 2);
+
+  Edge
+    e2 = G.addEdge(rn1, bn1),
+    e3 = G.addEdge(rn1, bn2);
+
+  checkGraphNodeList(G, 3);
+  checkGraphRedNodeList(G, 1);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 3);
+  checkGraphArcList(G, 6);
+
+  checkGraphIncEdgeArcLists(G, rn1, 3);
+  checkGraphIncEdgeArcLists(G, bn1, 1);
+  checkGraphIncEdgeArcLists(G, bn2, 2);
+
+  checkGraphConEdgeList(G, 3);
+  checkGraphConArcList(G, 6);
+
+  checkArcDirections(G);
+
+  checkNodeIds(G);
+  checkRedNodeIds(G);
+  checkBlueNodeIds(G);
+  checkArcIds(G);
+  checkEdgeIds(G);
+
+  checkGraphNodeMap(G);
+  checkGraphRedMap(G);
+  checkGraphBlueMap(G);
+  checkGraphArcMap(G);
+  checkGraphEdgeMap(G);
+}
+
+template <class Graph>
+void checkBpGraphSnapshot() {
+  TEMPLATE_BPGRAPH_TYPEDEFS(Graph);
+
+  Graph G;
+  Node 
+    n1 = G.addRedNode(),
+    n2 = G.addBlueNode(),
+    n3 = G.addBlueNode();
+  Edge 
+    e1 = G.addEdge(n1, n2),
+    e2 = G.addEdge(n1, n3);
+
+  checkGraphNodeList(G, 3);
+  checkGraphRedNodeList(G, 1);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 2);
+  checkGraphArcList(G, 4);
+
+  typename Graph::Snapshot snapshot(G);
+
+  Node n4 = G.addRedNode();
+  G.addEdge(n4, n2);
+  G.addEdge(n4, n3);
+
+  checkGraphNodeList(G, 4);
+  checkGraphRedNodeList(G, 2);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 4);
+  checkGraphArcList(G, 8);
+
+  snapshot.restore();
+
+  checkGraphNodeList(G, 3);
+  checkGraphRedNodeList(G, 1);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 2);
+  checkGraphArcList(G, 4);
+
+  checkGraphIncEdgeArcLists(G, n1, 2);
+  checkGraphIncEdgeArcLists(G, n2, 1);
+  checkGraphIncEdgeArcLists(G, n3, 1);
+
+  checkGraphConEdgeList(G, 2);
+  checkGraphConArcList(G, 4);
+
+  checkNodeIds(G);
+  checkRedNodeIds(G);
+  checkBlueNodeIds(G);
+  checkArcIds(G);
+  checkEdgeIds(G);
+
+  checkGraphNodeMap(G);
+  checkGraphRedMap(G);
+  checkGraphBlueMap(G);
+  checkGraphArcMap(G);
+  checkGraphEdgeMap(G);
+
+  G.addRedNode();
+  snapshot.save(G);
+
+  G.addEdge(G.addRedNode(), G.addBlueNode());
+
+  snapshot.restore();
+  snapshot.save(G);
+
+  checkGraphNodeList(G, 4);
+  checkGraphRedNodeList(G, 2);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 2);
+  checkGraphArcList(G, 4);
+
+  G.addEdge(G.addRedNode(), G.addBlueNode());
+
+  snapshot.restore();
+
+  checkGraphNodeList(G, 4);
+  checkGraphRedNodeList(G, 2);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 2);
+  checkGraphArcList(G, 4);
+}
+
+template <typename Graph>
+void checkBpGraphValidity() {
+  TEMPLATE_GRAPH_TYPEDEFS(Graph);
+  Graph g;
+
+  Node
+    n1 = g.addRedNode(),
+    n2 = g.addBlueNode(),
+    n3 = g.addBlueNode();
+
+  Edge
+    e1 = g.addEdge(n1, n2),
+    e2 = g.addEdge(n1, n3);
+
+  check(g.valid(n1), "Wrong validity check");
+  check(g.valid(e1), "Wrong validity check");
+  check(g.valid(g.direct(e1, true)), "Wrong validity check");
+
+  check(!g.valid(g.nodeFromId(-1)), "Wrong validity check");
+  check(!g.valid(g.edgeFromId(-1)), "Wrong validity check");
+  check(!g.valid(g.arcFromId(-1)), "Wrong validity check");
+}
 
 void checkConcepts() {
   { // Checking graph components
@@ -51,16 +235,27 @@ void checkConcepts() {
     checkConcept<ErasableBpGraphComponent<>,
       ErasableBpGraphComponent<> >();
 
-    checkConcept<ClearableGraphComponent<>,
-      ClearableGraphComponent<> >();
+    checkConcept<ClearableBpGraphComponent<>,
+      ClearableBpGraphComponent<> >();
 
   }
   { // Checking skeleton graph
     checkConcept<BpGraph, BpGraph>();
   }
+  { // Checking SmartBpGraph
+    checkConcept<BpGraph, SmartBpGraph>();
+    checkConcept<AlterableBpGraphComponent<>, SmartBpGraph>();
+    checkConcept<ExtendableBpGraphComponent<>, SmartBpGraph>();
+    checkConcept<ClearableBpGraphComponent<>, SmartBpGraph>();
+  }
 }
 
 void checkGraphs() {
+  { // Checking SmartGraph
+    checkBpGraphBuild<SmartBpGraph>();
+    checkBpGraphSnapshot<SmartBpGraph>();
+    checkBpGraphValidity<SmartBpGraph>();
+  }
 }
 
 int main() {

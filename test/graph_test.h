@@ -41,6 +41,30 @@ namespace lemon {
   }
 
   template<class Graph>
+  void checkGraphRedNodeList(const Graph &G, int cnt)
+  {
+    typename Graph::RedIt n(G);
+    for(int i=0;i<cnt;i++) {
+      check(n!=INVALID,"Wrong red Node list linking.");
+      ++n;
+    }
+    check(n==INVALID,"Wrong red Node list linking.");
+    check(countRedNodes(G)==cnt,"Wrong red Node number.");
+  }
+
+  template<class Graph>
+  void checkGraphBlueNodeList(const Graph &G, int cnt)
+  {
+    typename Graph::BlueIt n(G);
+    for(int i=0;i<cnt;i++) {
+      check(n!=INVALID,"Wrong blue Node list linking.");
+      ++n;
+    }
+    check(n==INVALID,"Wrong blue Node list linking.");
+    check(countBlueNodes(G)==cnt,"Wrong blue Node number.");
+  }
+
+  template<class Graph>
   void checkGraphArcList(const Graph &G, int cnt)
   {
     typename Graph::ArcIt e(G);
@@ -166,6 +190,7 @@ namespace lemon {
 
   template <typename Graph>
   void checkNodeIds(const Graph& G) {
+    typedef typename Graph::Node Node;
     std::set<int> values;
     for (typename Graph::NodeIt n(G); n != INVALID; ++n) {
       check(G.nodeFromId(G.id(n)) == n, "Wrong id");
@@ -173,10 +198,40 @@ namespace lemon {
       check(G.id(n) <= G.maxNodeId(), "Wrong maximum id");
       values.insert(G.id(n));
     }
+    check(G.maxId(Node()) <= G.maxNodeId(), "Wrong maximum id");
+  }
+
+  template <typename Graph>
+  void checkRedNodeIds(const Graph& G) {
+    typedef typename Graph::RedNode RedNode;
+    std::set<int> values;
+    for (typename Graph::RedIt n(G); n != INVALID; ++n) {
+      check(G.red(n), "Wrong partition");
+      check(G.redId(n) == G.id(RedNode(n)), "Wrong id");
+      check(values.find(G.redId(n)) == values.end(), "Wrong id");
+      check(G.redId(n) <= G.maxRedId(), "Wrong maximum id");
+      values.insert(G.id(n));
+    }
+    check(G.maxId(RedNode()) == G.maxRedId(), "Wrong maximum id");
+  }
+
+  template <typename Graph>
+  void checkBlueNodeIds(const Graph& G) {
+    typedef typename Graph::BlueNode BlueNode;
+    std::set<int> values;
+    for (typename Graph::BlueIt n(G); n != INVALID; ++n) {
+      check(G.blue(n), "Wrong partition");
+      check(G.blueId(n) == G.id(BlueNode(n)), "Wrong id");
+      check(values.find(G.blueId(n)) == values.end(), "Wrong id");
+      check(G.blueId(n) <= G.maxBlueId(), "Wrong maximum id");
+      values.insert(G.id(n));
+    }
+    check(G.maxId(BlueNode()) == G.maxBlueId(), "Wrong maximum id");
   }
 
   template <typename Graph>
   void checkArcIds(const Graph& G) {
+    typedef typename Graph::Arc Arc;
     std::set<int> values;
     for (typename Graph::ArcIt a(G); a != INVALID; ++a) {
       check(G.arcFromId(G.id(a)) == a, "Wrong id");
@@ -184,10 +239,12 @@ namespace lemon {
       check(G.id(a) <= G.maxArcId(), "Wrong maximum id");
       values.insert(G.id(a));
     }
+    check(G.maxId(Arc()) <= G.maxArcId(), "Wrong maximum id");
   }
 
   template <typename Graph>
   void checkEdgeIds(const Graph& G) {
+    typedef typename Graph::Edge Edge;
     std::set<int> values;
     for (typename Graph::EdgeIt e(G); e != INVALID; ++e) {
       check(G.edgeFromId(G.id(e)) == e, "Wrong id");
@@ -195,6 +252,7 @@ namespace lemon {
       check(G.id(e) <= G.maxEdgeId(), "Wrong maximum id");
       values.insert(G.id(e));
     }
+    check(G.maxId(Edge()) <= G.maxEdgeId(), "Wrong maximum id");
   }
 
   template <typename Graph>
@@ -217,6 +275,66 @@ namespace lemon {
     }
     s = s * (s - 1) / 2;
     for (NodeIt it(G); it != INVALID; ++it) {
+      s -= map[it];
+    }
+    check(s == 0, "Wrong sum.");
+
+    // map = constMap<Node>(12);
+    // for (NodeIt it(G); it != INVALID; ++it) {
+    //   check(map[it] == 12, "Wrong operator[].");
+    // }
+  }
+
+  template <typename Graph>
+  void checkGraphRedMap(const Graph& G) {
+    typedef typename Graph::Node Node;
+    typedef typename Graph::RedIt RedIt;
+
+    typedef typename Graph::template RedMap<int> IntRedMap;
+    IntRedMap map(G, 42);
+    for (RedIt it(G); it != INVALID; ++it) {
+      check(map[it] == 42, "Wrong map constructor.");
+    }
+    int s = 0;
+    for (RedIt it(G); it != INVALID; ++it) {
+      map[it] = 0;
+      check(map[it] == 0, "Wrong operator[].");
+      map.set(it, s);
+      check(map[it] == s, "Wrong set.");
+      ++s;
+    }
+    s = s * (s - 1) / 2;
+    for (RedIt it(G); it != INVALID; ++it) {
+      s -= map[it];
+    }
+    check(s == 0, "Wrong sum.");
+
+    // map = constMap<Node>(12);
+    // for (NodeIt it(G); it != INVALID; ++it) {
+    //   check(map[it] == 12, "Wrong operator[].");
+    // }
+  }
+
+  template <typename Graph>
+  void checkGraphBlueMap(const Graph& G) {
+    typedef typename Graph::Node Node;
+    typedef typename Graph::BlueIt BlueIt;
+
+    typedef typename Graph::template BlueMap<int> IntBlueMap;
+    IntBlueMap map(G, 42);
+    for (BlueIt it(G); it != INVALID; ++it) {
+      check(map[it] == 42, "Wrong map constructor.");
+    }
+    int s = 0;
+    for (BlueIt it(G); it != INVALID; ++it) {
+      map[it] = 0;
+      check(map[it] == 0, "Wrong operator[].");
+      map.set(it, s);
+      check(map[it] == s, "Wrong set.");
+      ++s;
+    }
+    s = s * (s - 1) / 2;
+    for (BlueIt it(G); it != INVALID; ++it) {
       s -= map[it];
     }
     check(s == 0, "Wrong sum.");

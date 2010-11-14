@@ -151,6 +151,88 @@ namespace lemon {
 
   };
 
+  template <typename GR, typename Enable = void>
+  struct RedNodeNotifierIndicator {
+    typedef InvalidType Type;
+  };
+  template <typename GR>
+  struct RedNodeNotifierIndicator<
+    GR,
+    typename enable_if<typename GR::RedNodeNotifier::Notifier, void>::type
+  > {
+    typedef typename GR::RedNodeNotifier Type;
+  };
+
+  template <typename GR>
+  class ItemSetTraits<GR, typename GR::RedNode> {
+  public:
+
+    typedef GR BpGraph;
+    typedef GR Graph;
+    typedef GR Digraph;
+
+    typedef typename GR::RedNode Item;
+    typedef typename GR::RedIt ItemIt;
+
+    typedef typename RedNodeNotifierIndicator<GR>::Type ItemNotifier;
+
+    template <typename V>
+    class Map : public GR::template RedMap<V> {
+      typedef typename GR::template RedMap<V> Parent;
+
+    public:
+      typedef typename GR::template RedMap<V> Type;
+      typedef typename Parent::Value Value;
+
+      Map(const GR& _bpgraph) : Parent(_bpgraph) {}
+      Map(const GR& _bpgraph, const Value& _value)
+        : Parent(_bpgraph, _value) {}
+
+     };
+
+  };
+
+  template <typename GR, typename Enable = void>
+  struct BlueNodeNotifierIndicator {
+    typedef InvalidType Type;
+  };
+  template <typename GR>
+  struct BlueNodeNotifierIndicator<
+    GR,
+    typename enable_if<typename GR::BlueNodeNotifier::Notifier, void>::type
+  > {
+    typedef typename GR::BlueNodeNotifier Type;
+  };
+
+  template <typename GR>
+  class ItemSetTraits<GR, typename GR::BlueNode> {
+  public:
+
+    typedef GR BpGraph;
+    typedef GR Graph;
+    typedef GR Digraph;
+
+    typedef typename GR::BlueNode Item;
+    typedef typename GR::BlueIt ItemIt;
+
+    typedef typename BlueNodeNotifierIndicator<GR>::Type ItemNotifier;
+
+    template <typename V>
+    class Map : public GR::template BlueMap<V> {
+      typedef typename GR::template BlueMap<V> Parent;
+
+    public:
+      typedef typename GR::template BlueMap<V> Type;
+      typedef typename Parent::Value Value;
+
+      Map(const GR& _bpgraph) : Parent(_bpgraph) {}
+      Map(const GR& _bpgraph, const Value& _value)
+        : Parent(_bpgraph, _value) {}
+
+     };
+
+  };
+
   template <typename Map, typename Enable = void>
   struct MapTraits {
     typedef False ReferenceMapTag;
