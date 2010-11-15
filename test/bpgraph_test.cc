@@ -17,7 +17,7 @@
  */
 
 #include <lemon/concepts/bpgraph.h>
-//#include <lemon/list_graph.h>
+#include <lemon/list_graph.h>
 #include <lemon/smart_graph.h>
 #include <lemon/full_graph.h>
 
@@ -107,11 +107,108 @@ void checkBpGraphBuild() {
   checkGraphEdgeMap(G);
 }
 
-template <class Graph>
-void checkBpGraphSnapshot() {
-  TEMPLATE_BPGRAPH_TYPEDEFS(Graph);
+template <class BpGraph>
+void checkBpGraphErase() {
+  TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
 
-  Graph G;
+  BpGraph G;
+  Node
+    n1 = G.addRedNode(), n2 = G.addBlueNode(),
+    n3 = G.addBlueNode(), n4 = G.addRedNode();
+  Edge
+    e1 = G.addEdge(n1, n2), e2 = G.addEdge(n1, n3),
+    e3 = G.addEdge(n4, n2), e4 = G.addEdge(n4, n3);
+
+  // Check edge deletion
+  G.erase(e2);
+
+  checkGraphNodeList(G, 4);
+  checkGraphRedNodeList(G, 2);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 3);
+  checkGraphArcList(G, 6);
+
+  checkGraphIncEdgeArcLists(G, n1, 1);
+  checkGraphIncEdgeArcLists(G, n2, 2);
+  checkGraphIncEdgeArcLists(G, n3, 1);
+  checkGraphIncEdgeArcLists(G, n4, 2);
+
+  checkGraphConEdgeList(G, 3);
+  checkGraphConArcList(G, 6);
+
+  // Check node deletion
+  G.erase(n3);
+
+  checkGraphNodeList(G, 3);
+  checkGraphRedNodeList(G, 2);
+  checkGraphBlueNodeList(G, 1);
+  checkGraphEdgeList(G, 2);
+  checkGraphArcList(G, 4);
+
+  checkGraphIncEdgeArcLists(G, n1, 1);
+  checkGraphIncEdgeArcLists(G, n2, 2);
+  checkGraphIncEdgeArcLists(G, n4, 1);
+
+  checkGraphConEdgeList(G, 2);
+  checkGraphConArcList(G, 4);
+
+}
+
+template <class BpGraph>
+void checkBpGraphAlter() {
+  TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
+
+  BpGraph G;
+  Node
+    n1 = G.addRedNode(), n2 = G.addBlueNode(),
+    n3 = G.addBlueNode(), n4 = G.addRedNode();
+  Edge
+    e1 = G.addEdge(n1, n2), e2 = G.addEdge(n1, n3),
+    e3 = G.addEdge(n4, n2), e4 = G.addEdge(n4, n3);
+
+  G.changeRed(e2, n4);
+  check(G.redNode(e2) == n4, "Wrong red node");
+  check(G.blueNode(e2) == n3, "Wrong blue node");
+
+  checkGraphNodeList(G, 4);
+  checkGraphRedNodeList(G, 2);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 4);
+  checkGraphArcList(G, 8);
+
+  checkGraphIncEdgeArcLists(G, n1, 1);
+  checkGraphIncEdgeArcLists(G, n2, 2);
+  checkGraphIncEdgeArcLists(G, n3, 2);
+  checkGraphIncEdgeArcLists(G, n4, 3);
+
+  checkGraphConEdgeList(G, 4);
+  checkGraphConArcList(G, 8);
+
+  G.changeBlue(e2, n2);
+  check(G.redNode(e2) == n4, "Wrong red node");
+  check(G.blueNode(e2) == n2, "Wrong blue node");
+
+  checkGraphNodeList(G, 4);
+  checkGraphRedNodeList(G, 2);
+  checkGraphBlueNodeList(G, 2);
+  checkGraphEdgeList(G, 4);
+  checkGraphArcList(G, 8);
+
+  checkGraphIncEdgeArcLists(G, n1, 1);
+  checkGraphIncEdgeArcLists(G, n2, 3);
+  checkGraphIncEdgeArcLists(G, n3, 1);
+  checkGraphIncEdgeArcLists(G, n4, 3);
+
+  checkGraphConEdgeList(G, 4);
+  checkGraphConArcList(G, 8);
+}
+
+
+template <class BpGraph>
+void checkBpGraphSnapshot() {
+  TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
+
+  BpGraph G;
   Node 
     n1 = G.addRedNode(),
     n2 = G.addBlueNode(),
@@ -126,7 +223,7 @@ void checkBpGraphSnapshot() {
   checkGraphEdgeList(G, 2);
   checkGraphArcList(G, 4);
 
-  typename Graph::Snapshot snapshot(G);
+  typename BpGraph::Snapshot snapshot(G);
 
   Node n4 = G.addRedNode();
   G.addEdge(n4, n2);
@@ -190,10 +287,10 @@ void checkBpGraphSnapshot() {
   checkGraphArcList(G, 4);
 }
 
-template <typename Graph>
+template <typename BpGraph>
 void checkBpGraphValidity() {
-  TEMPLATE_GRAPH_TYPEDEFS(Graph);
-  Graph g;
+  TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
+  BpGraph g;
 
   Node
     n1 = g.addRedNode(),
@@ -325,6 +422,13 @@ void checkFullBpGraph(int redNum, int blueNum) {
 }
 
 void checkGraphs() {
+  { // Checking ListGraph
+    checkBpGraphBuild<ListBpGraph>();
+    checkBpGraphErase<ListBpGraph>();
+    checkBpGraphAlter<ListBpGraph>();
+    checkBpGraphSnapshot<ListBpGraph>();
+    checkBpGraphValidity<ListBpGraph>();
+  }
   { // Checking SmartGraph
     checkBpGraphBuild<SmartBpGraph>();
     checkBpGraphSnapshot<SmartBpGraph>();

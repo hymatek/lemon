@@ -1016,7 +1016,7 @@ namespace lemon {
       return nodes[v._id].partition_index;
     }
     int blueId(Node v) const {
-      LEMON_DEBUG(nodes[v._id].red, "Node has to be blue");
+      LEMON_DEBUG(!nodes[v._id].red, "Node has to be blue");
       return nodes[v._id].partition_index;
     }
     static int id(Arc e) { return e._id; }
