@@ -555,6 +555,37 @@ namespace lemon {
       }
     };
 
+    template <typename BpGraph, typename Enable = void>
+    struct BpGraphCopySelector {
+      template <typename From, typename NodeRefMap, typename EdgeRefMap>
+      static void copy(const From& from, BpGraph &to,
+                       NodeRefMap& nodeRefMap, EdgeRefMap& edgeRefMap) {
+        to.clear();
+        for (typename From::RedIt it(from); it != INVALID; ++it) {
+          nodeRefMap[it] = to.addRedNode();
+        }
+        for (typename From::BlueIt it(from); it != INVALID; ++it) {
+          nodeRefMap[it] = to.addBlueNode();
+        }
+        for (typename From::EdgeIt it(from); it != INVALID; ++it) {
+          edgeRefMap[it] = to.addEdge(nodeRefMap[from.redNode(it)],
+                                      nodeRefMap[from.blueNode(it)]);
+        }
+      }
+    };
+
+    template <typename BpGraph>
+    struct BpGraphCopySelector<
+      BpGraph,
+      typename enable_if<typename BpGraph::BuildTag, void>::type>
+    {
+      template <typename From, typename NodeRefMap, typename EdgeRefMap>
+      static void copy(const From& from, BpGraph &to,
+                       NodeRefMap& nodeRefMap, EdgeRefMap& edgeRefMap) {
+        to.build(from, nodeRefMap, edgeRefMap);
+      }
+    };
+
   }
 
   /// \brief Check whether a graph is undirected.
@@ -1099,6 +1130,409 @@ namespace lemon {
   GraphCopy<From, To>
   graphCopy(const From& from, To& to) {
     return GraphCopy<From, To>(from, to);
+  }
+
+  /// \brief Class to copy a bipartite graph.
+  ///
+  /// Class to copy a bipartite graph to another graph (duplicate a
+  /// graph). The simplest way of using it is through the
+  /// \c bpGraphCopy() function.
+  ///
+  /// This class not only make a copy of a bipartite graph, but it can
+  /// create references and cross references between the nodes, edges
+  /// and arcs of the two graphs, and it can copy maps for using with
+  /// the newly created graph.
+  ///
+  /// To make a copy from a graph, first an instance of BpGraphCopy
+  /// should be created, then the data belongs to the graph should
+  /// assigned to copy. In the end, the \c run() member should be
+  /// called.
+  ///
+  /// The next code copies a graph with several data:
+  ///\code
+  ///  BpGraphCopy<OrigBpGraph, NewBpGraph> cg(orig_graph, new_graph);
+  ///  // Create references for the nodes
+  ///  OrigBpGraph::NodeMap<NewBpGraph::Node> nr(orig_graph);
+  ///  cg.nodeRef(nr);
+  ///  // Create cross references (inverse) for the edges
+  ///  NewBpGraph::EdgeMap<OrigBpGraph::Edge> ecr(new_graph);
+  ///  cg.edgeCrossRef(ecr);
+  ///  // Copy a red map
+  ///  OrigBpGraph::RedMap<double> ormap(orig_graph);
+  ///  NewBpGraph::RedMap<double> nrmap(new_graph);
+  ///  cg.edgeMap(ormap, nrmap);
+  ///  // Copy a node
+  ///  OrigBpGraph::Node on;
+  ///  NewBpGraph::Node nn;
+  ///  cg.node(on, nn);
+  ///  // Execute copying
+  ///  cg.run();
+  ///\endcode
+  template <typename From, typename To>
+  class BpGraphCopy {
+  private:
+
+    typedef typename From::Node Node;
+    typedef typename From::RedNode RedNode;
+    typedef typename From::BlueNode BlueNode;
+    typedef typename From::NodeIt NodeIt;
+    typedef typename From::Arc Arc;
+    typedef typename From::ArcIt ArcIt;
+    typedef typename From::Edge Edge;
+    typedef typename From::EdgeIt EdgeIt;
+
+    typedef typename To::Node TNode;
+    typedef typename To::Arc TArc;
+    typedef typename To::Edge TEdge;
+
+    typedef typename From::template NodeMap<TNode> NodeRefMap;
+    typedef typename From::template EdgeMap<TEdge> EdgeRefMap;
+
+    struct ArcRefMap {
+      ArcRefMap(const From& from, const To& to, const EdgeRefMap& edge_ref)
+        : _from(from), _to(to), _edge_ref(edge_ref) {}
+
+      typedef typename From::Arc Key;
+      typedef typename To::Arc Value;
+
+      Value operator[](const Key& key) const {
+        return _to.direct(_edge_ref[key], _from.direction(key));
+      }
+
+      const From& _from;
+      const To& _to;
+      const EdgeRefMap& _edge_ref;
+    };
+
+  public:
+
+    /// \brief Constructor of BpGraphCopy.
+    ///
+    /// Constructor of BpGraphCopy for copying the content of the
+    /// \c from graph into the \c to graph.
+    BpGraphCopy(const From& from, To& to)
+      : _from(from), _to(to) {}
+
+    /// \brief Destructor of BpGraphCopy
+    ///
+    /// Destructor of BpGraphCopy.
+    ~BpGraphCopy() {
+      for (int i = 0; i < int(_node_maps.size()); ++i) {
+        delete _node_maps[i];
+      }
+      for (int i = 0; i < int(_red_maps.size()); ++i) {
+        delete _red_maps[i];
+      }
+      for (int i = 0; i < int(_blue_maps.size()); ++i) {
+        delete _blue_maps[i];
+      }
+      for (int i = 0; i < int(_arc_maps.size()); ++i) {
+        delete _arc_maps[i];
+      }
+      for (int i = 0; i < int(_edge_maps.size()); ++i) {
+        delete _edge_maps[i];
+      }
+    }
+
+    /// \brief Copy the node references into the given map.
+    ///
+    /// This function copies the node references into the given map.
+    /// The parameter should be a map, whose key type is the Node type of
+    /// the source graph, while the value type is the Node type of the
+    /// destination graph.
+    template <typename NodeRef>
+    BpGraphCopy& nodeRef(NodeRef& map) {
+      _node_maps.push_back(new _core_bits::RefCopy<From, Node,
+                           NodeRefMap, NodeRef>(map));
+      return *this;
+    }
+
+    /// \brief Copy the node cross references into the given map.
+    ///
+    /// This function copies the node cross references (reverse references)
+    /// into the given map. The parameter should be a map, whose key type
+    /// is the Node type of the destination graph, while the value type is
+    /// the Node type of the source graph.
+    template <typename NodeCrossRef>
+    BpGraphCopy& nodeCrossRef(NodeCrossRef& map) {
+      _node_maps.push_back(new _core_bits::CrossRefCopy<From, Node,
+                           NodeRefMap, NodeCrossRef>(map));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given node map.
+    ///
+    /// This function makes a copy of the given node map for the newly
+    /// created graph.
+    /// The key type of the new map \c tmap should be the Node type of the
+    /// destination graph, and the key type of the original map \c map
+    /// should be the Node type of the source graph.
+    template <typename FromMap, typename ToMap>
+    BpGraphCopy& nodeMap(const FromMap& map, ToMap& tmap) {
+      _node_maps.push_back(new _core_bits::MapCopy<From, Node,
+                           NodeRefMap, FromMap, ToMap>(map, tmap));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given node.
+    ///
+    /// This function makes a copy of the given node.
+    BpGraphCopy& node(const Node& node, TNode& tnode) {
+      _node_maps.push_back(new _core_bits::ItemCopy<From, Node,
+                           NodeRefMap, TNode>(node, tnode));
+      return *this;
+    }
+
+    /// \brief Copy the red node references into the given map.
+    ///
+    /// This function copies the red node references into the given
+    /// map.  The parameter should be a map, whose key type is the
+    /// Node type of the source graph with the red item set, while the
+    /// value type is the Node type of the destination graph.
+    template <typename RedRef>
+    BpGraphCopy& redRef(RedRef& map) {
+      _red_maps.push_back(new _core_bits::RefCopy<From, RedNode,
+                          NodeRefMap, RedRef>(map));
+      return *this;
+    }
+
+    /// \brief Copy the red node cross references into the given map.
+    ///
+    /// This function copies the red node cross references (reverse
+    /// references) into the given map. The parameter should be a map,
+    /// whose key type is the Node type of the destination graph with
+    /// the red item set, while the value type is the Node type of the
+    /// source graph.
+    template <typename RedCrossRef>
+    BpGraphCopy& redCrossRef(RedCrossRef& map) {
+      _red_maps.push_back(new _core_bits::CrossRefCopy<From, RedNode,
+                          NodeRefMap, RedCrossRef>(map));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given red node map.
+    ///
+    /// This function makes a copy of the given red node map for the newly
+    /// created graph.
+    /// The key type of the new map \c tmap should be the Node type of
+    /// the destination graph with the red items, and the key type of
+    /// the original map \c map should be the Node type of the source
+    /// graph.
+    template <typename FromMap, typename ToMap>
+    BpGraphCopy& redMap(const FromMap& map, ToMap& tmap) {
+      _red_maps.push_back(new _core_bits::MapCopy<From, RedNode,
+                           NodeRefMap, FromMap, ToMap>(map, tmap));
+      return *this;
+    }
+
+    /// \brief Copy the blue node references into the given map.
+    ///
+    /// This function copies the blue node references into the given
+    /// map.  The parameter should be a map, whose key type is the
+    /// Node type of the source graph with the blue item set, while the
+    /// value type is the Node type of the destination graph.
+    template <typename BlueRef>
+    BpGraphCopy& blueRef(BlueRef& map) {
+      _blue_maps.push_back(new _core_bits::RefCopy<From, BlueNode,
+                           NodeRefMap, BlueRef>(map));
+      return *this;
+    }
+
+    /// \brief Copy the blue node cross references into the given map.
+    ///
+    /// This function copies the blue node cross references (reverse
+    /// references) into the given map. The parameter should be a map,
+    /// whose key type is the Node type of the destination graph with
+    /// the blue item set, while the value type is the Node type of the
+    /// source graph.
+    template <typename BlueCrossRef>
+    BpGraphCopy& blueCrossRef(BlueCrossRef& map) {
+      _blue_maps.push_back(new _core_bits::CrossRefCopy<From, BlueNode,
+                           NodeRefMap, BlueCrossRef>(map));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given blue node map.
+    ///
+    /// This function makes a copy of the given blue node map for the newly
+    /// created graph.
+    /// The key type of the new map \c tmap should be the Node type of
+    /// the destination graph with the blue items, and the key type of
+    /// the original map \c map should be the Node type of the source
+    /// graph.
+    template <typename FromMap, typename ToMap>
+    BpGraphCopy& blueMap(const FromMap& map, ToMap& tmap) {
+      _blue_maps.push_back(new _core_bits::MapCopy<From, BlueNode,
+                           NodeRefMap, FromMap, ToMap>(map, tmap));
+      return *this;
+    }
+
+    /// \brief Copy the arc references into the given map.
+    ///
+    /// This function copies the arc references into the given map.
+    /// The parameter should be a map, whose key type is the Arc type of
+    /// the source graph, while the value type is the Arc type of the
+    /// destination graph.
+    template <typename ArcRef>
+    BpGraphCopy& arcRef(ArcRef& map) {
+      _arc_maps.push_back(new _core_bits::RefCopy<From, Arc,
+                          ArcRefMap, ArcRef>(map));
+      return *this;
+    }
+
+    /// \brief Copy the arc cross references into the given map.
+    ///
+    /// This function copies the arc cross references (reverse references)
+    /// into the given map. The parameter should be a map, whose key type
+    /// is the Arc type of the destination graph, while the value type is
+    /// the Arc type of the source graph.
+    template <typename ArcCrossRef>
+    BpGraphCopy& arcCrossRef(ArcCrossRef& map) {
+      _arc_maps.push_back(new _core_bits::CrossRefCopy<From, Arc,
+                          ArcRefMap, ArcCrossRef>(map));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given arc map.
+    ///
+    /// This function makes a copy of the given arc map for the newly
+    /// created graph.
+    /// The key type of the new map \c tmap should be the Arc type of the
+    /// destination graph, and the key type of the original map \c map
+    /// should be the Arc type of the source graph.
+    template <typename FromMap, typename ToMap>
+    BpGraphCopy& arcMap(const FromMap& map, ToMap& tmap) {
+      _arc_maps.push_back(new _core_bits::MapCopy<From, Arc,
+                          ArcRefMap, FromMap, ToMap>(map, tmap));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given arc.
+    ///
+    /// This function makes a copy of the given arc.
+    BpGraphCopy& arc(const Arc& arc, TArc& tarc) {
+      _arc_maps.push_back(new _core_bits::ItemCopy<From, Arc,
+                          ArcRefMap, TArc>(arc, tarc));
+      return *this;
+    }
+
+    /// \brief Copy the edge references into the given map.
+    ///
+    /// This function copies the edge references into the given map.
+    /// The parameter should be a map, whose key type is the Edge type of
+    /// the source graph, while the value type is the Edge type of the
+    /// destination graph.
+    template <typename EdgeRef>
+    BpGraphCopy& edgeRef(EdgeRef& map) {
+      _edge_maps.push_back(new _core_bits::RefCopy<From, Edge,
+                           EdgeRefMap, EdgeRef>(map));
+      return *this;
+    }
+
+    /// \brief Copy the edge cross references into the given map.
+    ///
+    /// This function copies the edge cross references (reverse references)
+    /// into the given map. The parameter should be a map, whose key type
+    /// is the Edge type of the destination graph, while the value type is
+    /// the Edge type of the source graph.
+    template <typename EdgeCrossRef>
+    BpGraphCopy& edgeCrossRef(EdgeCrossRef& map) {
+      _edge_maps.push_back(new _core_bits::CrossRefCopy<From,
+                           Edge, EdgeRefMap, EdgeCrossRef>(map));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given edge map.
+    ///
+    /// This function makes a copy of the given edge map for the newly
+    /// created graph.
+    /// The key type of the new map \c tmap should be the Edge type of the
+    /// destination graph, and the key type of the original map \c map
+    /// should be the Edge type of the source graph.
+    template <typename FromMap, typename ToMap>
+    BpGraphCopy& edgeMap(const FromMap& map, ToMap& tmap) {
+      _edge_maps.push_back(new _core_bits::MapCopy<From, Edge,
+                           EdgeRefMap, FromMap, ToMap>(map, tmap));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given edge.
+    ///
+    /// This function makes a copy of the given edge.
+    BpGraphCopy& edge(const Edge& edge, TEdge& tedge) {
+      _edge_maps.push_back(new _core_bits::ItemCopy<From, Edge,
+                           EdgeRefMap, TEdge>(edge, tedge));
+      return *this;
+    }
+
+    /// \brief Execute copying.
+    ///
+    /// This function executes the copying of the graph along with the
+    /// copying of the assigned data.
+    void run() {
+      NodeRefMap nodeRefMap(_from);
+      EdgeRefMap edgeRefMap(_from);
+      ArcRefMap arcRefMap(_from, _to, edgeRefMap);
+      _core_bits::BpGraphCopySelector<To>::
+        copy(_from, _to, nodeRefMap, edgeRefMap);
+      for (int i = 0; i < int(_node_maps.size()); ++i) {
+        _node_maps[i]->copy(_from, nodeRefMap);
+      }
+      for (int i = 0; i < int(_red_maps.size()); ++i) {
+        _red_maps[i]->copy(_from, nodeRefMap);
+      }
+      for (int i = 0; i < int(_blue_maps.size()); ++i) {
+        _blue_maps[i]->copy(_from, nodeRefMap);
+      }
+      for (int i = 0; i < int(_edge_maps.size()); ++i) {
+        _edge_maps[i]->copy(_from, edgeRefMap);
+      }
+      for (int i = 0; i < int(_arc_maps.size()); ++i) {
+        _arc_maps[i]->copy(_from, arcRefMap);
+      }
+    }
+
+  private:
+
+    const From& _from;
+    To& _to;
+
+    std::vector<_core_bits::MapCopyBase<From, Node, NodeRefMap>* >
+      _node_maps;
+
+    std::vector<_core_bits::MapCopyBase<From, RedNode, NodeRefMap>* >
+      _red_maps;
+
+    std::vector<_core_bits::MapCopyBase<From, BlueNode, NodeRefMap>* >
+      _blue_maps;
+
+    std::vector<_core_bits::MapCopyBase<From, Arc, ArcRefMap>* >
+      _arc_maps;
+
+    std::vector<_core_bits::MapCopyBase<From, Edge, EdgeRefMap>* >
+      _edge_maps;
+
+  };
+
+  /// \brief Copy a graph to another graph.
+  ///
+  /// This function copies a graph to another graph.
+  /// The complete usage of it is detailed in the BpGraphCopy class,
+  /// but a short example shows a basic work:
+  ///\code
+  /// graphCopy(src, trg).nodeRef(nr).edgeCrossRef(ecr).run();
+  ///\endcode
+  ///
+  /// After the copy the \c nr map will contain the mapping from the
+  /// nodes of the \c from graph to the nodes of the \c to graph and
+  /// \c ecr will contain the mapping from the edges of the \c to graph
+  /// to the edges of the \c from graph.
+  ///
+  /// \see BpGraphCopy
+  template <typename From, typename To>
+  BpGraphCopy<From, To>
+  bpGraphCopy(const From& from, To& to) {
+    return BpGraphCopy<From, To>(from, to);
   }
 
   namespace _core_bits {
