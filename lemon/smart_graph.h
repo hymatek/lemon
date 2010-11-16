@@ -829,6 +829,7 @@ namespace lemon {
     std::vector<ArcT> arcs;
 
     int first_red, first_blue;
+    int max_red, max_blue;
 
   public:
 
@@ -890,29 +891,22 @@ namespace lemon {
 
 
     SmartBpGraphBase()
-      : nodes(), arcs(), first_red(-1), first_blue(-1) {}
+      : nodes(), arcs(), first_red(-1), first_blue(-1),
+        max_red(-1), max_blue(-1) {}
 
     typedef True NodeNumTag;
     typedef True EdgeNumTag;
     typedef True ArcNumTag;
 
     int nodeNum() const { return nodes.size(); }
-    int redNum() const {
-      return first_red == -1 ? 0 : nodes[first_red].partition_index + 1;
-    }
-    int blueNum() const {
-      return first_blue == -1 ? 0 : nodes[first_blue].partition_index + 1;
-    }
+    int redNum() const { return max_red + 1; }
+    int blueNum() const { return max_blue + 1; }
     int edgeNum() const { return arcs.size() / 2; }
     int arcNum() const { return arcs.size(); }
 
     int maxNodeId() const { return nodes.size()-1; }
-    int maxRedId() const {
-      return first_red == -1 ? -1 : nodes[first_red].partition_index;
-    }
-    int maxBlueId() const {
-      return first_blue == -1 ? -1 : nodes[first_blue].partition_index;
-    }
+    int maxRedId() const { return max_red; }
+    int maxBlueId() const { return max_blue; }
     int maxEdgeId() const { return arcs.size() / 2 - 1; }
     int maxArcId() const { return arcs.size()-1; }
 
@@ -1041,11 +1035,7 @@ namespace lemon {
       nodes.push_back(NodeT());
       nodes[n].first_out = -1;
       nodes[n].red = true;
-      if (first_red == -1) {
-        nodes[n].partition_index = 0;
-      } else {
-        nodes[n].partition_index = nodes[first_red].partition_index + 1;
-      }
+      nodes[n].partition_index = ++max_red;
       nodes[n].partition_next = first_red;
       first_red = n;
 
@@ -1057,11 +1047,7 @@ namespace lemon {
       nodes.push_back(NodeT());
       nodes[n].first_out = -1;
       nodes[n].red = false;
-      if (first_blue == -1) {
-        nodes[n].partition_index = 0;
-      } else {
-        nodes[n].partition_index = nodes[first_blue].partition_index + 1;
-      }
+      nodes[n].partition_index = ++max_blue;
       nodes[n].partition_next = first_blue;
       first_blue = n;
 
@@ -1090,6 +1076,8 @@ namespace lemon {
       nodes.clear();
       first_red = -1;
       first_blue = -1;
+      max_blue = -1;
+      max_red = -1;
     }
 
   };
@@ -1244,9 +1232,19 @@ namespace lemon {
         Node node = nodeFromId(n);
         if (Parent::red(node)) {
           first_red = nodes[n].partition_next;
+          if (first_red != -1) {
+            max_red = nodes[first_red].partition_index;
+          } else {
+            max_red = -1;
+          }
           Parent::notifier(RedNode()).erase(node);          
         } else {
           first_blue = nodes[n].partition_next;
+          if (first_blue != -1) {
+            max_blue = nodes[first_blue].partition_index;
+          } else {
+            max_blue = -1;
+          }
           Parent::notifier(BlueNode()).erase(node);
         }
         Parent::notifier(Node()).erase(node);
