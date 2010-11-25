@@ -991,6 +991,9 @@ namespace lemon {
       Parent::notifier(Arc()).build();
     }
 
+    using Parent::redNode;
+    using Parent::blueNode;
+
     /// \brief Returns the red node with the given index.
     ///
     /// Returns the red node with the given index. Since this
