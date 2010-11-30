@@ -25,6 +25,7 @@ SET(TESTS
   dijkstra_test
   dim_test
   edge_set_test
+  edmonds_karp_test
   error_test
   euler_test
   fractional_matching_test
