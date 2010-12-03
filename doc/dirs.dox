@@ -33,6 +33,19 @@ documentation.
 */
 
 /**
+\dir contrib
+\brief Directory for user contributed source codes.
+
+You can place your own C++ code using LEMON into this directory, which
+will compile to an executable along with LEMON when you build the
+library. This is probably the easiest way of compiling short to medium
+codes, for this does require neither a LEMON installed system-wide nor
+adding several paths to the compiler.
+
+Please have a look at <tt>contrib/CMakeLists.txt</tt> for
+instruction on how to add your own files into the build process.  */
+
+/**
 \dir test
 \brief Test programs.
 
