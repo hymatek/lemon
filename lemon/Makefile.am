@@ -64,6 +64,7 @@ lemon_HEADERS += \
 	lemon/bucket_heap.h \
 	lemon/capacity_scaling.h \
 	lemon/cbc.h \
+	lemon/christofides_tsp.h \
 	lemon/circulation.h \
 	lemon/clp.h \
 	lemon/color.h \
@@ -89,11 +90,13 @@ lemon_HEADERS += \
 	lemon/glpk.h \
 	lemon/gomory_hu.h \
 	lemon/graph_to_eps.h \
+	lemon/greedy_tsp.h \
 	lemon/grid_graph.h \
 	lemon/grosso_locatelli_pullan_mc.h \
 	lemon/hartmann_orlin_mmc.h \
 	lemon/howard_mmc.h \
 	lemon/hypercube_graph.h \
+	lemon/insertion_tsp.h \
 	lemon/karp_mmc.h \
 	lemon/kruskal.h \
 	lemon/hao_orlin.h \
@@ -110,7 +113,9 @@ lemon_HEADERS += \
 	lemon/max_cardinality_search.h \
 	lemon/nagamochi_ibaraki.h \
 	lemon/nauty_reader.h \
+	lemon/nearest_neighbor_tsp.h \
 	lemon/network_simplex.h \
+	lemon/opt2_tsp.h \
 	lemon/pairing_heap.h \
 	lemon/path.h \
 	lemon/planarity.h \
