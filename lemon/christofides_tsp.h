@@ -1,128 +1,239 @@
+/* -*- mode: C++; indent-tabs-mode: nil; -*-
+ *
+ * This file is a part of LEMON, a generic C++ optimization library.
+ *
+ * Copyright (C) 2003-2010
+ * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
+ * (Egervary Research Group on Combinatorial Optimization, EGRES).
+ *
+ * Permission to use, modify and distribute this software is granted
+ * provided that this copyright notice appears in all copies. For
+ * precise terms see the accompanying LICENSE file.
+ *
+ * This software is provided "AS IS" with no warranty of any kind,
+ * express or implied, and with no claim as to its suitability for any
+ * purpose.
+ *
+ */
+
 #ifndef LEMON_CHRISTOFIDES_TSP_H
 #define LEMON_CHRISTOFIDES_TSP_H
 
+/// \ingroup tsp
+/// \file
+/// \brief Christofides algorithm for symmetric TSP
+
 #include <lemon/full_graph.h>
 #include <lemon/smart_graph.h>
-#include <lemon/path.h>
 #include <lemon/kruskal.h>
 #include <lemon/matching.h>
-#include <lemon/adaptors.h>
-#include <lemon/maps.h>
 #include <lemon/euler.h>
 
 namespace lemon {
   
-  namespace christofides_helper {
-    template <class L>
-    L vectorConvert(const std::vector<FullGraph::Node> &_path) {
-      return L(_path.begin(), _path.end());
-    }
-  
-    template <>
-    std::vector<FullGraph::Node> vectorConvert(const std::vector<FullGraph::Node> &_path) {
-      return _path;
-    }
-  }
-  
+  /// \brief Christofides algorithm for symmetric TSP.
+  ///
+  /// ChristofidesTsp implements Christofides' heuristic for solving
+  /// symmetric \ref tsp "TSP".
+  ///
+  /// This a well-known approximation method for the TSP problem with
+  /// \ref checkMetricCost() "metric cost function".
+  /// It yields a tour whose total cost is at most 3/2 of the optimum,
+  /// but it is usually much better.
+  /// This implementation runs in O(n<sup>3</sup>log(n)) time.
+  ///
+  /// The algorithm starts with a \ref spantree "minimum cost spanning tree" and
+  /// finds a \ref MaxWeightedPerfectMatching "minimum cost perfect matching"
+  /// in the subgraph induced by the nodes that have odd degree in the
+  /// spanning tree.
+  /// Finally, it constructs the tour from the \ref EulerIt "Euler traversal"
+  /// of the union of the spanning tree and the matching.
+  /// During this last step, the algorithm simply skips the visited nodes
+  /// (i.e. creates shortcuts) assuming that the triangle inequality holds
+  /// for the cost function.
+  ///
+  /// \tparam CM Type of the cost map.
+  ///
+  /// \warning \& CM::Value must be signed type.
   template <typename CM>
-  class ChristofidesTsp {
+  class ChristofidesTsp
+  {
+    public:
+
+      /// Type of the cost map
+      typedef CM CostMap;
+      /// Type of the edge costs
+      typedef typename CM::Value Cost;
+
     private:
-      GRAPH_TYPEDEFS(SmartGraph);
+
+      GRAPH_TYPEDEFS(FullGraph);
+
+      const FullGraph &_gr;
+      const CostMap &_cost;
+      std::vector<Node> _path;
+      Cost _sum;
 
     public:
-      typedef typename CM::Value Cost;
-      typedef SmartGraph::EdgeMap<Cost> CostMap;
-    
-      ChristofidesTsp(const FullGraph &gr, const CM &cost) : _cost(_gr), fullg(gr), fullcost(cost), nr(_gr) {
-        graphCopy(gr, _gr).nodeCrossRef(nr).edgeMap(cost, _cost).run();
-      }
 
+      /// \brief Constructor
+      ///
+      /// Constructor.
+      /// \param gr The \ref FullGraph "full graph" the algorithm runs on.
+      /// \param cost The cost map.
+      ChristofidesTsp(const FullGraph &gr, const CostMap &cost)
+        : _gr(gr), _cost(cost) {}
+
+      /// \name Execution Control
+      /// @{
+
+      /// \brief Runs the algorithm.
+      ///
+      /// This function runs the algorithm.
+      ///
+      /// \return The total cost of the found tour.
       Cost run() {
         _path.clear();
+
+        if (_gr.nodeNum() == 0) return _sum = 0;
+        else if (_gr.nodeNum() == 1) {
+          _path.push_back(_gr(0));
+          return _sum = 0;
+        }
+        else if (_gr.nodeNum() == 2) {
+          _path.push_back(_gr(0));
+          _path.push_back(_gr(1));
+          return _sum = 2 * _cost[_gr.edge(_gr(0), _gr(1))];
+        }
         
-        SmartGraph::EdgeMap<bool> tree(_gr);
-        kruskal(_gr, _cost, tree);
+        // Compute min. cost spanning tree
+        std::vector<Edge> tree;
+        kruskal(_gr, _cost, std::back_inserter(tree));
         
-        FilterEdges<SmartGraph> treefiltered(_gr, tree);
-        InDegMap<FilterEdges<SmartGraph> > deg(treefiltered);
-        
-        SmartGraph::NodeMap<bool> oddfilter(_gr, false);
-        FilterNodes<SmartGraph> oddNodes(_gr, oddfilter);
-        
-        for (NodeIt n(_gr); n!=INVALID; ++n) {
-          if (deg[n]%2 == 1) {
-            oddNodes.enable(n);
+        FullGraph::NodeMap<int> deg(_gr, 0);
+        for (int i = 0; i != int(tree.size()); ++i) {
+          Edge e = tree[i];
+          ++deg[_gr.u(e)];
+          ++deg[_gr.v(e)];
+        }
+
+        // Copy the induced subgraph of odd nodes
+        std::vector<Node> odd_nodes;
+        for (NodeIt u(_gr); u != INVALID; ++u) {
+          if (deg[u] % 2 == 1) odd_nodes.push_back(u);
+        }
+  
+        SmartGraph sgr;
+        SmartGraph::EdgeMap<Cost> scost(sgr);
+        for (int i = 0; i != int(odd_nodes.size()); ++i) {
+          sgr.addNode();
+        }
+        for (int i = 0; i != int(odd_nodes.size()); ++i) {
+          for (int j = 0; j != int(odd_nodes.size()); ++j) {
+            if (j == i) continue;
+            SmartGraph::Edge e =
+              sgr.addEdge(sgr.nodeFromId(i), sgr.nodeFromId(j));
+            scost[e] = -_cost[_gr.edge(odd_nodes[i], odd_nodes[j])];
           }
         }
         
-        NegMap<CostMap> negmap(_cost);
-        MaxWeightedPerfectMatching<FilterNodes<SmartGraph>,
-                  NegMap<CostMap> > perfmatch(oddNodes, negmap);
-        perfmatch.run();
+        // Compute min. cost perfect matching
+        MaxWeightedPerfectMatching<SmartGraph, SmartGraph::EdgeMap<Cost> >
+          mwpm(sgr, scost);
+        mwpm.run();
         
-        for (FilterNodes<SmartGraph>::EdgeIt e(oddNodes); e!=INVALID; ++e) {
-          if (perfmatch.matching(e)) {
-            treefiltered.enable(_gr.addEdge(_gr.u(e), _gr.v(e)));
+        for (SmartGraph::EdgeIt e(sgr); e != INVALID; ++e) {
+          if (mwpm.matching(e)) {
+            tree.push_back( _gr.edge(odd_nodes[sgr.id(sgr.u(e))],
+                                     odd_nodes[sgr.id(sgr.v(e))]) );
           }
         }
         
-        FilterEdges<SmartGraph>::NodeMap<bool> seen(treefiltered, false);
-        for (EulerIt<FilterEdges<SmartGraph> > e(treefiltered); e!=INVALID; ++e) {
-          if (seen[treefiltered.target(e)]==false) {
-            _path.push_back(nr[treefiltered.target(e)]);
-            seen[treefiltered.target(e)] = true;
+        // Join the spanning tree and the matching        
+        sgr.clear();
+        for (int i = 0; i != _gr.nodeNum(); ++i) {
+          sgr.addNode();
+        }
+        for (int i = 0; i != int(tree.size()); ++i) {
+          int ui = _gr.id(_gr.u(tree[i])),
+              vi = _gr.id(_gr.v(tree[i]));
+          sgr.addEdge(sgr.nodeFromId(ui), sgr.nodeFromId(vi));
+        }
+
+        // Compute the tour from the Euler traversal
+        SmartGraph::NodeMap<bool> visited(sgr, false);
+        for (EulerIt<SmartGraph> e(sgr); e != INVALID; ++e) {
+          SmartGraph::Node n = sgr.target(e);
+          if (!visited[n]) {
+            _path.push_back(_gr(sgr.id(n)));
+            visited[n] = true;
           }
         }
 
-        _sum = fullcost[ fullg.edge(_path.back(), _path.front()) ];
-        for (unsigned int i=0; i<_path.size()-1; ++i)
-          _sum += fullcost[ fullg.edge(_path[i], _path[i+1]) ];
+        _sum = _cost[_gr.edge(_path.back(), _path.front())];
+        for (int i = 0; i < int(_path.size())-1; ++i) {
+          _sum += _cost[_gr.edge(_path[i], _path[i+1])];
+        }
 
         return _sum;
       }
 
-      template <typename L>
-      void tourNodes(L &container) {
-        container(christofides_helper::vectorConvert<L>(_path));
+      /// @}
+      
+      /// \name Query Functions
+      /// @{
+      
+      /// \brief The total cost of the found tour.
+      ///
+      /// This function returns the total cost of the found tour.
+      ///
+      /// \pre run() must be called before using this function.
+      Cost tourCost() const {
+        return _sum;
       }
       
-      template <template <typename> class L>
-      L<FullGraph::Node> tourNodes() {
-        return christofides_helper::vectorConvert<L<FullGraph::Node> >(_path);
-      }
-
-      const std::vector<Node>& tourNodes() {
+      /// \brief Returns a const reference to the node sequence of the
+      /// found tour.
+      ///
+      /// This function returns a const reference to the internal structure
+      /// that stores the node sequence of the found tour.
+      ///
+      /// \pre run() must be called before using this function.
+      const std::vector<Node>& tourNodes() const {
         return _path;
       }
-      
-      Path<FullGraph> tour() {
-        Path<FullGraph> p;
-        if (_path.size()<2)
-          return p;
 
-        for (unsigned int i=0; i<_path.size()-1; ++i) {
-          p.addBack(fullg.arc(_path[i], _path[i+1]));
+      /// \brief Gives back the node sequence of the found tour.
+      ///
+      /// This function copies the node sequence of the found tour into
+      /// the given standard container.
+      ///
+      /// \pre run() must be called before using this function.
+      template <typename Container>
+      void tourNodes(Container &container) const {
+        container.assign(_path.begin(), _path.end());
+      }
+      
+      /// \brief Gives back the found tour as a path.
+      ///
+      /// This function copies the found tour as a list of arcs/edges into
+      /// the given \ref concept::Path "path structure".
+      ///
+      /// \pre run() must be called before using this function.
+      template <typename Path>
+      void tour(Path &path) const {
+        path.clear();
+        for (int i = 0; i < int(_path.size()) - 1; ++i) {
+          path.addBack(_gr.arc(_path[i], _path[i+1]));
         }
-        p.addBack(fullg.arc(_path.back(), _path.front()));
-        
-        return p;
+        if (int(_path.size()) >= 2) {
+          path.addBack(_gr.arc(_path.back(), _path.front()));
+        }
       }
       
-      Cost tourCost() {
-        return _sum;
-      }
+      /// @}
       
-
-  private:
-    SmartGraph _gr;
-    CostMap _cost;
-    Cost _sum;
-    const FullGraph &fullg;
-    const CM &fullcost;
-    std::vector<FullGraph::Node> _path;
-    SmartGraph::NodeMap<FullGraph::Node> nr;
   };
-
 
 }; // namespace lemon
 

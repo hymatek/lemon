@@ -1,202 +1,353 @@
+/* -*- mode: C++; indent-tabs-mode: nil; -*-
+ *
+ * This file is a part of LEMON, a generic C++ optimization library.
+ *
+ * Copyright (C) 2003-2010
+ * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
+ * (Egervary Research Group on Combinatorial Optimization, EGRES).
+ *
+ * Permission to use, modify and distribute this software is granted
+ * provided that this copyright notice appears in all copies. For
+ * precise terms see the accompanying LICENSE file.
+ *
+ * This software is provided "AS IS" with no warranty of any kind,
+ * express or implied, and with no claim as to its suitability for any
+ * purpose.
+ *
+ */
+
 #ifndef LEMON_OPT2_TSP_H
 #define LEMON_OPT2_TSP_H
 
+/// \ingroup tsp
+/// \file
+/// \brief 2-opt algorithm for symmetric TSP
+
 #include <vector>
 #include <lemon/full_graph.h>
-#include <lemon/path.h>
 
 namespace lemon {
-  
-  namespace opt2_helper {
-    template <class L>
-    L vectorConvert(const std::vector<FullGraph::Node> &_path) {
-      return L(_path.begin(), _path.end());
-    }
-  
-    template <>
-    std::vector<FullGraph::Node> vectorConvert(const std::vector<FullGraph::Node> &_path) {
-      return _path;
-    }
-  }
-  
+
+  /// \brief 2-opt algorithm for symmetric TSP.
+  ///
+  /// Opt2Tsp implements the 2-opt heuristic for solving
+  /// symmetric \ref tsp "TSP".
+  ///
+  /// This algorithm starts with an initial tour and iteratively improves it.
+  /// At each step, it removes two edges and the reconnects the created two
+  /// paths in the other way if the resulting tour is shorter.
+  /// The algorithm finishes when no such 2-opt move can be applied, and so
+  /// the tour is 2-optimal.
+  ///
+  /// If no starting tour is given to the \ref run() function, then the
+  /// algorithm uses the node sequence determined by the node IDs.
+  /// Oherwise, it starts with the given tour.
+  ///
+  /// This is a relatively slow but powerful method. 
+  /// A typical usage of it is the improvement of a solution that is resulted
+  /// by a fast tour construction heuristic (e.g. the InsertionTsp algorithm).
+  ///
+  /// \tparam CM Type of the cost map.
   template <typename CM>
-  class Opt2Tsp {
+  class Opt2Tsp
+  {
+    public:
+
+      /// Type of the cost map
+      typedef CM CostMap;
+      /// Type of the edge costs
+      typedef typename CM::Value Cost;
+
     private:
+
       GRAPH_TYPEDEFS(FullGraph);
 
-    public:
-      typedef CM CostMap;
-      typedef typename CM::Value Cost;
-      
-    
-      Opt2Tsp(const FullGraph &gr, const CostMap &cost) : _gr(gr), _cost(cost), 
-            tmppath(_gr.nodeNum()*2) {
-            
-        for (int i=1; i<_gr.nodeNum()-1; ++i) {
-          tmppath[2*i] = i-1;
-          tmppath[2*i+1] = i+1;
-        }
-        tmppath[0] = _gr.nodeNum()-1;
-        tmppath[1] = 1;
-        tmppath[2*(_gr.nodeNum()-1)] = _gr.nodeNum()-2;
-        tmppath[2*(_gr.nodeNum()-1)+1] = 0;
-      }
-      
-      Opt2Tsp(const FullGraph &gr, const CostMap &cost, const std::vector<Node> &path) : 
-              _gr(gr), _cost(cost), tmppath(_gr.nodeNum()*2) {
+      const FullGraph &_gr;
+      const CostMap &_cost;
+      Cost _sum;
+      std::vector<int> _plist;
+      std::vector<Node> _path;
 
-        for (unsigned int i=1; i<path.size()-1; ++i) {
-          tmppath[2*_gr.id(path[i])] = _gr.id(path[i-1]);
-          tmppath[2*_gr.id(path[i])+1] = _gr.id(path[i+1]);
+    public:
+
+      /// \brief Constructor
+      ///
+      /// Constructor.
+      /// \param gr The \ref FullGraph "full graph" the algorithm runs on.
+      /// \param cost The cost map.
+      Opt2Tsp(const FullGraph &gr, const CostMap &cost)
+        : _gr(gr), _cost(cost) {}
+
+      /// \name Execution Control
+      /// @{
+
+      /// \brief Runs the algorithm from scratch.
+      ///
+      /// This function runs the algorithm starting from the tour that is
+      /// determined by the node ID sequence.
+      ///
+      /// \return The total cost of the found tour.
+      Cost run() {
+        _path.clear();
+
+        if (_gr.nodeNum() == 0) return _sum = 0;
+        else if (_gr.nodeNum() == 1) {
+          _path.push_back(_gr(0));
+          return _sum = 0;
         }
-        
-        tmppath[2*_gr.id(path[0])] = _gr.id(path.back());
-        tmppath[2*_gr.id(path[0])+1] = _gr.id(path[1]);
-        tmppath[2*_gr.id(path.back())] = _gr.id(path[path.size()-2]);
-        tmppath[2*_gr.id(path.back())+1] = _gr.id(path.front());
+        else if (_gr.nodeNum() == 2) {
+          _path.push_back(_gr(0));
+          _path.push_back(_gr(1));
+          return _sum = 2 * _cost[_gr.edge(_gr(0), _gr(1))];
+        }
+
+        _plist.resize(2*_gr.nodeNum());
+        for (int i = 1; i < _gr.nodeNum()-1; ++i) {
+          _plist[2*i] = i-1;
+          _plist[2*i+1] = i+1;
+        }
+        _plist[0] = _gr.nodeNum()-1;
+        _plist[1] = 1;
+        _plist[2*_gr.nodeNum()-2] = _gr.nodeNum()-2;
+        _plist[2*_gr.nodeNum()-1] = 0;
+
+        return start();
       }
+
+      /// \brief Runs the algorithm from the given tour.
+      ///
+      /// This function runs the algorithm starting from the given tour.
+      ///
+      /// \param tour The tour as a path structure. It must be a
+      /// \ref checkPath() "valid path" containing excactly n arcs.
+      ///
+      /// \return The total cost of the found tour.
+      template <typename Path>
+      Cost run(const Path& tour) {
+        _path.clear();
+
+        if (_gr.nodeNum() == 0) return _sum = 0;
+        else if (_gr.nodeNum() == 1) {
+          _path.push_back(_gr(0));
+          return _sum = 0;
+        }
+        else if (_gr.nodeNum() == 2) {
+          _path.push_back(_gr(0));
+          _path.push_back(_gr(1));
+          return _sum = 2 * _cost[_gr.edge(_gr(0), _gr(1))];
+        }
+
+        _plist.resize(2*_gr.nodeNum());
+        typename Path::ArcIt it(tour);
+        int first = _gr.id(_gr.source(it)),
+            prev = first,
+            curr = _gr.id(_gr.target(it)),
+            next = -1;
+        _plist[2*first+1] = curr;
+        for (++it; it != INVALID; ++it) {
+          next = _gr.id(_gr.target(it));
+          _plist[2*curr] = prev;
+          _plist[2*curr+1] = next;
+          prev = curr;
+          curr = next;
+        }
+        _plist[2*first] = prev;
+
+        return start();
+      }
+
+      /// \brief Runs the algorithm from the given tour.
+      ///
+      /// This function runs the algorithm starting from the given tour.
+      ///
+      /// \param tour The tour as a node sequence. It must be a standard
+      /// sequence container storing all <tt>Node</tt>s in the desired order.
+      ///
+      /// \return The total cost of the found tour.
+      template <template <typename> class Container>
+      Cost run(const Container<Node>& tour) {
+        _path.clear();
+
+        if (_gr.nodeNum() == 0) return _sum = 0;
+        else if (_gr.nodeNum() == 1) {
+          _path.push_back(_gr(0));
+          return _sum = 0;
+        }
+        else if (_gr.nodeNum() == 2) {
+          _path.push_back(_gr(0));
+          _path.push_back(_gr(1));
+          return _sum = 2 * _cost[_gr.edge(_gr(0), _gr(1))];
+        }
+
+        _plist.resize(2*_gr.nodeNum());
+        typename Container<Node>::const_iterator it = tour.begin();
+        int first = _gr.id(*it),
+            prev = first,
+            curr = _gr.id(*(++it)),
+            next = -1;
+        _plist[2*first+1] = curr;
+        for (++it; it != tour.end(); ++it) {
+          next = _gr.id(*it);
+          _plist[2*curr] = prev;
+          _plist[2*curr+1] = next;
+          prev = curr;
+          curr = next;
+        }
+        _plist[2*first] = curr;
+        _plist[2*curr] = prev;
+        _plist[2*curr+1] = first;
+
+        return start();
+      }
+
+      /// @}
+
+      /// \name Query Functions
+      /// @{
+
+      /// \brief The total cost of the found tour.
+      ///
+      /// This function returns the total cost of the found tour.
+      ///
+      /// \pre run() must be called before using this function.
+      Cost tourCost() const {
+        return _sum;
+      }
+
+      /// \brief Returns a const reference to the node sequence of the
+      /// found tour.
+      ///
+      /// This function returns a const reference to the internal structure
+      /// that stores the node sequence of the found tour.
+      ///
+      /// \pre run() must be called before using this function.
+      const std::vector<Node>& tourNodes() const {
+        return _path;
+      }
+
+      /// \brief Gives back the node sequence of the found tour.
+      ///
+      /// This function copies the node sequence of the found tour into
+      /// the given standard container.
+      ///
+      /// \pre run() must be called before using this function.
+      template <typename Container>
+      void tourNodes(Container &container) const {
+        container.assign(_path.begin(), _path.end());
+      }
+
+      /// \brief Gives back the found tour as a path.
+      ///
+      /// This function copies the found tour as a list of arcs/edges into
+      /// the given \ref concept::Path "path structure".
+      ///
+      /// \pre run() must be called before using this function.
+      template <typename Path>
+      void tour(Path &path) const {
+        path.clear();
+        for (int i = 0; i < int(_path.size()) - 1; ++i) {
+          path.addBack(_gr.arc(_path[i], _path[i+1]));
+        }
+        if (int(_path.size()) >= 2) {
+          path.addBack(_gr.arc(_path.back(), _path.front()));
+        }
+      }
+
+      /// @}
 
     private:
-      Cost c(int u, int v) {
-        return _cost[_gr.edge(_gr.nodeFromId(u), _gr.nodeFromId(v))];
-      }
-      
-      class It {
-        public:
-          It(const std::vector<int> &path, int i=0) : tmppath(path), act(i), last(tmppath[2*act]) {}
-          It(const std::vector<int> &path, int i, int l) : tmppath(path), act(i), last(l) {}
 
-          int next_index() const {
-            return (tmppath[2*act]==last)? 2*act+1 : 2*act;
+      // Iterator class for the linked list storage of the tour
+      class PathListIt {
+        public:
+          PathListIt(const std::vector<int> &pl, int i=0)
+            : plist(&pl), act(i), last(pl[2*act]) {}
+          PathListIt(const std::vector<int> &pl, int i, int l)
+            : plist(&pl), act(i), last(l) {}
+
+          int nextIndex() const {
+            return (*plist)[2*act] == last ? 2*act+1 : 2*act;
           }
-          
-          int prev_index() const {
-            return (tmppath[2*act]==last)? 2*act : 2*act+1;
+
+          int prevIndex() const {
+            return (*plist)[2*act] == last ? 2*act : 2*act+1;
           }
-          
+
           int next() const {
-            return tmppath[next_index()];
+            int x = (*plist)[2*act];
+            return x == last ? (*plist)[2*act+1] : x;
           }
 
           int prev() const {
-            return tmppath[prev_index()];
+            return last;
           }
-          
-          It& operator++() {
+
+          PathListIt& operator++() {
             int tmp = act;
             act = next();
             last = tmp;
             return *this;
           }
-          
+
           operator int() const {
             return act;
           }
-          
+
         private:
-          const std::vector<int> &tmppath;
+          const std::vector<int> *plist;
           int act;
           int last;
       };
 
-      bool check(std::vector<int> &path, It i, It j) {
-        if (c(i, i.next()) + c(j, j.next()) > 
-            c(i, j) + c(j.next(), i.next())) {
+      // Checks and applies 2-opt move (if it improves the tour)
+      bool checkOpt2(const PathListIt& i, const PathListIt& j) {
+        Node u  = _gr.nodeFromId(i),
+             un = _gr.nodeFromId(i.next()),
+             v  = _gr.nodeFromId(j),
+             vn = _gr.nodeFromId(j.next());
 
-            path[ It(path, i.next(), i).prev_index() ] = j.next();
-            path[ It(path, j.next(), j).prev_index() ] = i.next();
+        if (_cost[_gr.edge(u, un)] + _cost[_gr.edge(v, vn)] >
+            _cost[_gr.edge(u, v)] + _cost[_gr.edge(un, vn)])
+        {
+          _plist[PathListIt(_plist, i.next(), i).prevIndex()] = j.next();
+          _plist[PathListIt(_plist, j.next(), j).prevIndex()] = i.next();
 
-            path[i.next_index()] = j;
-            path[j.next_index()] = i;
+          _plist[i.nextIndex()] = j;
+          _plist[j.nextIndex()] = i;
 
-            return true;
+          return true;
         }
+
         return false;
-      }
-      
-    public:
-      
-      Cost run() {
-        _path.clear();
+     }
 
-        if (_gr.nodeNum()>3) {
+      // Executes the algorithm from the initial tour
+      Cost start() {
 
-opt2_tsp_label:
-          It i(tmppath);
-          It j(tmppath, i, i.prev());
-          ++j; ++j;
-          for (; j.next()!=0; ++j) {
-            if (check(tmppath, i, j))
-              goto opt2_tsp_label;
-          }
-          
-          for (++i; i.next()!=0; ++i) {
-            It j(tmppath, i, i.prev());
-            if (++j==0)
-              break;
-            if (++j==0)
-              break;
-            
-            for (; j!=0; ++j) {
-              if (check(tmppath, i, j))
-                goto opt2_tsp_label;
-            }
+      restart_search:
+        for (PathListIt i(_plist); true; ++i) {
+          PathListIt j = i;
+          if (++j == 0 || ++j == 0) break;
+          for (; j != 0 && j != i.prev(); ++j) {
+            if (checkOpt2(i, j))
+              goto restart_search;
           }
         }
 
-        It k(tmppath);
-        _path.push_back(_gr.nodeFromId(k));
-        for (++k; k!=0; ++k)
-          _path.push_back(_gr.nodeFromId(k));
+        PathListIt i(_plist);
+        _path.push_back(_gr.nodeFromId(i));
+        for (++i; i != 0; ++i)
+          _path.push_back(_gr.nodeFromId(i));
 
-        
-
-        _sum = _cost[ _gr.edge(_path.back(), _path.front()) ];
-        for (unsigned int i=0; i<_path.size()-1; ++i)
-          _sum += _cost[ _gr.edge(_path[i], _path[i+1]) ];
-        return _sum;
-      }
-
-      
-      template <typename L>
-      void tourNodes(L &container) {
-        container(opt2_helper::vectorConvert<L>(_path));
-      }
-      
-      template <template <typename> class L>
-      L<Node> tourNodes() {
-        return opt2_helper::vectorConvert<L<Node> >(_path);
-      }
-
-      const std::vector<Node>& tourNodes() {
-        return _path;
-      }
-      
-      Path<FullGraph> tour() {
-        Path<FullGraph> p;
-        if (_path.size()<2)
-          return p;
-
-        for (unsigned int i=0; i<_path.size()-1; ++i) {
-          p.addBack(_gr.arc(_path[i], _path[i+1]));
+        _sum = _cost[_gr.edge(_path.back(), _path.front())];
+        for (int i = 0; i < int(_path.size())-1; ++i) {
+          _sum += _cost[_gr.edge(_path[i], _path[i+1])];
         }
-        p.addBack(_gr.arc(_path.back(), _path.front()));
-        return p;
-      }
-      
-      Cost tourCost() {
+
         return _sum;
       }
-      
 
-  private:
-    const FullGraph &_gr;
-    const CostMap &_cost;
-    Cost _sum;
-    std::vector<int> tmppath;
-    std::vector<Node> _path;
   };
-
 
 }; // namespace lemon
 
