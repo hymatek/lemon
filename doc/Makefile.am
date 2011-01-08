@@ -30,7 +30,8 @@ DOC_EPS_IMAGES27 = \
 	matching.eps \
 	node_biconnected_components.eps \
 	planar.eps \
-	strongly_connected_components.eps
+	strongly_connected_components.eps \
+	tsp.eps
 
 DOC_EPS_IMAGES = \
 	$(DOC_EPS_IMAGES18) \
