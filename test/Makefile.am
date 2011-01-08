@@ -48,6 +48,7 @@ check_PROGRAMS += \
 	test/test_tools_fail \
 	test/test_tools_pass \
 	test/time_measure_test \
+	test/tsp_test \
 	test/unionfind_test
 
 test_test_tools_pass_DEPENDENCIES = demo
@@ -102,4 +103,5 @@ test_random_test_SOURCES = test/random_test.cc
 test_test_tools_fail_SOURCES = test/test_tools_fail.cc
 test_test_tools_pass_SOURCES = test/test_tools_pass.cc
 test_time_measure_test_SOURCES = test/time_measure_test.cc
+test_tsp_test_SOURCES = test/tsp_test.cc
 test_unionfind_test_SOURCES = test/unionfind_test.cc
