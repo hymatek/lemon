@@ -31,13 +31,15 @@
 
 namespace lemon {
   
+  /// \ingroup tsp
+  ///
   /// \brief Christofides algorithm for symmetric TSP.
   ///
   /// ChristofidesTsp implements Christofides' heuristic for solving
   /// symmetric \ref tsp "TSP".
   ///
   /// This a well-known approximation method for the TSP problem with
-  /// \ref checkMetricCost() "metric cost function".
+  /// metric cost function.
   /// It yields a tour whose total cost is at most 3/2 of the optimum,
   /// but it is usually much better.
   /// This implementation runs in O(n<sup>3</sup>log(n)) time.
@@ -54,7 +56,7 @@ namespace lemon {
   ///
   /// \tparam CM Type of the cost map.
   ///
-  /// \warning \& CM::Value must be signed type.
+  /// \warning CM::Value must be a signed number type.
   template <typename CM>
   class ChristofidesTsp
   {
@@ -195,7 +197,7 @@ namespace lemon {
       /// \brief Returns a const reference to the node sequence of the
       /// found tour.
       ///
-      /// This function returns a const reference to the internal structure
+      /// This function returns a const reference to a vector
       /// that stores the node sequence of the found tour.
       ///
       /// \pre run() must be called before using this function.

@@ -30,6 +30,8 @@
 
 namespace lemon {
 
+  /// \ingroup tsp
+  ///
   /// \brief Insertion algorithm for symmetric TSP.
   ///
   /// InsertionTsp implements the insertion heuristic for solving
@@ -74,9 +76,9 @@ namespace lemon {
       ///
       /// During the algorithm, nodes are selected for addition to the current
       /// subtour according to the applied rule.
-      /// In general, the FARTHEST yields the best tours, thus it is the
-      /// default option. RANDOM usually gives somewhat worse results, but
-      /// it is much faster than the others and it is the most robust.
+      /// In general, the FARTHEST method yields the best tours, thus it is the
+      /// default option. The RANDOM rule usually gives somewhat worse results,
+      /// but it is much faster than the others and it is the most robust.
       ///
       /// The desired selection rule can be specified as a parameter of the
       /// \ref run() function.
@@ -178,7 +180,7 @@ namespace lemon {
       /// \brief Returns a const reference to the node sequence of the
       /// found tour.
       ///
-      /// This function returns a const reference to the internal structure
+      /// This function returns a const reference to a vector
       /// that stores the node sequence of the found tour.
       ///
       /// \pre run() must be called before using this function.

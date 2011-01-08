@@ -30,6 +30,8 @@
 
 namespace lemon {
 
+  /// \ingroup tsp
+  ///
   /// \brief Greedy algorithm for symmetric TSP.
   ///
   /// GreedyTsp implements the greedy heuristic for solving
@@ -42,9 +44,8 @@ namespace lemon {
   /// not increase the degree of any node above two.
   ///
   /// This method runs in O(n<sup>2</sup>log(n)) time.
-  /// It quickly finds an effectively short tour for most TSP
-  /// instances, but in special cases, it could yield a really bad
-  /// (or even the worst) solution.
+  /// It quickly finds a short tour for most TSP instances, but in special
+  /// cases, it could yield a really bad (or even the worst) solution.
   ///
   /// \tparam CM Type of the cost map.
   template <typename CM>
@@ -193,7 +194,7 @@ namespace lemon {
       /// \brief Returns a const reference to the node sequence of the
       /// found tour.
       ///
-      /// This function returns a const reference to the internal structure
+      /// This function returns a const reference to a vector
       /// that stores the node sequence of the found tour.
       ///
       /// \pre run() must be called before using this function.

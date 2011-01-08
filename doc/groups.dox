@@ -561,8 +561,9 @@ Given an \ref FullGraph "undirected full graph" with a cost map on its edges,
 the problem is to find a shortest possible tour that visits each node exactly
 once (i.e. the minimum cost Hamiltonian cycle).
 
-These TSP algorithms should be used with a
-metric cost function. Otherwise, they could yield worse results.
+These TSP algorithms are intended to be used with a \e metric \e cost
+\e function, i.e. the edge costs should satisfy the triangle inequality.
+Otherwise the algorithms could yield worse results.
 
 LEMON provides five well-known heuristics for solving symmetric TSP:
  - \ref NearestNeighborTsp Neareast neighbor algorithm

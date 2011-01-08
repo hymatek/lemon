@@ -24,12 +24,15 @@
 /// \brief Nearest neighbor algorithm for symmetric TSP
 
 #include <deque>
+#include <vector>
 #include <limits>
 #include <lemon/full_graph.h>
 #include <lemon/maps.h>
 
 namespace lemon {
 
+  /// \ingroup tsp
+  ///
   /// \brief Nearest neighbor algorithm for symmetric TSP.
   ///
   /// NearestNeighborTsp implements the nearest neighbor heuristic for solving
@@ -41,9 +44,8 @@ namespace lemon {
   /// Finally, it connects the two end points of the path to form a tour.
   ///
   /// This method runs in O(n<sup>2</sup>) time.
-  /// It quickly finds an effectively short tour for most TSP
-  /// instances, but in special cases, it could yield a really bad
-  /// (or even the worst) solution.
+  /// It quickly finds a short tour for most TSP instances, but in special
+  /// cases, it could yield a really bad (or even the worst) solution.
   ///
   /// \tparam CM Type of the cost map.
   template <typename CM>
@@ -63,7 +65,7 @@ namespace lemon {
       const FullGraph &_gr;
       const CostMap &_cost;
       Cost _sum;
-      std::deque<Node> _path;
+      std::vector<Node> _path;
 
     public:
 
@@ -85,28 +87,30 @@ namespace lemon {
       /// \return The total cost of the found tour.
       Cost run() {
         _path.clear();
-
-        if (_gr.nodeNum() == 0) return _sum = 0;
+        if (_gr.nodeNum() == 0) {
+          return _sum = 0;
+        }
         else if (_gr.nodeNum() == 1) {
           _path.push_back(_gr(0));
           return _sum = 0;
         }
 
+        std::deque<Node> path_dq;
         Edge min_edge1 = INVALID,
              min_edge2 = INVALID;
 
         min_edge1 = mapMin(_gr, _cost);
         Node n1 = _gr.u(min_edge1),
              n2 = _gr.v(min_edge1);
-        _path.push_back(n1);
-        _path.push_back(n2);
+        path_dq.push_back(n1);
+        path_dq.push_back(n2);
 
         FullGraph::NodeMap<bool> used(_gr, false);
         used[n1] = true;
         used[n2] = true;
 
         min_edge1 = INVALID;
-        while (int(_path.size()) != _gr.nodeNum()) {
+        while (int(path_dq.size()) != _gr.nodeNum()) {
           if (min_edge1 == INVALID) {
             for (IncEdgeIt e(_gr, n1); e != INVALID; ++e) {
               if (!used[_gr.runningNode(e)] &&
@@ -127,7 +131,7 @@ namespace lemon {
 
           if (_cost[min_edge1] < _cost[min_edge2]) {
             n1 = _gr.oppositeNode(n1, min_edge1);
-            _path.push_front(n1);
+            path_dq.push_front(n1);
 
             used[n1] = true;
             min_edge1 = INVALID;
@@ -136,7 +140,7 @@ namespace lemon {
               min_edge2 = INVALID;
           } else {
             n2 = _gr.oppositeNode(n2, min_edge2);
-            _path.push_back(n2);
+            path_dq.push_back(n2);
 
             used[n2] = true;
             min_edge2 = INVALID;
@@ -146,9 +150,15 @@ namespace lemon {
           }
         }
 
-        _sum = _cost[_gr.edge(_path.back(), _path.front())];
-        for (int i = 0; i < int(_path.size())-1; ++i) {
-          _sum += _cost[_gr.edge(_path[i], _path[i+1])];
+        n1 = path_dq.back();
+        n2 = path_dq.front();
+        _path.push_back(n2);
+        _sum = _cost[_gr.edge(n1, n2)];
+        for (int i = 1; i < int(path_dq.size()); ++i) {
+          n1 = n2;
+          n2 = path_dq[i];
+          _path.push_back(n2);
+          _sum += _cost[_gr.edge(n1, n2)];
         }
 
         return _sum;
@@ -171,11 +181,11 @@ namespace lemon {
       /// \brief Returns a const reference to the node sequence of the
       /// found tour.
       ///
-      /// This function returns a const reference to the internal structure
+      /// This function returns a const reference to a vector
       /// that stores the node sequence of the found tour.
       ///
       /// \pre run() must be called before using this function.
-      const std::deque<Node>& tourNodes() const {
+      const std::vector<Node>& tourNodes() const {
         return _path;
       }
 

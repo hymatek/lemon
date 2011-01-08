@@ -21,13 +21,15 @@
 
 /// \ingroup tsp
 /// \file
-/// \brief 2-opt algorithm for symmetric TSP
+/// \brief 2-opt algorithm for symmetric TSP.
 
 #include <vector>
 #include <lemon/full_graph.h>
 
 namespace lemon {
 
+  /// \ingroup tsp
+  ///
   /// \brief 2-opt algorithm for symmetric TSP.
   ///
   /// Opt2Tsp implements the 2-opt heuristic for solving
@@ -114,7 +116,7 @@ namespace lemon {
         return start();
       }
 
-      /// \brief Runs the algorithm from the given tour.
+      /// \brief Runs the algorithm starting from the given tour.
       ///
       /// This function runs the algorithm starting from the given tour.
       ///
@@ -156,16 +158,16 @@ namespace lemon {
         return start();
       }
 
-      /// \brief Runs the algorithm from the given tour.
+      /// \brief Runs the algorithm starting from the given tour.
       ///
-      /// This function runs the algorithm starting from the given tour.
+      /// This function runs the algorithm starting from the given tour
+      /// (node sequence).
       ///
-      /// \param tour The tour as a node sequence. It must be a standard
-      /// sequence container storing all <tt>Node</tt>s in the desired order.
+      /// \param tour A vector that stores all <tt>Node</tt>s of the graph
+      /// in the desired order.
       ///
       /// \return The total cost of the found tour.
-      template <template <typename> class Container>
-      Cost run(const Container<Node>& tour) {
+      Cost run(const std::vector<Node>& tour) {
         _path.clear();
 
         if (_gr.nodeNum() == 0) return _sum = 0;
@@ -180,7 +182,7 @@ namespace lemon {
         }
 
         _plist.resize(2*_gr.nodeNum());
-        typename Container<Node>::const_iterator it = tour.begin();
+        typename std::vector<Node>::const_iterator it = tour.begin();
         int first = _gr.id(*it),
             prev = first,
             curr = _gr.id(*(++it)),
@@ -217,7 +219,7 @@ namespace lemon {
       /// \brief Returns a const reference to the node sequence of the
       /// found tour.
       ///
-      /// This function returns a const reference to the internal structure
+      /// This function returns a const reference to a vector
       /// that stores the node sequence of the found tour.
       ///
       /// \pre run() must be called before using this function.
