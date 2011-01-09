@@ -43,9 +43,10 @@ namespace lemon {
   /// as long as it does not create a cycle of less than n edges and it does
   /// not increase the degree of any node above two.
   ///
-  /// This method runs in O(n<sup>2</sup>log(n)) time.
-  /// It quickly finds a short tour for most TSP instances, but in special
-  /// cases, it could yield a really bad (or even the worst) solution.
+  /// This method runs in O(n<sup>2</sup>) time.
+  /// It quickly finds a relatively short tour for most TSP instances,
+  /// but it could also yield a really bad (or even the worst) solution
+  /// in special cases.
   ///
   /// \tparam CM Type of the cost map.
   template <typename CM>

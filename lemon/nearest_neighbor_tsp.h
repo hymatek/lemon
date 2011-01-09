@@ -44,8 +44,9 @@ namespace lemon {
   /// Finally, it connects the two end points of the path to form a tour.
   ///
   /// This method runs in O(n<sup>2</sup>) time.
-  /// It quickly finds a short tour for most TSP instances, but in special
-  /// cases, it could yield a really bad (or even the worst) solution.
+  /// It quickly finds a relatively short tour for most TSP instances,
+  /// but it could also yield a really bad (or even the worst) solution
+  /// in special cases.
   ///
   /// \tparam CM Type of the cost map.
   template <typename CM>

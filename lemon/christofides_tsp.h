@@ -40,8 +40,9 @@ namespace lemon {
   ///
   /// This a well-known approximation method for the TSP problem with
   /// metric cost function.
-  /// It yields a tour whose total cost is at most 3/2 of the optimum,
-  /// but it is usually much better.
+  /// It has a guaranteed approximation factor of 3/2 (i.e. it finds a tour
+  /// whose total cost is at most 3/2 of the optimum), but it usually
+  /// provides better solutions in practice.
   /// This implementation runs in O(n<sup>3</sup>log(n)) time.
   ///
   /// The algorithm starts with a \ref spantree "minimum cost spanning tree" and

@@ -572,6 +572,16 @@ LEMON provides five well-known heuristics for solving symmetric TSP:
  - \ref ChristofidesTsp Christofides algorithm
  - \ref Opt2Tsp 2-opt algorithm
 
+\ref NearestNeighborTsp, \ref GreedyTsp, and \ref InsertionTsp are the fastest
+solution methods. Furthermore, \ref InsertionTsp is usually quite effective.
+
+\ref ChristofidesTsp is somewhat slower, but it has the best guaranteed
+approximation factor: 3/2.
+
+\ref Opt2Tsp usually provides the best results in practice, but
+it is the slowest method. It can also be used to improve given tours,
+for example, the results of other algorithms.
+
 \image html tsp.png
 \image latex tsp.eps "Traveling salesman problem" width=\textwidth
 */

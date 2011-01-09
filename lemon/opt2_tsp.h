@@ -45,9 +45,9 @@ namespace lemon {
   /// algorithm uses the node sequence determined by the node IDs.
   /// Oherwise, it starts with the given tour.
   ///
-  /// This is a relatively slow but powerful method. 
-  /// A typical usage of it is the improvement of a solution that is resulted
-  /// by a fast tour construction heuristic (e.g. the InsertionTsp algorithm).
+  /// This is a rather slow but effective method.
+  /// Its typical usage is the improvement of the result of a fast tour
+  /// construction heuristic (e.g. the InsertionTsp algorithm).
   ///
   /// \tparam CM Type of the cost map.
   template <typename CM>
