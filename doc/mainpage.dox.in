@@ -17,7 +17,7 @@
  */
 
 /**
-\mainpage LEMON Documentation
+\mainpage @PACKAGE_NAME@ @PACKAGE_VERSION@ Documentation
 
 \section intro Introduction
 

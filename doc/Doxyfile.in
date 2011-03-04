@@ -4,8 +4,8 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = @PACKAGE_NAME@
-PROJECT_NUMBER         = @PACKAGE_VERSION@
+PROJECT_NAME           = 
+PROJECT_NUMBER         = 
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = 
@@ -96,7 +96,8 @@ INPUT                  = "@abs_top_srcdir@/doc" \
                          "@abs_top_srcdir@/lemon/concepts" \
                          "@abs_top_srcdir@/demo" \
                          "@abs_top_srcdir@/tools" \
-                         "@abs_top_srcdir@/test/test_tools.h"
+                         "@abs_top_srcdir@/test/test_tools.h" \
+                         "@abs_top_builddir@/doc/mainpage.dox"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
                          *.cc \
@@ -148,7 +149,7 @@ HTML_COLORSTYLE_SAT    = 100
 HTML_COLORSTYLE_GAMMA  = 80
 HTML_TIMESTAMP         = YES
 HTML_ALIGN_MEMBERS     = YES
-HTML_DYNAMIC_SECTIONS  = NO
+HTML_DYNAMIC_SECTIONS  = YES
 GENERATE_DOCSET        = NO
 DOCSET_FEEDNAME        = "Doxygen generated docs"
 DOCSET_BUNDLE_ID       = org.doxygen.Project
