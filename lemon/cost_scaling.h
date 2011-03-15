@@ -575,18 +575,25 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Reset all the parameters that have been given before.
+    /// \brief Reset the internal data structures and all the parameters
+    /// that have been given before.
     ///
-    /// This function resets all the paramaters that have been given
-    /// before using functions \ref lowerMap(), \ref upperMap(),
-    /// \ref costMap(), \ref supplyMap(), \ref stSupply().
+    /// This function resets the internal data structures and all the
+    /// paramaters that have been given before using functions \ref lowerMap(),
+    /// \ref upperMap(), \ref costMap(), \ref supplyMap(), \ref stSupply().
     ///
-    /// It is useful for multiple run() calls. If this function is not
-    /// used, all the parameters given before are kept for the next
-    /// \ref run() call.
-    /// However, the underlying digraph must not be modified after this
-    /// class have been constructed, since it copies and extends the graph.
+    /// It is useful for multiple \ref run() calls. By default, all the given
+    /// parameters are kept for the next \ref run() call, unless
+    /// \ref resetParams() or \ref reset() is used.
+    /// If the underlying digraph was also modified after the construction
+    /// of the class or the last \ref reset() call, then the \ref reset()
+    /// function must be used, otherwise \ref resetParams() is sufficient.
+    ///
+    /// See \ref resetParams() for examples.
+    ///
     /// \return <tt>(*this)</tt>
+    ///
+    /// \see resetParams(), run()
     CostScaling& reset() {
       // Resize vectors
       _node_num = countNodes(_graph);
@@ -890,14 +897,6 @@ namespace lemon {
         }
       }
 
-      return OPTIMAL;
-    }
-
-    // Execute the algorithm and transform the results
-    void start(Method method) {
-      // Maximum path length for partial augment
-      const int MAX_PATH_LENGTH = 4;
-
       // Initialize data structures for buckets
       _max_rank = _alpha * _res_node_num;
       _buckets.resize(_max_rank);
@@ -905,7 +904,13 @@ namespace lemon {
       _bucket_prev.resize(_res_node_num + 1);
       _rank.resize(_res_node_num + 1);
 
-      // Execute the algorithm
+      return OPTIMAL;
+    }
+
+    // Execute the algorithm and transform the results
+    void start(Method method) {
+      const int MAX_PARTIAL_PATH_LENGTH = 4;
+
       switch (method) {
         case PUSH:
           startPush();
@@ -914,7 +919,7 @@ namespace lemon {
           startAugment(_res_node_num - 1);
           break;
         case PARTIAL_AUGMENT:
-          startAugment(MAX_PATH_LENGTH);
+          startAugment(MAX_PARTIAL_PATH_LENGTH);
           break;
       }
 
@@ -951,13 +956,15 @@ namespace lemon {
         int last_out = _first_out[u+1];
         LargeCost pi_u = _pi[u];
         for (int a = _first_out[u]; a != last_out; ++a) {
-          int v = _target[a];
-          if (_res_cap[a] > 0 && _cost[a] + pi_u - _pi[v] < 0) {
-            Value delta = _res_cap[a];
-            _excess[u] -= delta;
-            _excess[v] += delta;
-            _res_cap[a] = 0;
-            _res_cap[_reverse[a]] += delta;
+          Value delta = _res_cap[a];
+          if (delta > 0) {
+            int v = _target[a];
+            if (_cost[a] + pi_u - _pi[v] < 0) {
+              _excess[u] -= delta;
+              _excess[v] += delta;
+              _res_cap[a] = 0;
+              _res_cap[_reverse[a]] += delta;
+            }
           }
         }
       }
@@ -1001,25 +1008,27 @@ namespace lemon {
 
     // Global potential update heuristic
     void globalUpdate() {
-      int bucket_end = _root + 1;
+      const int bucket_end = _root + 1;
 
       // Initialize buckets
       for (int r = 0; r != _max_rank; ++r) {
         _buckets[r] = bucket_end;
       }
       Value total_excess = 0;
+      int b0 = bucket_end;
       for (int i = 0; i != _res_node_num; ++i) {
         if (_excess[i] < 0) {
           _rank[i] = 0;
-          _bucket_next[i] = _buckets[0];
-          _bucket_prev[_buckets[0]] = i;
-          _buckets[0] = i;
+          _bucket_next[i] = b0;
+          _bucket_prev[b0] = i;
+          b0 = i;
         } else {
           total_excess += _excess[i];
           _rank[i] = _max_rank;
         }
       }
       if (total_excess == 0) return;
+      _buckets[0] = b0;
 
       // Search the buckets
       int r = 0;
@@ -1041,8 +1050,9 @@ namespace lemon {
                 // Compute the new rank of v
                 LargeCost nrc = (_cost[ra] + _pi[v] - pi_u) / _epsilon;
                 int new_rank_v = old_rank_v;
-                if (nrc < LargeCost(_max_rank))
-                  new_rank_v = r + 1 + int(nrc);
+                if (nrc < LargeCost(_max_rank)) {
+                  new_rank_v = r + 1 + static_cast<int>(nrc);
+                }
 
                 // Change the rank of v
                 if (new_rank_v < old_rank_v) {
@@ -1054,14 +1064,16 @@ namespace lemon {
                     if (_buckets[old_rank_v] == v) {
                       _buckets[old_rank_v] = _bucket_next[v];
                     } else {
-                      _bucket_next[_bucket_prev[v]] = _bucket_next[v];
-                      _bucket_prev[_bucket_next[v]] = _bucket_prev[v];
+                      int pv = _bucket_prev[v], nv = _bucket_next[v];
+                      _bucket_next[pv] = nv;
+                      _bucket_prev[nv] = pv;
                     }
                   }
 
-                  // Insert v to its new bucket
-                  _bucket_next[v] = _buckets[new_rank_v];
-                  _bucket_prev[_buckets[new_rank_v]] = v;
+                  // Insert v into its new bucket
+                  int nv = _buckets[new_rank_v];
+                  _bucket_next[v] = nv;
+                  _bucket_prev[nv] = v;
                   _buckets[new_rank_v] = v;
                 }
               }
