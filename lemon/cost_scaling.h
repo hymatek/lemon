@@ -487,7 +487,7 @@ namespace lemon {
     ///
     /// \param method The internal method that will be used in the
     /// algorithm. For more information, see \ref Method.
-    /// \param factor The cost scaling factor. It must be larger than one.
+    /// \param factor The cost scaling factor. It must be at least two.
     ///
     /// \return \c INFEASIBLE if no feasible flow exists,
     /// \n \c OPTIMAL if the problem has optimal solution
@@ -501,7 +501,8 @@ namespace lemon {
     ///
     /// \see ProblemType, Method
     /// \see resetParams(), reset()
-    ProblemType run(Method method = PARTIAL_AUGMENT, int factor = 8) {
+    ProblemType run(Method method = PARTIAL_AUGMENT, int factor = 16) {
+      LEMON_ASSERT(factor >= 2, "The scaling factor must be at least 2");
       _alpha = factor;
       ProblemType pt = init();
       if (pt != OPTIMAL) return pt;
