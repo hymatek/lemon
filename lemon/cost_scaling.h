@@ -237,7 +237,6 @@ namespace lemon {
       std::vector<Value>& _v;
     };
 
-    typedef StaticVectorMap<StaticDigraph::Node, LargeCost> LargeCostNodeMap;
     typedef StaticVectorMap<StaticDigraph::Arc, LargeCost> LargeCostArcMap;
 
   private:
@@ -288,14 +287,6 @@ namespace lemon {
     IntVector _rank;
     int _max_rank;
 
-    // Data for a StaticDigraph structure
-    typedef std::pair<int, int> IntPair;
-    StaticDigraph _sgr;
-    std::vector<IntPair> _arc_vec;
-    std::vector<LargeCost> _cost_vec;
-    LargeCostArcMap _cost_map;
-    LargeCostNodeMap _pi_map;
-
   public:
 
     /// \brief Constant for infinite upper bounds (capacities).
@@ -342,7 +333,6 @@ namespace lemon {
     /// \param graph The digraph the algorithm runs on.
     CostScaling(const GR& graph) :
       _graph(graph), _node_id(graph), _arc_idf(graph), _arc_idb(graph),
-      _cost_map(_cost_vec), _pi_map(_pi),
       INF(std::numeric_limits<Value>::has_infinity ?
           std::numeric_limits<Value>::infinity() :
           std::numeric_limits<Value>::max())
@@ -618,9 +608,6 @@ namespace lemon {
       _pi.resize(_res_node_num);
       _excess.resize(_res_node_num);
       _next_out.resize(_res_node_num);
-
-      _arc_vec.reserve(_res_arc_num);
-      _cost_vec.reserve(_res_arc_num);
 
       // Copy the graph
       int i = 0, j = 0, k = 2 * _arc_num + _node_num;
@@ -923,22 +910,63 @@ namespace lemon {
           break;
       }
 
-      // Compute node potentials for the original costs
-      _arc_vec.clear();
-      _cost_vec.clear();
-      for (int j = 0; j != _res_arc_num; ++j) {
-        if (_res_cap[j] > 0) {
-          _arc_vec.push_back(IntPair(_source[j], _target[j]));
-          _cost_vec.push_back(_scost[j]);
+      // Compute node potentials (dual solution)
+      for (int i = 0; i != _res_node_num; ++i) {
+        _pi[i] = static_cast<Cost>(_pi[i] / (_res_node_num * _alpha));
+      }
+      bool optimal = true;
+      for (int i = 0; optimal && i != _res_node_num; ++i) {
+        LargeCost pi_i = _pi[i];
+        int last_out = _first_out[i+1];
+        for (int j = _first_out[i]; j != last_out; ++j) {
+          if (_res_cap[j] > 0 && _scost[j] + pi_i - _pi[_target[j]] < 0) {
+            optimal = false;
+            break;
+          }
         }
       }
-      _sgr.build(_res_node_num, _arc_vec.begin(), _arc_vec.end());
 
-      typename BellmanFord<StaticDigraph, LargeCostArcMap>
-        ::template SetDistMap<LargeCostNodeMap>::Create bf(_sgr, _cost_map);
-      bf.distMap(_pi_map);
-      bf.init(0);
-      bf.start();
+      if (!optimal) {
+        // Compute node potentials for the original costs with BellmanFord
+        // (if it is necessary)
+        typedef std::pair<int, int> IntPair;
+        StaticDigraph sgr;
+        std::vector<IntPair> arc_vec;
+        std::vector<LargeCost> cost_vec;
+        LargeCostArcMap cost_map(cost_vec);
+
+        arc_vec.clear();
+        cost_vec.clear();
+        for (int j = 0; j != _res_arc_num; ++j) {
+          if (_res_cap[j] > 0) {
+            int u = _source[j], v = _target[j];
+            arc_vec.push_back(IntPair(u, v));
+            cost_vec.push_back(_scost[j] + _pi[u] - _pi[v]);
+          }
+        }
+        sgr.build(_res_node_num, arc_vec.begin(), arc_vec.end());
+
+        typename BellmanFord<StaticDigraph, LargeCostArcMap>::Create
+          bf(sgr, cost_map);
+        bf.init(0);
+        bf.start();
+
+        for (int i = 0; i != _res_node_num; ++i) {
+          _pi[i] += bf.dist(sgr.node(i));
+        }
+      }
+
+      // Shift potentials to meet the requirements of the GEQ type
+      // optimality conditions
+      LargeCost max_pot = _pi[_root];
+      for (int i = 0; i != _res_node_num; ++i) {
+        if (_pi[i] > max_pot) max_pot = _pi[i];
+      }
+      if (max_pot != 0) {
+        for (int i = 0; i != _res_node_num; ++i) {
+          _pi[i] -= max_pot;
+        }
+      }
 
       // Handle non-zero lower bounds
       if (_have_lower) {
