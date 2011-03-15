@@ -1103,16 +1103,15 @@ namespace lemon {
     void startAugment(int max_length) {
       // Paramters for heuristics
       const int EARLY_TERM_EPSILON_LIMIT = 1000;
-      const double GLOBAL_UPDATE_FACTOR = 3.0;
-
-      const int global_update_freq = int(GLOBAL_UPDATE_FACTOR *
+      const double GLOBAL_UPDATE_FACTOR = 1.0;
+      const int global_update_skip = static_cast<int>(GLOBAL_UPDATE_FACTOR *
         (_res_node_num + _sup_node_num * _sup_node_num));
-      int next_update_limit = global_update_freq;
-
-      int relabel_cnt = 0;
+      int next_global_update_limit = global_update_skip;
 
       // Perform cost scaling phases
-      std::vector<int> path;
+      IntVector path;
+      BoolVector path_arc(_res_arc_num, false);
+      int relabel_cnt = 0;
       for ( ; _epsilon >= 1; _epsilon = _epsilon < _alpha && _epsilon > 1 ?
                                         1 : _epsilon / _alpha )
       {
@@ -1135,32 +1134,45 @@ namespace lemon {
           int start = _active_nodes.front();
 
           // Find an augmenting path from the start node
-          path.clear();
           int tip = start;
-          while (_excess[tip] >= 0 && int(path.size()) < max_length) {
+          while (int(path.size()) < max_length && _excess[tip] >= 0) {
             int u;
-            LargeCost min_red_cost, rc, pi_tip = _pi[tip];
+            LargeCost rc, min_red_cost = std::numeric_limits<LargeCost>::max();
+            LargeCost pi_tip = _pi[tip];
             int last_out = _first_out[tip+1];
             for (int a = _next_out[tip]; a != last_out; ++a) {
-              u = _target[a];
-              if (_res_cap[a] > 0 && _cost[a] + pi_tip - _pi[u] < 0) {
-                path.push_back(a);
-                _next_out[tip] = a;
-                tip = u;
-                goto next_step;
+              if (_res_cap[a] > 0) {
+                u = _target[a];
+                rc = _cost[a] + pi_tip - _pi[u];
+                if (rc < 0) {
+                  path.push_back(a);
+                  _next_out[tip] = a;
+                  if (path_arc[a]) {
+                    goto augment;   // a cycle is found, stop path search
+                  }
+                  tip = u;
+                  path_arc[a] = true;
+                  goto next_step;
+                }
+                else if (rc < min_red_cost) {
+                  min_red_cost = rc;
+                }
               }
             }
 
             // Relabel tip node
-            min_red_cost = std::numeric_limits<LargeCost>::max();
             if (tip != start) {
               int ra = _reverse[path.back()];
-              min_red_cost = _cost[ra] + pi_tip - _pi[_target[ra]];
+              min_red_cost =
+                std::min(min_red_cost, _cost[ra] + pi_tip - _pi[_target[ra]]);
             }
+            last_out = _next_out[tip];
             for (int a = _first_out[tip]; a != last_out; ++a) {
-              rc = _cost[a] + pi_tip - _pi[_target[a]];
-              if (_res_cap[a] > 0 && rc < min_red_cost) {
-                min_red_cost = rc;
+              if (_res_cap[a] > 0) {
+                rc = _cost[a] + pi_tip - _pi[_target[a]];
+                if (rc < min_red_cost) {
+                  min_red_cost = rc;
+                }
               }
             }
             _pi[tip] -= min_red_cost + _epsilon;
@@ -1169,7 +1181,9 @@ namespace lemon {
 
             // Step back
             if (tip != start) {
-              tip = _source[path.back()];
+              int pa = path.back();
+              path_arc[pa] = false;
+              tip = _source[pa];
               path.pop_back();
             }
 
@@ -1177,28 +1191,34 @@ namespace lemon {
           }
 
           // Augment along the found path (as much flow as possible)
+        augment:
           Value delta;
           int pa, u, v = start;
           for (int i = 0; i != int(path.size()); ++i) {
             pa = path[i];
             u = v;
             v = _target[pa];
+            path_arc[pa] = false;
             delta = std::min(_res_cap[pa], _excess[u]);
             _res_cap[pa] -= delta;
             _res_cap[_reverse[pa]] += delta;
             _excess[u] -= delta;
             _excess[v] += delta;
-            if (_excess[v] > 0 && _excess[v] <= delta)
+            if (_excess[v] > 0 && _excess[v] <= delta) {
               _active_nodes.push_back(v);
+            }
           }
+          path.clear();
 
           // Global update heuristic
-          if (relabel_cnt >= next_update_limit) {
+          if (relabel_cnt >= next_global_update_limit) {
             globalUpdate();
-            next_update_limit += global_update_freq;
+            next_global_update_limit += global_update_skip;
           }
         }
+
       }
+
     }
 
     /// Execute the algorithm performing push and relabel operations
@@ -1207,15 +1227,14 @@ namespace lemon {
       const int EARLY_TERM_EPSILON_LIMIT = 1000;
       const double GLOBAL_UPDATE_FACTOR = 2.0;
 
-      const int global_update_freq = int(GLOBAL_UPDATE_FACTOR *
+      const int global_update_skip = static_cast<int>(GLOBAL_UPDATE_FACTOR *
         (_res_node_num + _sup_node_num * _sup_node_num));
-      int next_update_limit = global_update_freq;
-
-      int relabel_cnt = 0;
+      int next_global_update_limit = global_update_skip;
 
       // Perform cost scaling phases
       BoolVector hyper(_res_node_num, false);
       LargeCostVector hyper_cost(_res_node_num);
+      int relabel_cnt = 0;
       for ( ; _epsilon >= 1; _epsilon = _epsilon < _alpha && _epsilon > 1 ?
                                         1 : _epsilon / _alpha )
       {
@@ -1293,9 +1312,11 @@ namespace lemon {
              min_red_cost = hyper[n] ? -hyper_cost[n] :
                std::numeric_limits<LargeCost>::max();
             for (int a = _first_out[n]; a != last_out; ++a) {
-              rc = _cost[a] + pi_n - _pi[_target[a]];
-              if (_res_cap[a] > 0 && rc < min_red_cost) {
-                min_red_cost = rc;
+              if (_res_cap[a] > 0) {
+                rc = _cost[a] + pi_n - _pi[_target[a]];
+                if (rc < min_red_cost) {
+                  min_red_cost = rc;
+                }
               }
             }
             _pi[n] -= min_red_cost + _epsilon;
@@ -1313,11 +1334,11 @@ namespace lemon {
           }
 
           // Global update heuristic
-          if (relabel_cnt >= next_update_limit) {
+          if (relabel_cnt >= next_global_update_limit) {
             globalUpdate();
             for (int u = 0; u != _res_node_num; ++u)
               hyper[u] = false;
-            next_update_limit += global_update_freq;
+            next_global_update_limit += global_update_skip;
           }
         }
       }
