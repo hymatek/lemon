@@ -980,30 +980,229 @@ namespace lemon {
       }
     }
 
-    // Early termination heuristic
-    bool earlyTermination() {
-      const double EARLY_TERM_FACTOR = 3.0;
+    // Price (potential) refinement heuristic
+    bool priceRefinement() {
 
-      // Build a static residual graph
-      _arc_vec.clear();
-      _cost_vec.clear();
-      for (int j = 0; j != _res_arc_num; ++j) {
-        if (_res_cap[j] > 0) {
-          _arc_vec.push_back(IntPair(_source[j], _target[j]));
-          _cost_vec.push_back(_cost[j] + 1);
+      // Stack for stroing the topological order
+      IntVector stack(_res_node_num);
+      int stack_top;
+
+      // Perform phases
+      while (topologicalSort(stack, stack_top)) {
+
+        // Compute node ranks in the acyclic admissible network and
+        // store the nodes in buckets
+        for (int i = 0; i != _res_node_num; ++i) {
+          _rank[i] = 0;
         }
-      }
-      _sgr.build(_res_node_num, _arc_vec.begin(), _arc_vec.end());
+        const int bucket_end = _root + 1;
+        for (int r = 0; r != _max_rank; ++r) {
+          _buckets[r] = bucket_end;
+        }
+        int top_rank = 0;
+        for ( ; stack_top >= 0; --stack_top) {
+          int u = stack[stack_top], v;
+          int rank_u = _rank[u];
 
-      // Run Bellman-Ford algorithm to check if the current flow is optimal
-      BellmanFord<StaticDigraph, LargeCostArcMap> bf(_sgr, _cost_map);
-      bf.init(0);
-      bool done = false;
-      int K = int(EARLY_TERM_FACTOR * std::sqrt(double(_res_node_num)));
-      for (int i = 0; i < K && !done; ++i) {
-        done = bf.processNextWeakRound();
+          LargeCost rc, pi_u = _pi[u];
+          int last_out = _first_out[u+1];
+          for (int a = _first_out[u]; a != last_out; ++a) {
+            if (_res_cap[a] > 0) {
+              v = _target[a];
+              rc = _cost[a] + pi_u - _pi[v];
+              if (rc < 0) {
+                LargeCost nrc = static_cast<LargeCost>((-rc - 0.5) / _epsilon);
+                if (nrc < LargeCost(_max_rank)) {
+                  int new_rank_v = rank_u + static_cast<int>(nrc);
+                  if (new_rank_v > _rank[v]) {
+                    _rank[v] = new_rank_v;
+                  }
+                }
+              }
+            }
+          }
+
+          if (rank_u > 0) {
+            top_rank = std::max(top_rank, rank_u);
+            int bfirst = _buckets[rank_u];
+            _bucket_next[u] = bfirst;
+            _bucket_prev[bfirst] = u;
+            _buckets[rank_u] = u;
+          }
+        }
+
+        // Check if the current flow is epsilon-optimal
+        if (top_rank == 0) {
+          return true;
+        }
+
+        // Process buckets in top-down order
+        for (int rank = top_rank; rank > 0; --rank) {
+          while (_buckets[rank] != bucket_end) {
+            // Remove the first node from the current bucket
+            int u = _buckets[rank];
+            _buckets[rank] = _bucket_next[u];
+
+            // Search the outgoing arcs of u
+            LargeCost rc, pi_u = _pi[u];
+            int last_out = _first_out[u+1];
+            int v, old_rank_v, new_rank_v;
+            for (int a = _first_out[u]; a != last_out; ++a) {
+              if (_res_cap[a] > 0) {
+                v = _target[a];
+                old_rank_v = _rank[v];
+
+                if (old_rank_v < rank) {
+
+                  // Compute the new rank of node v
+                  rc = _cost[a] + pi_u - _pi[v];
+                  if (rc < 0) {
+                    new_rank_v = rank;
+                  } else {
+                    LargeCost nrc = rc / _epsilon;
+                    new_rank_v = 0;
+                    if (nrc < LargeCost(_max_rank)) {
+                      new_rank_v = rank - 1 - static_cast<int>(nrc);
+                    }
+                  }
+
+                  // Change the rank of node v
+                  if (new_rank_v > old_rank_v) {
+                    _rank[v] = new_rank_v;
+
+                    // Remove v from its old bucket
+                    if (old_rank_v > 0) {
+                      if (_buckets[old_rank_v] == v) {
+                        _buckets[old_rank_v] = _bucket_next[v];
+                      } else {
+                        int pv = _bucket_prev[v], nv = _bucket_next[v];
+                        _bucket_next[pv] = nv;
+                        _bucket_prev[nv] = pv;
+                      }
+                    }
+
+                    // Insert v into its new bucket
+                    int nv = _buckets[new_rank_v];
+                    _bucket_next[v] = nv;
+                    _bucket_prev[nv] = v;
+                    _buckets[new_rank_v] = v;
+                  }
+                }
+              }
+            }
+
+            // Refine potential of node u
+            _pi[u] -= rank * _epsilon;
+          }
+        }
+
       }
-      return done;
+
+      return false;
+    }
+
+    // Find and cancel cycles in the admissible network and
+    // determine topological order using DFS
+    bool topologicalSort(IntVector &stack, int &stack_top) {
+      const int MAX_CYCLE_CANCEL = 1;
+
+      BoolVector reached(_res_node_num, false);
+      BoolVector processed(_res_node_num, false);
+      IntVector pred(_res_node_num);
+      for (int i = 0; i != _res_node_num; ++i) {
+        _next_out[i] = _first_out[i];
+      }
+      stack_top = -1;
+
+      int cycle_cnt = 0;
+      for (int start = 0; start != _res_node_num; ++start) {
+        if (reached[start]) continue;
+
+        // Start DFS search from this start node
+        pred[start] = -1;
+        int tip = start, v;
+        while (true) {
+          // Check the outgoing arcs of the current tip node
+          reached[tip] = true;
+          LargeCost pi_tip = _pi[tip];
+          int a, last_out = _first_out[tip+1];
+          for (a = _next_out[tip]; a != last_out; ++a) {
+            if (_res_cap[a] > 0) {
+              v = _target[a];
+              if (_cost[a] + pi_tip - _pi[v] < 0) {
+                if (!reached[v]) {
+                  // A new node is reached
+                  reached[v] = true;
+                  pred[v] = tip;
+                  _next_out[tip] = a;
+                  tip = v;
+                  a = _next_out[tip];
+                  last_out = _first_out[tip+1];
+                  break;
+                }
+                else if (!processed[v]) {
+                  // A cycle is found
+                  ++cycle_cnt;
+                  _next_out[tip] = a;
+
+                  // Find the minimum residual capacity along the cycle
+                  Value d, delta = _res_cap[a];
+                  int u, delta_node = tip;
+                  for (u = tip; u != v; ) {
+                    u = pred[u];
+                    d = _res_cap[_next_out[u]];
+                    if (d <= delta) {
+                      delta = d;
+                      delta_node = u;
+                    }
+                  }
+
+                  // Augment along the cycle
+                  _res_cap[a] -= delta;
+                  _res_cap[_reverse[a]] += delta;
+                  for (u = tip; u != v; ) {
+                    u = pred[u];
+                    int ca = _next_out[u];
+                    _res_cap[ca] -= delta;
+                    _res_cap[_reverse[ca]] += delta;
+                  }
+
+                  // Check the maximum number of cycle canceling
+                  if (cycle_cnt >= MAX_CYCLE_CANCEL) {
+                    return false;
+                  }
+
+                  // Roll back search to delta_node
+                  if (delta_node != tip) {
+                    for (u = tip; u != delta_node; u = pred[u]) {
+                      reached[u] = false;
+                    }
+                    tip = delta_node;
+                    a = _next_out[tip] + 1;
+                    last_out = _first_out[tip+1];
+                    break;
+                  }
+                }
+              }
+            }
+          }
+
+          // Step back to the previous node
+          if (a == last_out) {
+            processed[tip] = true;
+            stack[++stack_top] = tip;
+            tip = pred[tip];
+            if (tip < 0) {
+              // Finish DFS from the current start node
+              break;
+            }
+            ++_next_out[tip];
+          }
+        }
+
+      }
+
+      return (cycle_cnt == 0);
     }
 
     // Global potential update heuristic
@@ -1102,7 +1301,7 @@ namespace lemon {
     /// Execute the algorithm performing augment and relabel operations
     void startAugment(int max_length) {
       // Paramters for heuristics
-      const int EARLY_TERM_EPSILON_LIMIT = 1000;
+      const int PRICE_REFINEMENT_LIMIT = 2;
       const double GLOBAL_UPDATE_FACTOR = 1.0;
       const int global_update_skip = static_cast<int>(GLOBAL_UPDATE_FACTOR *
         (_res_node_num + _sup_node_num * _sup_node_num));
@@ -1112,12 +1311,15 @@ namespace lemon {
       IntVector path;
       BoolVector path_arc(_res_arc_num, false);
       int relabel_cnt = 0;
+      int eps_phase_cnt = 0;
       for ( ; _epsilon >= 1; _epsilon = _epsilon < _alpha && _epsilon > 1 ?
                                         1 : _epsilon / _alpha )
       {
-        // Early termination heuristic
-        if (_epsilon <= EARLY_TERM_EPSILON_LIMIT) {
-          if (earlyTermination()) break;
+        ++eps_phase_cnt;
+
+        // Price refinement heuristic
+        if (eps_phase_cnt >= PRICE_REFINEMENT_LIMIT) {
+          if (priceRefinement()) continue;
         }
 
         // Initialize current phase
@@ -1224,7 +1426,7 @@ namespace lemon {
     /// Execute the algorithm performing push and relabel operations
     void startPush() {
       // Paramters for heuristics
-      const int EARLY_TERM_EPSILON_LIMIT = 1000;
+      const int PRICE_REFINEMENT_LIMIT = 2;
       const double GLOBAL_UPDATE_FACTOR = 2.0;
 
       const int global_update_skip = static_cast<int>(GLOBAL_UPDATE_FACTOR *
@@ -1235,12 +1437,15 @@ namespace lemon {
       BoolVector hyper(_res_node_num, false);
       LargeCostVector hyper_cost(_res_node_num);
       int relabel_cnt = 0;
+      int eps_phase_cnt = 0;
       for ( ; _epsilon >= 1; _epsilon = _epsilon < _alpha && _epsilon > 1 ?
                                         1 : _epsilon / _alpha )
       {
-        // Early termination heuristic
-        if (_epsilon <= EARLY_TERM_EPSILON_LIMIT) {
-          if (earlyTermination()) break;
+        ++eps_phase_cnt;
+
+        // Price refinement heuristic
+        if (eps_phase_cnt >= PRICE_REFINEMENT_LIMIT) {
+          if (priceRefinement()) continue;
         }
 
         // Initialize current phase
