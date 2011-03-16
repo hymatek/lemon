@@ -907,7 +907,7 @@ namespace lemon {
           startPush();
           break;
         case AUGMENT:
-          startAugment();
+          startAugment(_res_node_num - 1);
           break;
         case PARTIAL_AUGMENT:
           startAugment(MAX_PATH_LENGTH);
@@ -1084,7 +1084,7 @@ namespace lemon {
     }
 
     /// Execute the algorithm performing augment and relabel operations
-    void startAugment(int max_length = std::numeric_limits<int>::max()) {
+    void startAugment(int max_length) {
       // Paramters for heuristics
       const int EARLY_TERM_EPSILON_LIMIT = 1000;
       const double GLOBAL_UPDATE_FACTOR = 3.0;
