@@ -7,6 +7,10 @@ LINK_DIRECTORIES(
   ${PROJECT_BINARY_DIR}/lemon
 )
 
+SET(TEST_WITH_VALGRIND "NO" CACHE STRING
+  "Run the test with valgrind (YES/NO).")
+SET(VALGRIND_FLAGS "" CACHE STRING "Valgrind flags used by the tests.")
+
 SET(TESTS
   adaptors_test
   bellman_ford_test
@@ -136,6 +140,12 @@ FOREACH(TEST_NAME ${TESTS})
     ADD_EXECUTABLE(${TEST_NAME} EXCLUDE_FROM_ALL ${TEST_NAME}.cc)
   ENDIF()
   TARGET_LINK_LIBRARIES(${TEST_NAME} lemon)
-  ADD_TEST(${TEST_NAME} ${TEST_NAME})
+    IF(TEST_WITH_VALGRIND)
+      ADD_TEST(${TEST_NAME}
+        valgrind --error-exitcode=1 ${VALGRIND_FLAGS}
+        ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} )
+    ELSE()
+      ADD_TEST(${TEST_NAME} ${TEST_NAME})
+    ENDIF()
   ADD_DEPENDENCIES(check ${TEST_NAME})
 ENDFOREACH()
