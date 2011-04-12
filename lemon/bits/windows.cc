@@ -40,7 +40,9 @@
 #else
 #include <unistd.h>
 #include <ctime>
+#ifndef WIN32
 #include <sys/times.h>
+#endif
 #include <sys/time.h>
 #endif
 
