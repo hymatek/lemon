@@ -641,6 +641,7 @@ int main()
 
     const int num = 10;
     Graph g;
+    Ibm map0(g, true);
     std::vector<Item> items;
     for (int i = 0; i < num; ++i) {
       items.push_back(g.addNode());
@@ -722,6 +723,7 @@ int main()
 
     const int num = 10;
     Graph g;
+    Iim map0(g, 0);
     std::vector<Item> items;
     for (int i = 0; i < num; ++i) {
       items.push_back(g.addNode());
@@ -772,6 +774,7 @@ int main()
 
     const int num = 10;
     Graph g;
+    Ivm map0(g, 0.0);
     std::vector<Item> items;
     for (int i = 0; i < num; ++i) {
       items.push_back(g.addNode());
