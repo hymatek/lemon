@@ -272,5 +272,39 @@ int main() {
     heapSortTest<SimpleIntHeap>();
   }
 
+  {
+    typedef FibHeap<Prio, ItemIntMap> IntHeap;
+    checkConcept<Heap<Prio, ItemIntMap>, IntHeap>();
+    heapSortTest<IntHeap>();
+    heapIncreaseTest<IntHeap>();
+
+    typedef FibHeap<Prio, IntNodeMap > NodeHeap;
+    checkConcept<Heap<Prio, IntNodeMap >, NodeHeap>();
+    dijkstraHeapTest<NodeHeap>(digraph, length, source);
+  }
+
+  {
+    typedef RadixHeap<ItemIntMap> IntHeap;
+    checkConcept<Heap<Prio, ItemIntMap>, IntHeap>();
+    heapSortTest<IntHeap>();
+    heapIncreaseTest<IntHeap>();
+
+    typedef RadixHeap<IntNodeMap > NodeHeap;
+    checkConcept<Heap<Prio, IntNodeMap >, NodeHeap>();
+    dijkstraHeapTest<NodeHeap>(digraph, length, source);
+  }
+
+  {
+    typedef BucketHeap<ItemIntMap> IntHeap;
+    checkConcept<Heap<Prio, ItemIntMap>, IntHeap>();
+    heapSortTest<IntHeap>();
+    heapIncreaseTest<IntHeap>();
+
+    typedef BucketHeap<IntNodeMap > NodeHeap;
+    checkConcept<Heap<Prio, IntNodeMap >, NodeHeap>();
+    dijkstraHeapTest<NodeHeap>(digraph, length, source);
+  }
+
+
   return 0;
 }
