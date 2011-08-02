@@ -18,6 +18,7 @@ check_PROGRAMS += \
 	test/graph_utils_test \
 	test/heap_test \
 	test/kruskal_test \
+	test/lgf_test \
         test/maps_test \
         test/random_test \
         test/path_test \
@@ -41,6 +42,7 @@ test_graph_test_SOURCES = test/graph_test.cc
 test_graph_utils_test_SOURCES = test/graph_utils_test.cc
 test_heap_test_SOURCES = test/heap_test.cc
 test_kruskal_test_SOURCES = test/kruskal_test.cc
+test_lgf_test_SOURCES = test/lgf_test.cc
 test_maps_test_SOURCES = test/maps_test.cc
 test_path_test_SOURCES = test/path_test.cc
 test_random_test_SOURCES = test/random_test.cc

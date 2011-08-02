@@ -63,11 +63,11 @@ associated to the current node.
  3      (40,10)      10      "Third node"
 \endcode
 
-The \c \@arcs section is very similar to the \c \@nodes section,
-it again starts with a header line describing the names of the maps,
-but the \c "label" map is not obligatory here. The following lines
-describe the arcs. The first two tokens of each line are
-the source and the target node of the arc, respectively, then come the map
+The \c \@arcs section is very similar to the \c \@nodes section, it
+again starts with a header line describing the names of the maps, but
+the \c "label" map is not obligatory here. The following lines
+describe the arcs. The first two tokens of each line are the source
+and the target node of the arc, respectively, then come the map
 values. The source and target tokens must be node labels.
 
 \code
@@ -78,10 +78,21 @@ values. The source and target tokens must be node labels.
  2   3   18
 \endcode
 
+If there is no map in the \c \@arcs section at all, then it must be
+indicated by a sole '-' sign in the first line.
+
+\code
+ @arcs
+         -
+ 1   2
+ 1   3
+ 2   3
+\endcode
+
 The \c \@edges is just a synonym of \c \@arcs. The \@arcs section can
 also store the edge set of an undirected graph. In such case there is
 a conventional method for store arc maps in the file, if two columns
-has the same caption with \c '+' and \c '-' prefix, then these columns
+have the same caption with \c '+' and \c '-' prefix, then these columns
 can be regarded as the values of an arc map.
 
 The \c \@attributes section contains key-value pairs, each line

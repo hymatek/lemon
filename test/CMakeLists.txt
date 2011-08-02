@@ -18,6 +18,7 @@ SET(TESTS
   graph_utils_test
   heap_test
   kruskal_test
+  lgf_test
   maps_test
   random_test
   path_test
