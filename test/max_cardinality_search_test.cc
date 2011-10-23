@@ -117,7 +117,7 @@ void checkMaxCardSearchCompile() {
    maxcard.addSource(s);
    maxcard.start(x);
 
-   check(maxcard.processed(s) and !maxcard.processed(x) and
+   check(maxcard.processed(s) && !maxcard.processed(x) &&
          !maxcard.processed(y), "Wrong processed()!");
 
    a=maxcard.nextNode();
@@ -127,7 +127,7 @@ void checkMaxCardSearchCompile() {
    check(maxcard.processed(a), "Wrong processNextNode()!");
 
    maxcard.start();
-   check(maxcard.cardinality(x)==2 and maxcard.cardinality(y)>=4,
+   check(maxcard.cardinality(x)==2 && maxcard.cardinality(y)>=4,
          "Wrong cardinalities!");
  }
 
