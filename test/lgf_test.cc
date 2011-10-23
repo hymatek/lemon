@@ -117,7 +117,7 @@ int main()
       digraphReader(d, input).
         run();
     }
-    catch (FormatError& error) 
+    catch (FormatError&) 
       {
         ok = true;
       }
@@ -131,7 +131,7 @@ int main()
       graphReader(g, input).
         run();
     }
-    catch (FormatError& error)
+    catch (FormatError&)
       {
         ok = true;
       }
@@ -146,7 +146,7 @@ int main()
       digraphReader(d, input).
         run();
     }
-    catch (FormatError& error)
+    catch (FormatError&)
       {
         ok = true;
       }
@@ -160,7 +160,7 @@ int main()
       graphReader(g, input).
         run();
     }
-    catch (FormatError& error)
+    catch (FormatError&)
       {
         ok = true;
       }
