@@ -1,5 +1,6 @@
 EXTRA_DIST += \
 	lemon/lemon.pc.in \
+	lemon/lemon.pc.cmake \
 	lemon/CMakeLists.txt \
 	lemon/config.h.cmake
 
