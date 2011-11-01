@@ -166,6 +166,14 @@ void lpTest(LpSolver& lp)
     c = ((2 >= e) >= 3);
     c = ((2 >= p1) >= 3);
 
+    { //Tests for #430
+      LP::Col v=lp.addCol();
+      LP::Constr c = v >= -3;
+      c = c <= 4;
+      LP::Constr c2;
+      c2 = -3 <= v <= 4;
+    }
+
     e[x[3]]=2;
     e[x[3]]=4;
     e[x[3]]=1;
