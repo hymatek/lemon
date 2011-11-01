@@ -1604,7 +1604,7 @@ namespace lemon {
   ///
   inline LpBase::Constr operator<=(const LpBase::Expr &e,
                                    const LpBase::Expr &f) {
-    return LpBase::Constr(0, f - e, LpBase::INF);
+    return LpBase::Constr(0, f - e, LpBase::NaN);
   }
 
   ///Create constraint
@@ -1622,7 +1622,7 @@ namespace lemon {
   ///
   inline LpBase::Constr operator<=(const LpBase::Expr &e,
                                    const LpBase::Value &f) {
-    return LpBase::Constr(- LpBase::INF, e, f);
+    return LpBase::Constr(LpBase::NaN, e, f);
   }
 
   ///Create constraint
@@ -1631,7 +1631,7 @@ namespace lemon {
   ///
   inline LpBase::Constr operator>=(const LpBase::Expr &e,
                                    const LpBase::Expr &f) {
-    return LpBase::Constr(0, e - f, LpBase::INF);
+    return LpBase::Constr(0, e - f, LpBase::NaN);
   }
 
 
@@ -1651,7 +1651,7 @@ namespace lemon {
   ///
   inline LpBase::Constr operator>=(const LpBase::Expr &e,
                                    const LpBase::Value &f) {
-    return LpBase::Constr(f, e, LpBase::INF);
+    return LpBase::Constr(f, e, LpBase::NaN);
   }
 
   ///Create constraint
