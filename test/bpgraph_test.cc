@@ -41,7 +41,7 @@ void checkBpGraphBuild() {
   G.reserveNode(3);
   G.reserveEdge(3);
 
-  Node
+  RedNode
     rn1 = G.addRedNode();
   checkGraphNodeList(G, 1);
   checkGraphRedNodeList(G, 1);
@@ -49,7 +49,7 @@ void checkBpGraphBuild() {
   checkGraphEdgeList(G, 0);
   checkGraphArcList(G, 0);
 
-  Node
+  BlueNode
     bn1 = G.addBlueNode(),
     bn2 = G.addBlueNode();
   checkGraphNodeList(G, 3);
@@ -76,7 +76,7 @@ void checkBpGraphBuild() {
   checkGraphConArcList(G, 2);
 
   Edge
-    e2 = G.addEdge(rn1, bn1),
+    e2 = G.addEdge(bn1, rn1),
     e3 = G.addEdge(rn1, bn2);
 
   checkGraphNodeList(G, 3);
@@ -112,9 +112,10 @@ void checkBpGraphErase() {
   TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
 
   BpGraph G;
-  Node
-    n1 = G.addRedNode(), n2 = G.addBlueNode(),
-    n3 = G.addBlueNode(), n4 = G.addRedNode();
+  RedNode
+    n1 = G.addRedNode(), n4 = G.addRedNode(); 
+  BlueNode
+    n2 = G.addBlueNode(), n3 = G.addBlueNode();
   Edge
     e1 = G.addEdge(n1, n2), e2 = G.addEdge(n1, n3),
     e3 = G.addEdge(n4, n2), e4 = G.addEdge(n4, n3);
@@ -159,9 +160,10 @@ void checkBpGraphAlter() {
   TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
 
   BpGraph G;
-  Node
-    n1 = G.addRedNode(), n2 = G.addBlueNode(),
-    n3 = G.addBlueNode(), n4 = G.addRedNode();
+  RedNode
+    n1 = G.addRedNode(), n4 = G.addRedNode(); 
+  BlueNode
+    n2 = G.addBlueNode(), n3 = G.addBlueNode();
   Edge
     e1 = G.addEdge(n1, n2), e2 = G.addEdge(n1, n3),
     e3 = G.addEdge(n4, n2), e4 = G.addEdge(n4, n3);
@@ -209,8 +211,9 @@ void checkBpGraphSnapshot() {
   TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
 
   BpGraph G;
-  Node 
-    n1 = G.addRedNode(),
+  RedNode
+    n1 = G.addRedNode();
+  BlueNode
     n2 = G.addBlueNode(),
     n3 = G.addBlueNode();
   Edge 
@@ -225,7 +228,7 @@ void checkBpGraphSnapshot() {
 
   typename BpGraph::Snapshot snapshot(G);
 
-  Node n4 = G.addRedNode();
+  RedNode n4 = G.addRedNode();
   G.addEdge(n4, n2);
   G.addEdge(n4, n3);
 
@@ -292,8 +295,9 @@ void checkBpGraphValidity() {
   TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph);
   BpGraph g;
 
-  Node
-    n1 = g.addRedNode(),
+  RedNode
+    n1 = g.addRedNode();
+  BlueNode
     n2 = g.addBlueNode(),
     n3 = g.addBlueNode();
 
@@ -396,12 +400,12 @@ void checkFullBpGraph(int redNum, int blueNum) {
 
   for (int i = 0; i < G.redNum(); ++i) {
     check(G.red(G.redNode(i)), "Wrong node");
-    check(G.redIndex(G.redNode(i)) == i, "Wrong index");
+    check(G.index(G.redNode(i)) == i, "Wrong index");
   }
 
   for (int i = 0; i < G.blueNum(); ++i) {
     check(G.blue(G.blueNode(i)), "Wrong node");
-    check(G.blueIndex(G.blueNode(i)) == i, "Wrong index");
+    check(G.index(G.blueNode(i)) == i, "Wrong index");
   }
 
   for (NodeIt u(G); u != INVALID; ++u) {

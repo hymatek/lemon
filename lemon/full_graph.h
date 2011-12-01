@@ -651,6 +651,30 @@ namespace lemon {
       bool operator<(const Node& node) const {return _id < node._id;}
     };
 
+    class RedNode : public Node {
+      friend class FullBpGraphBase;
+    protected:
+
+      explicit RedNode(int pid) : Node(pid) {}
+
+    public:
+      RedNode() {}
+      RedNode(const RedNode& node) : Node(node) {}
+      RedNode(Invalid) : Node(INVALID){}
+    };
+
+    class BlueNode : public Node {
+      friend class FullBpGraphBase;
+    protected:
+
+      explicit BlueNode(int pid) : Node(pid) {}
+
+    public:
+      BlueNode() {}
+      BlueNode(const BlueNode& node) : Node(node) {}
+      BlueNode(Invalid) : Node(INVALID){}
+    };
+
     class Edge {
       friend class FullBpGraphBase;
     protected:
@@ -717,6 +741,9 @@ namespace lemon {
     bool red(Node n) const { return n._id < _red_num; }
     bool blue(Node n) const { return n._id >= _red_num; }
 
+    static RedNode asRedNodeUnsafe(Node n) { return RedNode(n._id); }
+    static BlueNode asBlueNodeUnsafe(Node n) { return BlueNode(n._id); }
+
     Node source(Arc a) const {
       if (a._id & 1) {
         return Node((a._id >> 1) % _red_num);
@@ -732,11 +759,11 @@ namespace lemon {
       }
     }
 
-    Node redNode(Edge e) const {
-      return Node(e._id % _red_num);
+    RedNode redNode(Edge e) const {
+      return RedNode(e._id % _red_num);
     }
-    Node blueNode(Edge e) const {
-      return Node(e._id / _red_num + _red_num);
+    BlueNode blueNode(Edge e) const {
+      return BlueNode(e._id / _red_num + _red_num);
     }
 
     static bool direction(Arc a) {
@@ -755,20 +782,20 @@ namespace lemon {
       --node._id;
     }
 
-    void firstRed(Node& node) const {
+    void first(RedNode& node) const {
       node._id = _red_num - 1;
     }
 
-    static void nextRed(Node& node) {
+    static void next(RedNode& node) {
       --node._id;
     }
 
-    void firstBlue(Node& node) const {
+    void first(BlueNode& node) const {
       if (_red_num == _node_num) node._id = -1;
       else node._id = _node_num - 1;
     }
 
-    void nextBlue(Node& node) const {
+    void next(BlueNode& node) const {
       if (node._id == _red_num) node._id = -1;
       else --node._id;
     }
@@ -842,15 +869,9 @@ namespace lemon {
       }
     }
 
-    static int id(Node v) { return v._id; }
-    int redId(Node v) const {
-      LEMON_DEBUG(v._id < _red_num, "Node has to be red");
-      return v._id;
-    }
-    int blueId(Node v) const {
-      LEMON_DEBUG(v._id >= _red_num, "Node has to be blue");
-      return v._id - _red_num;
-    }
+    static int id(const Node& v) { return v._id; }
+    int id(const RedNode& v) const { return v._id; }
+    int id(const BlueNode& v) const { return v._id - _red_num; }
     static int id(Arc e) { return e._id; }
     static int id(Edge e) { return e._id; }
     
@@ -868,19 +889,19 @@ namespace lemon {
       return e._id >= 0 && e._id < _edge_num;
     }
 
-    Node redNode(int index) const {
-      return Node(index);
+    RedNode redNode(int index) const {
+      return RedNode(index);
     }
 
-    int redIndex(Node n) const {
+    int index(RedNode n) const {
       return n._id;
     }
 
-    Node blueNode(int index) const {
-      return Node(index + _red_num);
+    BlueNode blueNode(int index) const {
+      return BlueNode(index + _red_num);
     }
 
-    int blueIndex(Node n) const {
+    int index(BlueNode n) const {
       return n._id - _red_num;
     }
         
@@ -1000,7 +1021,7 @@ namespace lemon {
     /// structure is completely static, the red nodes can be indexed
     /// with integers from the range <tt>[0..redNum()-1]</tt>.
     /// \sa redIndex()
-    Node redNode(int index) const { return Parent::redNode(index); }
+    RedNode redNode(int index) const { return Parent::redNode(index); }
 
     /// \brief Returns the index of the given red node.
     ///
@@ -1009,7 +1030,7 @@ namespace lemon {
     /// integers from the range <tt>[0..redNum()-1]</tt>.
     ///
     /// \sa operator()()
-    int redIndex(Node node) const { return Parent::redIndex(node); }
+    int index(RedNode node) const { return Parent::index(node); }
 
     /// \brief Returns the blue node with the given index.
     ///
@@ -1017,7 +1038,7 @@ namespace lemon {
     /// structure is completely static, the blue nodes can be indexed
     /// with integers from the range <tt>[0..blueNum()-1]</tt>.
     /// \sa blueIndex()
-    Node blueNode(int index) const { return Parent::blueNode(index); }
+    BlueNode blueNode(int index) const { return Parent::blueNode(index); }
 
     /// \brief Returns the index of the given blue node.
     ///
@@ -1026,7 +1047,7 @@ namespace lemon {
     /// integers from the range <tt>[0..blueNum()-1]</tt>.
     ///
     /// \sa operator()()
-    int blueIndex(Node node) const { return Parent::blueIndex(node); }
+    int index(BlueNode node) const { return Parent::index(node); }
 
     /// \brief Returns the edge which connects the given nodes.
     ///

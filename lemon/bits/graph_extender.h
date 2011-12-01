@@ -760,54 +760,16 @@ namespace lemon {
     typedef True UndirectedTag;
 
     typedef typename Parent::Node Node;
+    typedef typename Parent::RedNode RedNode;
+    typedef typename Parent::BlueNode BlueNode;
     typedef typename Parent::Arc Arc;
     typedef typename Parent::Edge Edge;
 
     // BpGraph extension
 
-    class RedNode : public Node {
-    public:
-      RedNode() {}
-      RedNode(const RedNode& node) : Node(node) {}
-      RedNode(Invalid) : Node(INVALID){}
-      RedNode(const Node& node) : Node(node) {}
-    };
-    class BlueNode : public Node {
-    public:
-      BlueNode() {}
-      BlueNode(const BlueNode& node) : Node(node) {}
-      BlueNode(Invalid) : Node(INVALID){}
-      BlueNode(const Node& node) : Node(node) {}
-    };
-
     using Parent::first;
     using Parent::next;
-
-    void first(RedNode& node) const {
-      Parent::firstRed(node);
-    }
-    
-    void next(RedNode& node) const {
-      Parent::nextRed(node);
-    }
-
-    void first(BlueNode& node) const {
-      Parent::firstBlue(node);
-    }
-
-    void next(BlueNode& node) const {
-      Parent::nextBlue(node);
-    }
-
     using Parent::id;
-
-    int id(const RedNode& node) const {
-      return Parent::redId(node);
-    }
-
-    int id(const BlueNode& node) const {
-      return Parent::blueId(node);
-    }
 
     int maxId(Node) const {
       return Parent::maxNodeId();
@@ -860,6 +822,32 @@ namespace lemon {
     using Parent::direct;
     Arc direct(const Edge &edge, const Node &node) const {
       return Parent::direct(edge, Parent::redNode(edge) == node);
+    }
+
+    RedNode asRedNode(const Node& node) const {
+      if (node == INVALID || Parent::blue(node)) {
+        return INVALID;
+      } else {
+        return Parent::asRedNodeUnsafe(node);
+      }
+    }
+
+    BlueNode asBlueNode(const Node& node) const {
+      if (node == INVALID || Parent::red(node)) {
+        return INVALID;
+      } else {
+        return Parent::asBlueNodeUnsafe(node);
+      }
+    }
+
+    std::pair<RedNode, BlueNode> asRedBlueNode(const Node& node) const {
+      if (node == INVALID) {
+        return std::make_pair(RedNode(INVALID), BlueNode(INVALID));
+      } else if (Parent::red(node)) {
+        return std::make_pair(Parent::asRedNodeUnsafe(node), BlueNode(INVALID));
+      } else {
+        return std::make_pair(RedNode(INVALID), Parent::asBlueNodeUnsafe(node));
+      }
     }
 
     // Alterable extension
@@ -925,49 +913,45 @@ namespace lemon {
 
     };
 
-    class RedIt : public Node {
+    class RedIt : public RedNode {
       const BpGraph* _graph;
     public:
 
       RedIt() {}
 
-      RedIt(Invalid i) : Node(i) { }
+      RedIt(Invalid i) : RedNode(i) { }
 
       explicit RedIt(const BpGraph& graph) : _graph(&graph) {
-        _graph->firstRed(static_cast<Node&>(*this));
+        _graph->first(static_cast<RedNode&>(*this));
       }
 
-      RedIt(const BpGraph& graph, const Node& node)
-        : Node(node), _graph(&graph) {
-        LEMON_DEBUG(_graph->red(node), "Node has to be red.");
-      }
+      RedIt(const BpGraph& graph, const RedNode& node)
+        : RedNode(node), _graph(&graph) {}
 
       RedIt& operator++() {
-        _graph->nextRed(*this);
+        _graph->next(static_cast<RedNode&>(*this));
         return *this;
       }
 
     };
 
-    class BlueIt : public Node {
+    class BlueIt : public BlueNode {
       const BpGraph* _graph;
     public:
 
       BlueIt() {}
 
-      BlueIt(Invalid i) : Node(i) { }
+      BlueIt(Invalid i) : BlueNode(i) { }
 
       explicit BlueIt(const BpGraph& graph) : _graph(&graph) {
-        _graph->firstBlue(static_cast<Node&>(*this));
+        _graph->first(static_cast<BlueNode&>(*this));
       }
 
-      BlueIt(const BpGraph& graph, const Node& node)
-        : Node(node), _graph(&graph) {
-        LEMON_DEBUG(_graph->blue(node), "Node has to be blue.");
-      }
+      BlueIt(const BpGraph& graph, const BlueNode& node)
+        : BlueNode(node), _graph(&graph) {}
 
       BlueIt& operator++() {
-        _graph->nextBlue(*this);
+        _graph->next(static_cast<BlueNode&>(*this));
         return *this;
       }
 
@@ -1258,21 +1242,21 @@ namespace lemon {
 
     // Alteration extension
 
-    Node addRedNode() {
-      Node node = Parent::addRedNode();
+    RedNode addRedNode() {
+      RedNode node = Parent::addRedNode();
       notifier(RedNode()).add(node);
       notifier(Node()).add(node);
       return node;
     }
 
-    Node addBlueNode() {
-      Node node = Parent::addBlueNode();
+    BlueNode addBlueNode() {
+      BlueNode node = Parent::addBlueNode();
       notifier(BlueNode()).add(node);
       notifier(Node()).add(node);
       return node;
     }
 
-    Edge addEdge(const Node& from, const Node& to) {
+    Edge addEdge(const RedNode& from, const BlueNode& to) {
       Edge edge = Parent::addEdge(from, to);
       notifier(Edge()).add(edge);
       std::vector<Arc> av;
@@ -1317,9 +1301,9 @@ namespace lemon {
       }
 
       if (Parent::red(node)) {
-        notifier(RedNode()).erase(node);
+        notifier(RedNode()).erase(this->asRedNodeUnsafe(node));
       } else {
-        notifier(BlueNode()).erase(node);        
+        notifier(BlueNode()).erase(this->asBlueNodeUnsafe(node));
       }
 
       notifier(Node()).erase(node);

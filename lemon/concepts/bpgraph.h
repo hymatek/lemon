@@ -149,12 +149,6 @@ namespace lemon {
         /// \sa Invalid for more details.
         RedNode(Invalid) { }
 
-        /// Constructor for conversion from a node.
-
-        /// Constructor for conversion from a node. The conversion can
-        /// be invalid, since the Node can be member of the blue
-        /// set.
-        RedNode(const Node&) {}
       };
 
       /// Class to represent blue nodes.
@@ -182,12 +176,6 @@ namespace lemon {
         /// \sa Invalid for more details.
         BlueNode(Invalid) { }
 
-        /// Constructor for conversion from a node.
-
-        /// Constructor for conversion from a node. The conversion can
-        /// be invalid, since the Node can be member of the red
-        /// set.
-        BlueNode(const Node&) {}
       };
 
       /// Iterator class for the red nodes.
@@ -199,7 +187,7 @@ namespace lemon {
       /// int count=0;
       /// for (BpGraph::RedNodeIt n(g); n!=INVALID; ++n) ++count;
       ///\endcode
-      class RedIt : public Node {
+      class RedIt : public RedNode {
       public:
         /// Default constructor
 
@@ -210,7 +198,7 @@ namespace lemon {
 
         /// Copy constructor.
         ///
-        RedIt(const RedIt& n) : Node(n) { }
+        RedIt(const RedIt& n) : RedNode(n) { }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -225,7 +213,7 @@ namespace lemon {
 
         /// Sets the iterator to the given red node of the given
         /// digraph.
-        RedIt(const BpGraph&, const Node&) { }
+        RedIt(const BpGraph&, const RedNode&) { }
         /// Next node.
 
         /// Assign the iterator to the next red node.
@@ -242,7 +230,7 @@ namespace lemon {
       /// int count=0;
       /// for (BpGraph::BlueNodeIt n(g); n!=INVALID; ++n) ++count;
       ///\endcode
-      class BlueIt : public Node {
+      class BlueIt : public BlueNode {
       public:
         /// Default constructor
 
@@ -253,7 +241,7 @@ namespace lemon {
 
         /// Copy constructor.
         ///
-        BlueIt(const BlueIt& n) : Node(n) { }
+        BlueIt(const BlueIt& n) : BlueNode(n) { }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -268,7 +256,7 @@ namespace lemon {
 
         /// Sets the iterator to the given blue node of the given
         /// digraph.
-        BlueIt(const BpGraph&, const Node&) { }
+        BlueIt(const BpGraph&, const BlueNode&) { }
         /// Next node.
 
         /// Assign the iterator to the next blue node.
@@ -784,15 +772,54 @@ namespace lemon {
       /// Gives back %true for blue nodes.
       bool blue(const Node&) const { return true; }
 
+      /// \brief Converts the node to red node object.
+      ///
+      /// This class is converts unsafely the node to red node
+      /// object. It should be called only if the node is from the red
+      /// partition or INVALID.
+      RedNode asRedNodeUnsafe(const Node&) const { return RedNode(); }
+
+      /// \brief Converts the node to blue node object.
+      ///
+      /// This class is converts unsafely the node to blue node
+      /// object. It should be called only if the node is from the red
+      /// partition or INVALID.
+      BlueNode asBlueNodeUnsafe(const Node&) const { return BlueNode(); }
+
+      /// \brief Converts the node to red node object.
+      ///
+      /// This class is converts safely the node to red node
+      /// object. If the node is not from the red partition, then it
+      /// returns INVALID.
+      RedNode asRedNode(const Node&) const { return RedNode(); }
+
+      /// \brief Converts the node to blue node object.
+      ///
+      /// This class is converts unsafely the node to blue node
+      /// object. If the node is not from the blue partition, then it
+      /// returns INVALID.
+      BlueNode asBlueNode(const Node&) const { return BlueNode(); }
+
+      /// \brief Convert the node to either red or blue node.
+      ///
+      /// If the node is from the red partition then it is returned in
+      /// first and second is INVALID. If the node is from the blue
+      /// partition then it is returned in second and first is
+      /// INVALID. If the node INVALID then both first and second are
+      /// INVALID in the return value.
+      std::pair<RedNode, BlueNode> asRedBlueNode(const Node&) const {
+        return std::make_pair(RedNode(), BlueNode());
+      }
+
       /// \brief Gives back the red end node of the edge.
       /// 
       /// Gives back the red end node of the edge.
-      Node redNode(const Edge&) const { return Node(); }
+      RedNode redNode(const Edge&) const { return RedNode(); }
 
       /// \brief Gives back the blue end node of the edge.
       /// 
       /// Gives back the blue end node of the edge.
-      Node blueNode(const Edge&) const { return Node(); }
+      BlueNode blueNode(const Edge&) const { return BlueNode(); }
 
       /// \brief The first node of the edge.
       ///
@@ -822,17 +849,7 @@ namespace lemon {
       /// \brief The red ID of the node.
       ///
       /// Returns the red ID of the given node.
-      int redId(Node) const { return -1; }
-
-      /// \brief The red ID of the node.
-      ///
-      /// Returns the red ID of the given node.
       int id(RedNode) const { return -1; }
-
-      /// \brief The blue ID of the node.
-      ///
-      /// Returns the blue ID of the given node.
-      int blueId(Node) const { return -1; }
 
       /// \brief The blue ID of the node.
       ///
@@ -928,11 +945,11 @@ namespace lemon {
       void first(Node&) const {}
       void next(Node&) const {}
 
-      void firstRed(Node&) const {}
-      void nextRed(Node&) const {}
+      void firstRed(RedNode&) const {}
+      void nextRed(RedNode&) const {}
 
-      void firstBlue(Node&) const {}
-      void nextBlue(Node&) const {}
+      void firstBlue(BlueNode&) const {}
+      void nextBlue(BlueNode&) const {}
 
       void first(Edge&) const {}
       void next(Edge&) const {}

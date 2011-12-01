@@ -317,10 +317,8 @@ namespace lemon {
 
       /// \brief Class to represent red nodes.
       ///
-      /// This class represents the red nodes of the graph. It does
-      /// not supposed to be used directly, because the nodes can be
-      /// represented as Node instances. This class can be used as
-      /// template parameter for special map classes.
+      /// This class represents the red nodes of the graph. The red
+      /// nodes can be used also as normal nodes.
       class RedNode : public Node {
         typedef Node Parent;
 
@@ -344,21 +342,12 @@ namespace lemon {
         /// It initializes the item to be invalid.
         /// \sa Invalid for more details.
         RedNode(Invalid) {}
-
-        /// \brief Constructor for conversion from a node.
-        ///
-        /// Constructor for conversion from a node. The conversion can
-        /// be invalid, since the Node can be member of the blue
-        /// set.
-        RedNode(const Node&) {}
       };
 
       /// \brief Class to represent blue nodes.
       ///
-      /// This class represents the blue nodes of the graph. It does
-      /// not supposed to be used directly, because the nodes can be
-      /// represented as Node instances. This class can be used as
-      /// template parameter for special map classes.
+      /// This class represents the blue nodes of the graph. The blue
+      /// nodes can be used also as normal nodes.
       class BlueNode : public Node {
         typedef Node Parent;
 
@@ -404,12 +393,51 @@ namespace lemon {
       /// \brief Gives back the red end node of the edge.
       /// 
       /// Gives back the red end node of the edge.
-      Node redNode(const Edge&) const { return Node(); }
+      RedNode redNode(const Edge&) const { return RedNode(); }
 
       /// \brief Gives back the blue end node of the edge.
       /// 
       /// Gives back the blue end node of the edge.
-      Node blueNode(const Edge&) const { return Node(); }
+      BlueNode blueNode(const Edge&) const { return BlueNode(); }
+
+      /// \brief Converts the node to red node object.
+      ///
+      /// This class is converts unsafely the node to red node
+      /// object. It should be called only if the node is from the red
+      /// partition or INVALID.
+      RedNode asRedNodeUnsafe(const Node&) const { return RedNode(); }
+
+      /// \brief Converts the node to blue node object.
+      ///
+      /// This class is converts unsafely the node to blue node
+      /// object. It should be called only if the node is from the red
+      /// partition or INVALID.
+      BlueNode asBlueNodeUnsafe(const Node&) const { return BlueNode(); }
+
+      /// \brief Converts the node to red node object.
+      ///
+      /// This class is converts safely the node to red node
+      /// object. If the node is not from the red partition, then it
+      /// returns INVALID.
+      RedNode asRedNode(const Node&) const { return RedNode(); }
+
+      /// \brief Converts the node to blue node object.
+      ///
+      /// This class is converts unsafely the node to blue node
+      /// object. If the node is not from the blue partition, then it
+      /// returns INVALID.
+      BlueNode asBlueNode(const Node&) const { return BlueNode(); }
+
+      /// \brief Convert the node to either red or blue node.
+      ///
+      /// If the node is from the red partition then it is returned in
+      /// first and second is INVALID. If the node is from the blue
+      /// partition then it is returned in second and first is
+      /// INVALID. If the node INVALID then both first and second are
+      /// INVALID in the return value.
+      std::pair<RedNode, BlueNode> asRedBlueNode(const Node&) const {
+        return std::make_pair(RedNode(), BlueNode());
+      }
 
       template <typename _BpGraph>
       struct Constraints {
@@ -425,17 +453,22 @@ namespace lemon {
           checkConcept<GraphItem<'n'>, BlueNode>();
           {
             Node n;
-            RedNode rn = n;
-            BlueNode bn = bn;
+            RedNode rn;
+            BlueNode bn;
+            Node rnan = rn;
+            Node bnan = bn;
             Edge e;
             bool b;
-            b = bpgraph.red(n);
-            b = bpgraph.blue(n);
-            ignore_unused_variable_warning(b);
-            n = bpgraph.redNode(e);
-            n = bpgraph.blueNode(e);
-            rn = n;
-            bn = n;
+            b = bpgraph.red(rnan);
+            b = bpgraph.blue(bnan);
+            rn = bpgraph.redNode(e);
+            bn = bpgraph.blueNode(e);
+            rn = bpgraph.asRedNodeUnsafe(rnan);
+            bn = bpgraph.asBlueNodeUnsafe(bnan);
+            rn = bpgraph.asRedNode(rnan);
+            bn = bpgraph.asBlueNode(bnan);
+            std::pair<RedNode, BlueNode> p = bpgraph.asRedBlueNode(rnan);
+            ignore_unused_variable_warning(b,p);
           }
         }
 
@@ -599,21 +632,11 @@ namespace lemon {
       /// \brief Return a unique integer id for the given node in the red set.
       ///
       /// Return a unique integer id for the given node in the red set.
-      int redId(const Node&) const { return -1; }
-
-      /// \brief Return the same value as redId().
-      ///
-      /// Return the same value as redId().
       int id(const RedNode&) const { return -1; }
 
       /// \brief Return a unique integer id for the given node in the blue set.
       ///
       /// Return a unique integer id for the given node in the blue set.
-      int blueId(const Node&) const { return -1; }
-
-      /// \brief Return the same value as blueId().
-      ///
-      /// Return the same value as blueId().
       int id(const BlueNode&) const { return -1; }
 
       /// \brief Return an integer greater or equal to the maximum
@@ -638,10 +661,8 @@ namespace lemon {
           typename _BpGraph::Node node;
           typename _BpGraph::RedNode red;
           typename _BpGraph::BlueNode blue;
-          int rid = bpgraph.redId(node);
-          int bid = bpgraph.blueId(node);
-          rid = bpgraph.id(red);
-          bid = bpgraph.id(blue);
+          int rid = bpgraph.id(red);
+          int bid = bpgraph.id(blue);
           rid = bpgraph.maxRedId();
           bid = bpgraph.maxBlueId();
           ignore_unused_variable_warning(rid);
@@ -1137,11 +1158,15 @@ namespace lemon {
 
       typedef BAS Base;
       typedef typename Base::Node Node;
+      typedef typename Base::RedNode RedNode;
+      typedef typename Base::BlueNode BlueNode;
       typedef typename Base::Arc Arc;
       typedef typename Base::Edge Edge;
-
-
+      
       typedef IterableBpGraphComponent BpGraph;
+
+      using IterableGraphComponent<BAS>::first;
+      using IterableGraphComponent<BAS>::next;
 
       /// \name Base Iteration
       ///
@@ -1152,22 +1177,22 @@ namespace lemon {
       /// \brief Return the first red node.
       ///
       /// This function gives back the first red node in the iteration order.
-      void firstRed(Node&) const {}
+      void first(RedNode&) const {}
 
       /// \brief Return the next red node.
       ///
       /// This function gives back the next red node in the iteration order.
-      void nextRed(Node&) const {}
+      void next(RedNode&) const {}
 
       /// \brief Return the first blue node.
       ///
       /// This function gives back the first blue node in the iteration order.
-      void firstBlue(Node&) const {}
+      void first(BlueNode&) const {}
 
       /// \brief Return the next blue node.
       ///
       /// This function gives back the next blue node in the iteration order.
-      void nextBlue(Node&) const {}
+      void next(BlueNode&) const {}
 
 
       /// @}
@@ -1181,12 +1206,12 @@ namespace lemon {
       /// \brief This iterator goes through each red node.
       ///
       /// This iterator goes through each red node.
-      typedef GraphItemIt<BpGraph, Node> RedIt;
+      typedef GraphItemIt<BpGraph, RedNode> RedIt;
 
       /// \brief This iterator goes through each blue node.
       ///
       /// This iterator goes through each blue node.
-      typedef GraphItemIt<BpGraph, Node> BlueIt;
+      typedef GraphItemIt<BpGraph, BlueNode> BlueIt;
 
       /// @}
 
@@ -1195,15 +1220,16 @@ namespace lemon {
         void constraints() {
           checkConcept<IterableGraphComponent<Base>, _BpGraph>();
 
-          typename _BpGraph::Node node(INVALID);
-          bpgraph.firstRed(node);
-          bpgraph.nextRed(node); 
-          bpgraph.firstBlue(node);
-          bpgraph.nextBlue(node);
+          typename _BpGraph::RedNode rn(INVALID);
+          bpgraph.first(rn);
+          bpgraph.next(rn); 
+          typename _BpGraph::BlueNode bn(INVALID);
+          bpgraph.first(bn);
+          bpgraph.next(bn);
 
-          checkConcept<GraphItemIt<_BpGraph, typename _BpGraph::Node>,
+          checkConcept<GraphItemIt<_BpGraph, typename _BpGraph::RedNode>,
             typename _BpGraph::RedIt>();
-          checkConcept<GraphItemIt<_BpGraph, typename _BpGraph::Node>,
+          checkConcept<GraphItemIt<_BpGraph, typename _BpGraph::BlueNode>,
             typename _BpGraph::BlueIt>();
         }
 
@@ -1790,29 +1816,29 @@ namespace lemon {
 
           { // int map test
             typedef typename _BpGraph::template RedMap<int> IntRedMap;
-            checkConcept<GraphMap<_BpGraph, typename _BpGraph::Node, int>,
+            checkConcept<GraphMap<_BpGraph, typename _BpGraph::RedNode, int>,
               IntRedMap >();
           } { // bool map test
             typedef typename _BpGraph::template RedMap<bool> BoolRedMap;
-            checkConcept<GraphMap<_BpGraph, typename _BpGraph::Node, bool>,
+            checkConcept<GraphMap<_BpGraph, typename _BpGraph::RedNode, bool>,
               BoolRedMap >();
           } { // Dummy map test
             typedef typename _BpGraph::template RedMap<Dummy> DummyRedMap;
-            checkConcept<GraphMap<_BpGraph, typename _BpGraph::Node, Dummy>,
+            checkConcept<GraphMap<_BpGraph, typename _BpGraph::RedNode, Dummy>,
               DummyRedMap >();
           }
 
           { // int map test
             typedef typename _BpGraph::template BlueMap<int> IntBlueMap;
-            checkConcept<GraphMap<_BpGraph, typename _BpGraph::Node, int>,
+            checkConcept<GraphMap<_BpGraph, typename _BpGraph::BlueNode, int>,
               IntBlueMap >();
           } { // bool map test
             typedef typename _BpGraph::template BlueMap<bool> BoolBlueMap;
-            checkConcept<GraphMap<_BpGraph, typename _BpGraph::Node, bool>,
+            checkConcept<GraphMap<_BpGraph, typename _BpGraph::BlueNode, bool>,
               BoolBlueMap >();
           } { // Dummy map test
             typedef typename _BpGraph::template BlueMap<Dummy> DummyBlueMap;
-            checkConcept<GraphMap<_BpGraph, typename _BpGraph::Node, Dummy>,
+            checkConcept<GraphMap<_BpGraph, typename _BpGraph::BlueNode, Dummy>,
               DummyBlueMap >();
           }
         }
@@ -1923,19 +1949,21 @@ namespace lemon {
 
       typedef BAS Base;
       typedef typename Base::Node Node;
+      typedef typename Base::RedNode RedNode;
+      typedef typename Base::BlueNode BlueNode;
       typedef typename Base::Edge Edge;
 
       /// \brief Add a new red node to the digraph.
       ///
       /// This function adds a red new node to the digraph.
-      Node addRedNode() {
+      RedNode addRedNode() {
         return INVALID;
       }
 
       /// \brief Add a new blue node to the digraph.
       ///
       /// This function adds a blue new node to the digraph.
-      Node addBlueNode() {
+      BlueNode addBlueNode() {
         return INVALID;
       }
 
@@ -1944,7 +1972,10 @@ namespace lemon {
       /// This function adds a new edge connecting the given two nodes
       /// of the graph. The first node has to be a red node, and the
       /// second one a blue node.
-      Edge addEdge(const Node&, const Node&) {
+      Edge addEdge(const RedNode&, const BlueNode&) {
+        return INVALID;
+      }
+      Edge addEdge(const BlueNode&, const RedNode&) {
         return INVALID;
       }
 
@@ -1952,11 +1983,13 @@ namespace lemon {
       struct Constraints {
         void constraints() {
           checkConcept<Base, _BpGraph>();
-          typename _BpGraph::Node red_node, blue_node;
+          typename _BpGraph::RedNode red_node;
+          typename _BpGraph::BlueNode blue_node;
           red_node = bpgraph.addRedNode();
           blue_node = bpgraph.addBlueNode();
           typename _BpGraph::Edge edge;
           edge = bpgraph.addEdge(red_node, blue_node);
+          edge = bpgraph.addEdge(blue_node, red_node);
         }
 
         _BpGraph& bpgraph;

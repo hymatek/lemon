@@ -854,6 +854,30 @@ namespace lemon {
       bool operator<(const Node& node) const {return _id < node._id;}
     };
 
+    class RedNode : public Node {
+      friend class SmartBpGraphBase;
+    protected:
+
+      explicit RedNode(int pid) : Node(pid) {}
+
+    public:
+      RedNode() {}
+      RedNode(const RedNode& node) : Node(node) {}
+      RedNode(Invalid) : Node(INVALID){}
+    };
+
+    class BlueNode : public Node {
+      friend class SmartBpGraphBase;
+    protected:
+
+      explicit BlueNode(int pid) : Node(pid) {}
+
+    public:
+      BlueNode() {}
+      BlueNode(const BlueNode& node) : Node(node) {}
+      BlueNode(Invalid) : Node(INVALID){}
+    };
+
     class Edge {
       friend class SmartBpGraphBase;
     protected:
@@ -913,11 +937,18 @@ namespace lemon {
     bool red(Node n) const { return nodes[n._id].red; }
     bool blue(Node n) const { return !nodes[n._id].red; }
 
+    static RedNode asRedNodeUnsafe(Node n) { return RedNode(n._id); }
+    static BlueNode asBlueNodeUnsafe(Node n) { return BlueNode(n._id); }
+
     Node source(Arc a) const { return Node(arcs[a._id ^ 1].target); }
     Node target(Arc a) const { return Node(arcs[a._id].target); }
 
-    Node redNode(Edge e) const { return Node(arcs[2 * e._id].target); }
-    Node blueNode(Edge e) const { return Node(arcs[2 * e._id + 1].target); }
+    RedNode redNode(Edge e) const {
+      return RedNode(arcs[2 * e._id].target);
+    }
+    BlueNode blueNode(Edge e) const {
+      return BlueNode(arcs[2 * e._id + 1].target);
+    }
 
     static bool direction(Arc a) {
       return (a._id & 1) == 1;
@@ -935,19 +966,19 @@ namespace lemon {
       --node._id;
     }
 
-    void firstRed(Node& node) const {
+    void first(RedNode& node) const {
       node._id = first_red;
     }
 
-    void nextRed(Node& node) const {
+    void next(RedNode& node) const {
       node._id = nodes[node._id].partition_next;
     }
 
-    void firstBlue(Node& node) const {
+    void first(BlueNode& node) const {
       node._id = first_blue;
     }
 
-    void nextBlue(Node& node) const {
+    void next(BlueNode& node) const {
       node._id = nodes[node._id].partition_next;
     }
 
@@ -1005,14 +1036,8 @@ namespace lemon {
     }
 
     static int id(Node v) { return v._id; }
-    int redId(Node v) const {
-      LEMON_DEBUG(nodes[v._id].red, "Node has to be red");
-      return nodes[v._id].partition_index;
-    }
-    int blueId(Node v) const {
-      LEMON_DEBUG(!nodes[v._id].red, "Node has to be blue");
-      return nodes[v._id].partition_index;
-    }
+    int id(RedNode v) const { return nodes[v._id].partition_index; }
+    int id(BlueNode v) const { return nodes[v._id].partition_index; }
     static int id(Arc e) { return e._id; }
     static int id(Edge e) { return e._id; }
 
@@ -1030,7 +1055,7 @@ namespace lemon {
       return e._id >= 0 && 2 * e._id < static_cast<int>(arcs.size());
     }
 
-    Node addRedNode() {
+    RedNode addRedNode() {
       int n = nodes.size();
       nodes.push_back(NodeT());
       nodes[n].first_out = -1;
@@ -1039,10 +1064,10 @@ namespace lemon {
       nodes[n].partition_next = first_red;
       first_red = n;
 
-      return Node(n);
+      return RedNode(n);
     }
 
-    Node addBlueNode() {
+    BlueNode addBlueNode() {
       int n = nodes.size();
       nodes.push_back(NodeT());
       nodes[n].first_out = -1;
@@ -1051,10 +1076,10 @@ namespace lemon {
       nodes[n].partition_next = first_blue;
       first_blue = n;
 
-      return Node(n);
+      return BlueNode(n);
     }
 
-    Edge addEdge(Node u, Node v) {
+    Edge addEdge(RedNode u, BlueNode v) {
       int n = arcs.size();
       arcs.push_back(ArcT());
       arcs.push_back(ArcT());
@@ -1124,13 +1149,13 @@ namespace lemon {
     ///
     /// This function adds a red new node to the graph.
     /// \return The new node.
-    Node addRedNode() { return Parent::addRedNode(); }
+    RedNode addRedNode() { return Parent::addRedNode(); }
 
     /// \brief Add a new blue node to the graph.
     ///
     /// This function adds a blue new node to the graph.
     /// \return The new node.
-    Node addBlueNode() { return Parent::addBlueNode(); }
+    BlueNode addBlueNode() { return Parent::addBlueNode(); }
 
     /// \brief Add a new edge to the graph.
     ///
@@ -1138,10 +1163,11 @@ namespace lemon {
     /// \c u and \c v with inherent orientation from node \c u to
     /// node \c v.
     /// \return The new edge.
-    Edge addEdge(Node red, Node blue) {
-      LEMON_DEBUG(Parent::red(red) && Parent::blue(blue),
-                  "Edge has to be formed by a red and a blue nodes");
-      return Parent::addEdge(red, blue);
+    Edge addEdge(RedNode u, BlueNode v) {
+      return Parent::addEdge(u, v);
+    }
+    Edge addEdge(BlueNode v, RedNode u) {
+      return Parent::addEdge(u, v);
     }
 
     /// \brief Node validity check
@@ -1237,7 +1263,7 @@ namespace lemon {
           } else {
             max_red = -1;
           }
-          Parent::notifier(RedNode()).erase(node);          
+          Parent::notifier(RedNode()).erase(asRedNodeUnsafe(node));          
         } else {
           first_blue = nodes[n].partition_next;
           if (first_blue != -1) {
@@ -1245,7 +1271,7 @@ namespace lemon {
           } else {
             max_blue = -1;
           }
-          Parent::notifier(BlueNode()).erase(node);
+          Parent::notifier(BlueNode()).erase(asBlueNodeUnsafe(node));
         }
         Parent::notifier(Node()).erase(node);
         nodes.pop_back();

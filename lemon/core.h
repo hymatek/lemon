@@ -550,26 +550,30 @@ namespace lemon {
     {
       template <typename From, typename NodeRefMap, typename EdgeRefMap>
       static void copy(const From& from, Graph &to,
-                       NodeRefMap& nodeRefMap, EdgeRefMap& edgeRefMap) {
+                       NodeRefMap& nodeRefMap,
+                       EdgeRefMap& edgeRefMap) {
         to.build(from, nodeRefMap, edgeRefMap);
       }
     };
 
     template <typename BpGraph, typename Enable = void>
     struct BpGraphCopySelector {
-      template <typename From, typename NodeRefMap, typename EdgeRefMap>
+      template <typename From, typename RedNodeRefMap,
+                typename BlueNodeRefMap, typename EdgeRefMap>
       static void copy(const From& from, BpGraph &to,
-                       NodeRefMap& nodeRefMap, EdgeRefMap& edgeRefMap) {
+                       RedNodeRefMap& redNodeRefMap,
+                       BlueNodeRefMap& blueNodeRefMap,
+                       EdgeRefMap& edgeRefMap) {
         to.clear();
         for (typename From::RedIt it(from); it != INVALID; ++it) {
-          nodeRefMap[it] = to.addRedNode();
+          redNodeRefMap[it] = to.addRedNode();
         }
         for (typename From::BlueIt it(from); it != INVALID; ++it) {
-          nodeRefMap[it] = to.addBlueNode();
+          blueNodeRefMap[it] = to.addBlueNode();
         }
         for (typename From::EdgeIt it(from); it != INVALID; ++it) {
-          edgeRefMap[it] = to.addEdge(nodeRefMap[from.redNode(it)],
-                                      nodeRefMap[from.blueNode(it)]);
+          edgeRefMap[it] = to.addEdge(redNodeRefMap[from.redNode(it)],
+                                      blueNodeRefMap[from.blueNode(it)]);
         }
       }
     };
@@ -579,10 +583,13 @@ namespace lemon {
       BpGraph,
       typename enable_if<typename BpGraph::BuildTag, void>::type>
     {
-      template <typename From, typename NodeRefMap, typename EdgeRefMap>
+      template <typename From, typename RedNodeRefMap,
+                typename BlueNodeRefMap, typename EdgeRefMap>
       static void copy(const From& from, BpGraph &to,
-                       NodeRefMap& nodeRefMap, EdgeRefMap& edgeRefMap) {
-        to.build(from, nodeRefMap, edgeRefMap);
+                       RedNodeRefMap& redNodeRefMap,
+                       BlueNodeRefMap& blueNodeRefMap,
+                       EdgeRefMap& edgeRefMap) {
+        to.build(from, redNodeRefMap, blueNodeRefMap, edgeRefMap);
       }
     };
 
@@ -1182,11 +1189,37 @@ namespace lemon {
     typedef typename From::EdgeIt EdgeIt;
 
     typedef typename To::Node TNode;
+    typedef typename To::RedNode TRedNode;
+    typedef typename To::BlueNode TBlueNode;
     typedef typename To::Arc TArc;
     typedef typename To::Edge TEdge;
 
-    typedef typename From::template NodeMap<TNode> NodeRefMap;
+    typedef typename From::template RedMap<TRedNode> RedNodeRefMap;
+    typedef typename From::template BlueMap<TBlueNode> BlueNodeRefMap;
     typedef typename From::template EdgeMap<TEdge> EdgeRefMap;
+
+    struct NodeRefMap {
+      NodeRefMap(const From& from, const RedNodeRefMap& red_node_ref,
+                 const BlueNodeRefMap& blue_node_ref)
+        : _from(from), _red_node_ref(red_node_ref),
+          _blue_node_ref(blue_node_ref) {}
+
+      typedef typename From::Node Key;
+      typedef typename To::Node Value;
+
+      Value operator[](const Key& key) const {
+        std::pair<RedNode, BlueNode> red_blue_pair = _from.asRedBlueNode(key);
+        if (red_blue_pair.first != INVALID) {
+          return _red_node_ref[red_blue_pair.first];
+        } else {
+          return _blue_node_ref[red_blue_pair.second];
+        }
+      }
+
+      const From& _from;
+      const RedNodeRefMap& _red_node_ref;
+      const BlueNodeRefMap& _blue_node_ref;
+    };
 
     struct ArcRefMap {
       ArcRefMap(const From& from, const To& to, const EdgeRefMap& edge_ref)
@@ -1292,7 +1325,7 @@ namespace lemon {
     template <typename RedRef>
     BpGraphCopy& redRef(RedRef& map) {
       _red_maps.push_back(new _core_bits::RefCopy<From, RedNode,
-                          NodeRefMap, RedRef>(map));
+                          RedNodeRefMap, RedRef>(map));
       return *this;
     }
 
@@ -1306,7 +1339,7 @@ namespace lemon {
     template <typename RedCrossRef>
     BpGraphCopy& redCrossRef(RedCrossRef& map) {
       _red_maps.push_back(new _core_bits::CrossRefCopy<From, RedNode,
-                          NodeRefMap, RedCrossRef>(map));
+                          RedNodeRefMap, RedCrossRef>(map));
       return *this;
     }
 
@@ -1321,7 +1354,16 @@ namespace lemon {
     template <typename FromMap, typename ToMap>
     BpGraphCopy& redMap(const FromMap& map, ToMap& tmap) {
       _red_maps.push_back(new _core_bits::MapCopy<From, RedNode,
-                           NodeRefMap, FromMap, ToMap>(map, tmap));
+                          RedNodeRefMap, FromMap, ToMap>(map, tmap));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given red node.
+    ///
+    /// This function makes a copy of the given red node.
+    BpGraphCopy& redNode(const RedNode& node, TRedNode& tnode) {
+      _red_maps.push_back(new _core_bits::ItemCopy<From, RedNode,
+                          RedNodeRefMap, TRedNode>(node, tnode));
       return *this;
     }
 
@@ -1334,7 +1376,7 @@ namespace lemon {
     template <typename BlueRef>
     BpGraphCopy& blueRef(BlueRef& map) {
       _blue_maps.push_back(new _core_bits::RefCopy<From, BlueNode,
-                           NodeRefMap, BlueRef>(map));
+                           BlueNodeRefMap, BlueRef>(map));
       return *this;
     }
 
@@ -1348,7 +1390,7 @@ namespace lemon {
     template <typename BlueCrossRef>
     BpGraphCopy& blueCrossRef(BlueCrossRef& map) {
       _blue_maps.push_back(new _core_bits::CrossRefCopy<From, BlueNode,
-                           NodeRefMap, BlueCrossRef>(map));
+                           BlueNodeRefMap, BlueCrossRef>(map));
       return *this;
     }
 
@@ -1363,7 +1405,16 @@ namespace lemon {
     template <typename FromMap, typename ToMap>
     BpGraphCopy& blueMap(const FromMap& map, ToMap& tmap) {
       _blue_maps.push_back(new _core_bits::MapCopy<From, BlueNode,
-                           NodeRefMap, FromMap, ToMap>(map, tmap));
+                           BlueNodeRefMap, FromMap, ToMap>(map, tmap));
+      return *this;
+    }
+
+    /// \brief Make a copy of the given blue node.
+    ///
+    /// This function makes a copy of the given blue node.
+    BpGraphCopy& blueNode(const BlueNode& node, TBlueNode& tnode) {
+      _blue_maps.push_back(new _core_bits::ItemCopy<From, BlueNode,
+                           BlueNodeRefMap, TBlueNode>(node, tnode));
       return *this;
     }
 
@@ -1470,19 +1521,21 @@ namespace lemon {
     /// This function executes the copying of the graph along with the
     /// copying of the assigned data.
     void run() {
-      NodeRefMap nodeRefMap(_from);
+      RedNodeRefMap redNodeRefMap(_from);
+      BlueNodeRefMap blueNodeRefMap(_from);
+      NodeRefMap nodeRefMap(_from, redNodeRefMap, blueNodeRefMap);
       EdgeRefMap edgeRefMap(_from);
       ArcRefMap arcRefMap(_from, _to, edgeRefMap);
       _core_bits::BpGraphCopySelector<To>::
-        copy(_from, _to, nodeRefMap, edgeRefMap);
+        copy(_from, _to, redNodeRefMap, blueNodeRefMap, edgeRefMap);
       for (int i = 0; i < int(_node_maps.size()); ++i) {
         _node_maps[i]->copy(_from, nodeRefMap);
       }
       for (int i = 0; i < int(_red_maps.size()); ++i) {
-        _red_maps[i]->copy(_from, nodeRefMap);
+        _red_maps[i]->copy(_from, redNodeRefMap);
       }
       for (int i = 0; i < int(_blue_maps.size()); ++i) {
-        _blue_maps[i]->copy(_from, nodeRefMap);
+        _blue_maps[i]->copy(_from, blueNodeRefMap);
       }
       for (int i = 0; i < int(_edge_maps.size()); ++i) {
         _edge_maps[i]->copy(_from, edgeRefMap);
@@ -1500,10 +1553,10 @@ namespace lemon {
     std::vector<_core_bits::MapCopyBase<From, Node, NodeRefMap>* >
       _node_maps;
 
-    std::vector<_core_bits::MapCopyBase<From, RedNode, NodeRefMap>* >
+    std::vector<_core_bits::MapCopyBase<From, RedNode, RedNodeRefMap>* >
       _red_maps;
 
-    std::vector<_core_bits::MapCopyBase<From, BlueNode, NodeRefMap>* >
+    std::vector<_core_bits::MapCopyBase<From, BlueNode, BlueNodeRefMap>* >
       _blue_maps;
 
     std::vector<_core_bits::MapCopyBase<From, Arc, ArcRefMap>* >

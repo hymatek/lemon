@@ -46,6 +46,16 @@ namespace lemon {
     typename Graph::RedIt n(G);
     for(int i=0;i<cnt;i++) {
       check(n!=INVALID,"Wrong red Node list linking.");
+      check(G.red(n),"Wrong node set check.");
+      check(!G.blue(n),"Wrong node set check.");
+      typename Graph::Node nn = n;
+      check(G.asRedNodeUnsafe(nn) == n,"Wrong node conversion.");
+      check(G.asRedNode(nn) == n,"Wrong node conversion.");
+      check(G.asBlueNode(nn) == INVALID,"Wrong node conversion.");
+      std::pair<typename Graph::RedNode, typename Graph::BlueNode> rbn =
+        G.asRedBlueNode(nn);
+      check(rbn.first == n,"Wrong node conversion.");
+      check(rbn.second == INVALID,"Wrong node conversion.");
       ++n;
     }
     check(n==INVALID,"Wrong red Node list linking.");
@@ -58,6 +68,16 @@ namespace lemon {
     typename Graph::BlueIt n(G);
     for(int i=0;i<cnt;i++) {
       check(n!=INVALID,"Wrong blue Node list linking.");
+      check(G.blue(n),"Wrong node set check.");
+      check(!G.red(n),"Wrong node set check.");
+      typename Graph::Node nn = n;
+      check(G.asBlueNodeUnsafe(nn) == n,"Wrong node conversion.");
+      check(G.asBlueNode(nn) == n,"Wrong node conversion.");
+      check(G.asRedNode(nn) == INVALID,"Wrong node conversion.");
+      std::pair<typename Graph::RedNode, typename Graph::BlueNode> rbn =
+        G.asRedBlueNode(nn);
+      check(rbn.first == INVALID,"Wrong node conversion.");
+      check(rbn.second == n,"Wrong node conversion.");
       ++n;
     }
     check(n==INVALID,"Wrong blue Node list linking.");
@@ -207,9 +227,8 @@ namespace lemon {
     std::set<int> values;
     for (typename Graph::RedIt n(G); n != INVALID; ++n) {
       check(G.red(n), "Wrong partition");
-      check(G.redId(n) == G.id(RedNode(n)), "Wrong id");
-      check(values.find(G.redId(n)) == values.end(), "Wrong id");
-      check(G.redId(n) <= G.maxRedId(), "Wrong maximum id");
+      check(values.find(G.id(n)) == values.end(), "Wrong id");
+      check(G.id(n) <= G.maxRedId(), "Wrong maximum id");
       values.insert(G.id(n));
     }
     check(G.maxId(RedNode()) == G.maxRedId(), "Wrong maximum id");
@@ -221,9 +240,8 @@ namespace lemon {
     std::set<int> values;
     for (typename Graph::BlueIt n(G); n != INVALID; ++n) {
       check(G.blue(n), "Wrong partition");
-      check(G.blueId(n) == G.id(BlueNode(n)), "Wrong id");
-      check(values.find(G.blueId(n)) == values.end(), "Wrong id");
-      check(G.blueId(n) <= G.maxBlueId(), "Wrong maximum id");
+      check(values.find(G.id(n)) == values.end(), "Wrong id");
+      check(G.id(n) <= G.maxBlueId(), "Wrong maximum id");
       values.insert(G.id(n));
     }
     check(G.maxId(BlueNode()) == G.maxBlueId(), "Wrong maximum id");
