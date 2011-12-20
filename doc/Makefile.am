@@ -11,6 +11,7 @@ EXTRA_DIST += \
 	doc/min_cost_flow.dox \
 	doc/named-param.dox \
 	doc/namespaces.dox \
+	doc/template.h \
 	doc/html \
 	doc/CMakeLists.txt
 
