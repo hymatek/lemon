@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2008
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -84,6 +84,19 @@ namespace lemon {
     soplex::LPRow r;
     r.setLhs(-soplex::infinity);
     r.setRhs(soplex::infinity);
+    soplex->addRow(r);
+
+    _row_names.push_back(std::string());
+
+    return soplex->nRows() - 1;
+  }
+
+  int SoplexLp::_addRow(Value l, ExprIterator b, ExprIterator e, Value u) {
+    soplex::DSVector v;
+    for (ExprIterator it = b; it != e; ++it) {
+      v.add(it->first, it->second);
+    }
+    soplex::LPRow r(l, v, u);
     soplex->addRow(r);
 
     _row_names.push_back(std::string());
@@ -274,7 +287,7 @@ namespace lemon {
   SoplexLp::SolveExitStatus SoplexLp::_solve() {
 
     _clear_temporals();
-    
+
     _applyMessageLevel();
 
     soplex::SPxSolver::Status status = soplex->solve();

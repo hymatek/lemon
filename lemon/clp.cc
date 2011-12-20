@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2008
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -75,6 +75,19 @@ namespace lemon {
 
   int ClpLp::_addRow() {
     _prob->addRow(0, 0, 0, -COIN_DBL_MAX, COIN_DBL_MAX);
+    return _prob->numberRows() - 1;
+  }
+
+  int ClpLp::_addRow(Value l, ExprIterator b, ExprIterator e, Value u) {
+    std::vector<int> indexes;
+    std::vector<Value> values;
+
+    for(ExprIterator it = b; it != e; ++it) {
+      indexes.push_back(it->first);
+      values.push_back(it->second);
+    }
+
+    _prob->addRow(values.size(), &indexes.front(), &values.front(), l, u);
     return _prob->numberRows() - 1;
   }
 

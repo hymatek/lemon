@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2008
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -28,6 +28,11 @@ namespace lemon {
   }
 
   int SkeletonSolverBase::_addRow()
+  {
+    return ++row_num;
+  }
+
+  int SkeletonSolverBase::_addRow(Value, ExprIterator, ExprIterator, Value)
   {
     return ++row_num;
   }
