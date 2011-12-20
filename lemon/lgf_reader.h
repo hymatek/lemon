@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2011
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -964,6 +964,13 @@ namespace lemon {
         std::string map;
         int index = 0;
         while (_reader_bits::readToken(line, map)) {
+          if(map == "-") {
+              if(index!=0)
+                throw FormatError("'-' is not allowed as a map name");
+              else if (line >> std::ws >> c)
+                throw FormatError("Extra character at the end of line");
+              else break;
+            }
           if (maps.find(map) != maps.end()) {
             std::ostringstream msg;
             msg << "Multiple occurence of arc map: " << map;
@@ -1834,6 +1841,13 @@ namespace lemon {
         std::string map;
         int index = 0;
         while (_reader_bits::readToken(line, map)) {
+          if(map == "-") {
+              if(index!=0)
+                throw FormatError("'-' is not allowed as a map name");
+              else if (line >> std::ws >> c)
+                throw FormatError("Extra character at the end of line");
+              else break;
+            }
           if (maps.find(map) != maps.end()) {
             std::ostringstream msg;
             msg << "Multiple occurence of edge map: " << map;

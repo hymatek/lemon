@@ -25,6 +25,7 @@ check_PROGRAMS += \
 	test/hao_orlin_test \
 	test/heap_test \
 	test/kruskal_test \
+	test/lgf_test \
 	test/maps_test \
 	test/matching_test \
 	test/min_cost_arborescence_test \
@@ -70,6 +71,7 @@ test_graph_utils_test_SOURCES = test/graph_utils_test.cc
 test_heap_test_SOURCES = test/heap_test.cc
 test_kruskal_test_SOURCES = test/kruskal_test.cc
 test_hao_orlin_test_SOURCES = test/hao_orlin_test.cc
+test_lgf_test_SOURCES = test/lgf_test.cc
 test_lp_test_SOURCES = test/lp_test.cc
 test_maps_test_SOURCES = test/maps_test.cc
 test_mip_test_SOURCES = test/mip_test.cc

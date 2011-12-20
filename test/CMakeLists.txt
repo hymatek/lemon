@@ -31,6 +31,7 @@ SET(TESTS
   hao_orlin_test
   heap_test
   kruskal_test
+  lgf_test
   maps_test
   matching_test
   min_cost_arborescence_test
