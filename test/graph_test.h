@@ -52,10 +52,6 @@ namespace lemon {
       check(G.asRedNodeUnsafe(nn) == n,"Wrong node conversion.");
       check(G.asRedNode(nn) == n,"Wrong node conversion.");
       check(G.asBlueNode(nn) == INVALID,"Wrong node conversion.");
-      std::pair<typename Graph::RedNode, typename Graph::BlueNode> rbn =
-        G.asRedBlueNode(nn);
-      check(rbn.first == n,"Wrong node conversion.");
-      check(rbn.second == INVALID,"Wrong node conversion.");
       ++n;
     }
     check(n==INVALID,"Wrong red Node list linking.");
@@ -74,10 +70,6 @@ namespace lemon {
       check(G.asBlueNodeUnsafe(nn) == n,"Wrong node conversion.");
       check(G.asBlueNode(nn) == n,"Wrong node conversion.");
       check(G.asRedNode(nn) == INVALID,"Wrong node conversion.");
-      std::pair<typename Graph::RedNode, typename Graph::BlueNode> rbn =
-        G.asRedBlueNode(nn);
-      check(rbn.first == INVALID,"Wrong node conversion.");
-      check(rbn.second == n,"Wrong node conversion.");
       ++n;
     }
     check(n==INVALID,"Wrong blue Node list linking.");

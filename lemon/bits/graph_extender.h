@@ -840,16 +840,6 @@ namespace lemon {
       }
     }
 
-    std::pair<RedNode, BlueNode> asRedBlueNode(const Node& node) const {
-      if (node == INVALID) {
-        return std::make_pair(RedNode(INVALID), BlueNode(INVALID));
-      } else if (Parent::red(node)) {
-        return std::make_pair(Parent::asRedNodeUnsafe(node), BlueNode(INVALID));
-      } else {
-        return std::make_pair(RedNode(INVALID), Parent::asBlueNodeUnsafe(node));
-      }
-    }
-
     // Alterable extension
 
     typedef AlterationNotifier<BpGraphExtender, Node> NodeNotifier;

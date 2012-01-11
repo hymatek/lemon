@@ -1209,11 +1209,10 @@ namespace lemon {
       typedef typename To::Node Value;
 
       Value operator[](const Key& key) const {
-        std::pair<RedNode, BlueNode> red_blue_pair = _from.asRedBlueNode(key);
-        if (red_blue_pair.first != INVALID) {
-          return _red_node_ref[red_blue_pair.first];
+        if (_from.red(key)) {
+          return _red_node_ref[_from.asRedNodeUnsafe(key)];
         } else {
-          return _blue_node_ref[red_blue_pair.second];
+          return _blue_node_ref[_from.asBlueNodeUnsafe(key)];
         }
       }
 

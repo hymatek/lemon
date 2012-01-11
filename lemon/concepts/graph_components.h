@@ -428,17 +428,6 @@ namespace lemon {
       /// returns INVALID.
       BlueNode asBlueNode(const Node&) const { return BlueNode(); }
 
-      /// \brief Convert the node to either red or blue node.
-      ///
-      /// If the node is from the red partition then it is returned in
-      /// first and second is INVALID. If the node is from the blue
-      /// partition then it is returned in second and first is
-      /// INVALID. If the node INVALID then both first and second are
-      /// INVALID in the return value.
-      std::pair<RedNode, BlueNode> asRedBlueNode(const Node&) const {
-        return std::make_pair(RedNode(), BlueNode());
-      }
-
       template <typename _BpGraph>
       struct Constraints {
         typedef typename _BpGraph::Node Node;
@@ -467,8 +456,7 @@ namespace lemon {
             bn = bpgraph.asBlueNodeUnsafe(bnan);
             rn = bpgraph.asRedNode(rnan);
             bn = bpgraph.asBlueNode(bnan);
-            std::pair<RedNode, BlueNode> p = bpgraph.asRedBlueNode(rnan);
-            ignore_unused_variable_warning(b,p);
+            ignore_unused_variable_warning(b);
           }
         }
 
