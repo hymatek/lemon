@@ -101,8 +101,8 @@ void checkBpGraphBuild() {
   checkEdgeIds(G);
 
   checkGraphNodeMap(G);
-  checkGraphRedMap(G);
-  checkGraphBlueMap(G);
+  checkGraphRedNodeMap(G);
+  checkGraphBlueNodeMap(G);
   checkGraphArcMap(G);
   checkGraphEdgeMap(G);
 }
@@ -260,8 +260,8 @@ void checkBpGraphSnapshot() {
   checkEdgeIds(G);
 
   checkGraphNodeMap(G);
-  checkGraphRedMap(G);
-  checkGraphBlueMap(G);
+  checkGraphRedNodeMap(G);
+  checkGraphBlueNodeMap(G);
   checkGraphArcMap(G);
   checkGraphEdgeMap(G);
 
@@ -369,13 +369,13 @@ void checkFullBpGraph(int redNum, int blueNum) {
   checkGraphEdgeList(G, redNum * blueNum);
   checkGraphArcList(G, 2 * redNum * blueNum);
 
-  for (RedIt n(G); n != INVALID; ++n) {
+  for (RedNodeIt n(G); n != INVALID; ++n) {
     checkGraphOutArcList(G, n, blueNum);
     checkGraphInArcList(G, n, blueNum);
     checkGraphIncEdgeList(G, n, blueNum);
   }
 
-  for (BlueIt n(G); n != INVALID; ++n) {
+  for (BlueNodeIt n(G); n != INVALID; ++n) {
     checkGraphOutArcList(G, n, redNum);
     checkGraphInArcList(G, n, redNum);
     checkGraphIncEdgeList(G, n, redNum);
@@ -393,8 +393,8 @@ void checkFullBpGraph(int redNum, int blueNum) {
   checkEdgeIds(G);
 
   checkGraphNodeMap(G);
-  checkGraphRedMap(G);
-  checkGraphBlueMap(G);
+  checkGraphRedNodeMap(G);
+  checkGraphBlueNodeMap(G);
   checkGraphArcMap(G);
   checkGraphEdgeMap(G);
 

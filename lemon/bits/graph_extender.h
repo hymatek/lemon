@@ -913,44 +913,44 @@ namespace lemon {
 
     };
 
-    class RedIt : public RedNode {
+    class RedNodeIt : public RedNode {
       const BpGraph* _graph;
     public:
 
-      RedIt() {}
+      RedNodeIt() {}
 
-      RedIt(Invalid i) : RedNode(i) { }
+      RedNodeIt(Invalid i) : RedNode(i) { }
 
-      explicit RedIt(const BpGraph& graph) : _graph(&graph) {
+      explicit RedNodeIt(const BpGraph& graph) : _graph(&graph) {
         _graph->first(static_cast<RedNode&>(*this));
       }
 
-      RedIt(const BpGraph& graph, const RedNode& node)
+      RedNodeIt(const BpGraph& graph, const RedNode& node)
         : RedNode(node), _graph(&graph) {}
 
-      RedIt& operator++() {
+      RedNodeIt& operator++() {
         _graph->next(static_cast<RedNode&>(*this));
         return *this;
       }
 
     };
 
-    class BlueIt : public BlueNode {
+    class BlueNodeIt : public BlueNode {
       const BpGraph* _graph;
     public:
 
-      BlueIt() {}
+      BlueNodeIt() {}
 
-      BlueIt(Invalid i) : BlueNode(i) { }
+      BlueNodeIt(Invalid i) : BlueNode(i) { }
 
-      explicit BlueIt(const BpGraph& graph) : _graph(&graph) {
+      explicit BlueNodeIt(const BpGraph& graph) : _graph(&graph) {
         _graph->first(static_cast<BlueNode&>(*this));
       }
 
-      BlueIt(const BpGraph& graph, const BlueNode& node)
+      BlueNodeIt(const BpGraph& graph, const BlueNode& node)
         : BlueNode(node), _graph(&graph) {}
 
-      BlueIt& operator++() {
+      BlueNodeIt& operator++() {
         _graph->next(static_cast<BlueNode&>(*this));
         return *this;
       }
@@ -1144,23 +1144,23 @@ namespace lemon {
     };
 
     template <typename _Value>
-    class RedMap
+    class RedNodeMap
       : public MapExtender<DefaultMap<BpGraph, RedNode, _Value> > {
       typedef MapExtender<DefaultMap<BpGraph, RedNode, _Value> > Parent;
 
     public:
-      explicit RedMap(const BpGraph& bpgraph)
+      explicit RedNodeMap(const BpGraph& bpgraph)
         : Parent(bpgraph) {}
-      RedMap(const BpGraph& bpgraph, const _Value& value)
+      RedNodeMap(const BpGraph& bpgraph, const _Value& value)
         : Parent(bpgraph, value) {}
 
     private:
-      RedMap& operator=(const RedMap& cmap) {
-        return operator=<RedMap>(cmap);
+      RedNodeMap& operator=(const RedNodeMap& cmap) {
+        return operator=<RedNodeMap>(cmap);
       }
 
       template <typename CMap>
-      RedMap& operator=(const CMap& cmap) {
+      RedNodeMap& operator=(const CMap& cmap) {
         Parent::operator=(cmap);
         return *this;
       }
@@ -1168,23 +1168,23 @@ namespace lemon {
     };
 
     template <typename _Value>
-    class BlueMap
+    class BlueNodeMap
       : public MapExtender<DefaultMap<BpGraph, BlueNode, _Value> > {
       typedef MapExtender<DefaultMap<BpGraph, BlueNode, _Value> > Parent;
 
     public:
-      explicit BlueMap(const BpGraph& bpgraph)
+      explicit BlueNodeMap(const BpGraph& bpgraph)
         : Parent(bpgraph) {}
-      BlueMap(const BpGraph& bpgraph, const _Value& value)
+      BlueNodeMap(const BpGraph& bpgraph, const _Value& value)
         : Parent(bpgraph, value) {}
 
     private:
-      BlueMap& operator=(const BlueMap& cmap) {
-        return operator=<BlueMap>(cmap);
+      BlueNodeMap& operator=(const BlueNodeMap& cmap) {
+        return operator=<BlueNodeMap>(cmap);
       }
 
       template <typename CMap>
-      BlueMap& operator=(const CMap& cmap) {
+      BlueNodeMap& operator=(const CMap& cmap) {
         Parent::operator=(cmap);
         return *this;
       }

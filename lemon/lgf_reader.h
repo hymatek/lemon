@@ -2148,7 +2148,7 @@ namespace lemon {
   /// reads the red and blue nodes from separate sections, and these
   /// sections can contain different set of maps.
   ///
-  /// The red and blue maps are read from the corresponding
+  /// The red and blue node maps are read from the corresponding
   /// sections. If a map is defined with the same name in both of
   /// these sections, then it can be read as a node map.
   template <typename BGR>
@@ -2337,9 +2337,9 @@ namespace lemon {
       return *this;
     }
 
-    /// Add a red map reading rule to the reader.
+    /// Add a red node map reading rule to the reader.
     template <typename Map>
-    BpGraphReader& redMap(const std::string& caption, Map& map) {
+    BpGraphReader& redNodeMap(const std::string& caption, Map& map) {
       checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
       _reader_bits::MapStorageBase<Node>* storage =
         new _reader_bits::MapStorage<Node, Map>(map);
@@ -2347,13 +2347,13 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Red map reading rule
+    /// \brief Red node map reading rule
     ///
-    /// Add a red map reading rule with specialized converter to the
-    /// reader.
+    /// Add a red node map node reading rule with specialized converter to
+    /// the reader.
     template <typename Map, typename Converter>
-    BpGraphReader& redMap(const std::string& caption, Map& map,
-                          const Converter& converter = Converter()) {
+    BpGraphReader& redNodeMap(const std::string& caption, Map& map,
+                              const Converter& converter = Converter()) {
       checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
       _reader_bits::MapStorageBase<Node>* storage =
         new _reader_bits::MapStorage<Node, Map, Converter>(map, converter);
@@ -2361,9 +2361,9 @@ namespace lemon {
       return *this;
     }
 
-    /// Add a blue map reading rule to the reader.
+    /// Add a blue node map reading rule to the reader.
     template <typename Map>
-    BpGraphReader& blueMap(const std::string& caption, Map& map) {
+    BpGraphReader& blueNodeMap(const std::string& caption, Map& map) {
       checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
       _reader_bits::MapStorageBase<Node>* storage =
         new _reader_bits::MapStorage<Node, Map>(map);
@@ -2371,13 +2371,13 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Blue map reading rule
+    /// \brief Blue node map reading rule
     ///
-    /// Add a blue map reading rule with specialized converter to the
-    /// reader.
+    /// Add a blue node map reading rule with specialized converter to
+    /// the reader.
     template <typename Map, typename Converter>
-    BpGraphReader& blueMap(const std::string& caption, Map& map,
-                           const Converter& converter = Converter()) {
+    BpGraphReader& blueNodeMap(const std::string& caption, Map& map,
+                               const Converter& converter = Converter()) {
       checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
       _reader_bits::MapStorageBase<Node>* storage =
         new _reader_bits::MapStorage<Node, Map, Converter>(map, converter);
@@ -2684,7 +2684,7 @@ namespace lemon {
         while (_reader_bits::readToken(line, map)) {
           if (maps.find(map) != maps.end()) {
             std::ostringstream msg;
-            msg << "Multiple occurence of red map: " << map;
+            msg << "Multiple occurence of red node map: " << map;
             throw FormatError(msg.str());
           }
           maps.insert(std::make_pair(map, index));
@@ -2777,7 +2777,7 @@ namespace lemon {
         while (_reader_bits::readToken(line, map)) {
           if (maps.find(map) != maps.end()) {
             std::ostringstream msg;
-            msg << "Multiple occurence of blue map: " << map;
+            msg << "Multiple occurence of blue node map: " << map;
             throw FormatError(msg.str());
           }
           maps.insert(std::make_pair(map, index));

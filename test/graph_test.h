@@ -43,7 +43,7 @@ namespace lemon {
   template<class Graph>
   void checkGraphRedNodeList(const Graph &G, int cnt)
   {
-    typename Graph::RedIt n(G);
+    typename Graph::RedNodeIt n(G);
     for(int i=0;i<cnt;i++) {
       check(n!=INVALID,"Wrong red Node list linking.");
       check(G.red(n),"Wrong node set check.");
@@ -65,7 +65,7 @@ namespace lemon {
   template<class Graph>
   void checkGraphBlueNodeList(const Graph &G, int cnt)
   {
-    typename Graph::BlueIt n(G);
+    typename Graph::BlueNodeIt n(G);
     for(int i=0;i<cnt;i++) {
       check(n!=INVALID,"Wrong blue Node list linking.");
       check(G.blue(n),"Wrong node set check.");
@@ -225,7 +225,7 @@ namespace lemon {
   void checkRedNodeIds(const Graph& G) {
     typedef typename Graph::RedNode RedNode;
     std::set<int> values;
-    for (typename Graph::RedIt n(G); n != INVALID; ++n) {
+    for (typename Graph::RedNodeIt n(G); n != INVALID; ++n) {
       check(G.red(n), "Wrong partition");
       check(values.find(G.id(n)) == values.end(), "Wrong id");
       check(G.id(n) <= G.maxRedId(), "Wrong maximum id");
@@ -238,7 +238,7 @@ namespace lemon {
   void checkBlueNodeIds(const Graph& G) {
     typedef typename Graph::BlueNode BlueNode;
     std::set<int> values;
-    for (typename Graph::BlueIt n(G); n != INVALID; ++n) {
+    for (typename Graph::BlueNodeIt n(G); n != INVALID; ++n) {
       check(G.blue(n), "Wrong partition");
       check(values.find(G.id(n)) == values.end(), "Wrong id");
       check(G.id(n) <= G.maxBlueId(), "Wrong maximum id");
@@ -304,17 +304,17 @@ namespace lemon {
   }
 
   template <typename Graph>
-  void checkGraphRedMap(const Graph& G) {
+  void checkGraphRedNodeMap(const Graph& G) {
     typedef typename Graph::Node Node;
-    typedef typename Graph::RedIt RedIt;
+    typedef typename Graph::RedNodeIt RedNodeIt;
 
-    typedef typename Graph::template RedMap<int> IntRedMap;
-    IntRedMap map(G, 42);
-    for (RedIt it(G); it != INVALID; ++it) {
+    typedef typename Graph::template RedNodeMap<int> IntRedNodeMap;
+    IntRedNodeMap map(G, 42);
+    for (RedNodeIt it(G); it != INVALID; ++it) {
       check(map[it] == 42, "Wrong map constructor.");
     }
     int s = 0;
-    for (RedIt it(G); it != INVALID; ++it) {
+    for (RedNodeIt it(G); it != INVALID; ++it) {
       map[it] = 0;
       check(map[it] == 0, "Wrong operator[].");
       map.set(it, s);
@@ -322,7 +322,7 @@ namespace lemon {
       ++s;
     }
     s = s * (s - 1) / 2;
-    for (RedIt it(G); it != INVALID; ++it) {
+    for (RedNodeIt it(G); it != INVALID; ++it) {
       s -= map[it];
     }
     check(s == 0, "Wrong sum.");
@@ -334,17 +334,17 @@ namespace lemon {
   }
 
   template <typename Graph>
-  void checkGraphBlueMap(const Graph& G) {
+  void checkGraphBlueNodeMap(const Graph& G) {
     typedef typename Graph::Node Node;
-    typedef typename Graph::BlueIt BlueIt;
+    typedef typename Graph::BlueNodeIt BlueNodeIt;
 
-    typedef typename Graph::template BlueMap<int> IntBlueMap;
-    IntBlueMap map(G, 42);
-    for (BlueIt it(G); it != INVALID; ++it) {
+    typedef typename Graph::template BlueNodeMap<int> IntBlueNodeMap;
+    IntBlueNodeMap map(G, 42);
+    for (BlueNodeIt it(G); it != INVALID; ++it) {
       check(map[it] == 42, "Wrong map constructor.");
     }
     int s = 0;
-    for (BlueIt it(G); it != INVALID; ++it) {
+    for (BlueNodeIt it(G); it != INVALID; ++it) {
       map[it] = 0;
       check(map[it] == 0, "Wrong operator[].");
       map.set(it, s);
@@ -352,7 +352,7 @@ namespace lemon {
       ++s;
     }
     s = s * (s - 1) / 2;
-    for (BlueIt it(G); it != INVALID; ++it) {
+    for (BlueNodeIt it(G); it != INVALID; ++it) {
       s -= map[it];
     }
     check(s == 0, "Wrong sum.");

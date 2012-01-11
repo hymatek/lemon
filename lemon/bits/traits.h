@@ -172,16 +172,16 @@ namespace lemon {
     typedef GR Digraph;
 
     typedef typename GR::RedNode Item;
-    typedef typename GR::RedIt ItemIt;
+    typedef typename GR::RedNodeIt ItemIt;
 
     typedef typename RedNodeNotifierIndicator<GR>::Type ItemNotifier;
 
     template <typename V>
-    class Map : public GR::template RedMap<V> {
-      typedef typename GR::template RedMap<V> Parent;
+    class Map : public GR::template RedNodeMap<V> {
+      typedef typename GR::template RedNodeMap<V> Parent;
 
     public:
-      typedef typename GR::template RedMap<V> Type;
+      typedef typename GR::template RedNodeMap<V> Type;
       typedef typename Parent::Value Value;
 
       Map(const GR& _bpgraph) : Parent(_bpgraph) {}
@@ -213,16 +213,16 @@ namespace lemon {
     typedef GR Digraph;
 
     typedef typename GR::BlueNode Item;
-    typedef typename GR::BlueIt ItemIt;
+    typedef typename GR::BlueNodeIt ItemIt;
 
     typedef typename BlueNodeNotifierIndicator<GR>::Type ItemNotifier;
 
     template <typename V>
-    class Map : public GR::template BlueMap<V> {
-      typedef typename GR::template BlueMap<V> Parent;
+    class Map : public GR::template BlueNodeMap<V> {
+      typedef typename GR::template BlueNodeMap<V> Parent;
 
     public:
-      typedef typename GR::template BlueMap<V> Type;
+      typedef typename GR::template BlueNodeMap<V> Type;
       typedef typename Parent::Value Value;
 
       Map(const GR& _bpgraph) : Parent(_bpgraph) {}

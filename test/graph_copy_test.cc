@@ -216,8 +216,8 @@ void bpgraph_copy_test() {
   // Build a graph
   SmartBpGraph from;
   SmartBpGraph::NodeMap<int> fnm(from);
-  SmartBpGraph::RedMap<int> frnm(from);
-  SmartBpGraph::BlueMap<int> fbnm(from);
+  SmartBpGraph::RedNodeMap<int> frnm(from);
+  SmartBpGraph::BlueNodeMap<int> fbnm(from);
   SmartBpGraph::ArcMap<int> fam(from);
   SmartBpGraph::EdgeMap<int> fem(from);
   SmartBpGraph::Node fn = INVALID;
@@ -261,8 +261,8 @@ void bpgraph_copy_test() {
   // Test graph copy
   GR to;
   typename GR::template NodeMap<int> tnm(to);
-  typename GR::template RedMap<int> trnm(to);
-  typename GR::template BlueMap<int> tbnm(to);
+  typename GR::template RedNodeMap<int> trnm(to);
+  typename GR::template BlueNodeMap<int> tbnm(to);
   typename GR::template ArcMap<int> tam(to);
   typename GR::template EdgeMap<int> tem(to);
   typename GR::Node tn;
@@ -272,19 +272,20 @@ void bpgraph_copy_test() {
   typename GR::Edge te;
 
   SmartBpGraph::NodeMap<typename GR::Node> nr(from);
-  SmartBpGraph::RedMap<typename GR::RedNode> rnr(from);
-  SmartBpGraph::BlueMap<typename GR::BlueNode> bnr(from);
+  SmartBpGraph::RedNodeMap<typename GR::RedNode> rnr(from);
+  SmartBpGraph::BlueNodeMap<typename GR::BlueNode> bnr(from);
   SmartBpGraph::ArcMap<typename GR::Arc> ar(from);
   SmartBpGraph::EdgeMap<typename GR::Edge> er(from);
 
   typename GR::template NodeMap<SmartBpGraph::Node> ncr(to);
-  typename GR::template RedMap<SmartBpGraph::RedNode> rncr(to);
-  typename GR::template BlueMap<SmartBpGraph::BlueNode> bncr(to);
+  typename GR::template RedNodeMap<SmartBpGraph::RedNode> rncr(to);
+  typename GR::template BlueNodeMap<SmartBpGraph::BlueNode> bncr(to);
   typename GR::template ArcMap<SmartBpGraph::Arc> acr(to);
   typename GR::template EdgeMap<SmartBpGraph::Edge> ecr(to);
 
   bpGraphCopy(from, to).
-    nodeMap(fnm, tnm).redMap(frnm, trnm).blueMap(fbnm, tbnm).
+    nodeMap(fnm, tnm).
+    redNodeMap(frnm, trnm).blueNodeMap(fbnm, tbnm).
     arcMap(fam, tam).edgeMap(fem, tem).
     nodeRef(nr).redRef(rnr).blueRef(bnr).
     arcRef(ar).edgeRef(er).
@@ -304,7 +305,7 @@ void bpgraph_copy_test() {
     check(fnm[it] == tnm[nr[it]], "Wrong copy.");
   }
 
-  for (SmartBpGraph::RedIt it(from); it != INVALID; ++it) {
+  for (SmartBpGraph::RedNodeIt it(from); it != INVALID; ++it) {
     check(ncr[nr[it]] == it, "Wrong copy.");
     check(fnm[it] == tnm[nr[it]], "Wrong copy.");
     check(rnr[it] == nr[it], "Wrong copy.");
@@ -313,7 +314,7 @@ void bpgraph_copy_test() {
     check(to.red(rnr[it]), "Wrong copy.");
   }
 
-  for (SmartBpGraph::BlueIt it(from); it != INVALID; ++it) {
+  for (SmartBpGraph::BlueNodeIt it(from); it != INVALID; ++it) {
     check(ncr[nr[it]] == it, "Wrong copy.");
     check(fnm[it] == tnm[nr[it]], "Wrong copy.");
     check(bnr[it] == nr[it], "Wrong copy.");
@@ -343,11 +344,11 @@ void bpgraph_copy_test() {
   for (typename GR::NodeIt it(to); it != INVALID; ++it) {
     check(nr[ncr[it]] == it, "Wrong copy.");
   }
-  for (typename GR::RedIt it(to); it != INVALID; ++it) {
+  for (typename GR::RedNodeIt it(to); it != INVALID; ++it) {
     check(rncr[it] == ncr[it], "Wrong copy.");
     check(rnr[rncr[it]] == it, "Wrong copy.");
   }
-  for (typename GR::BlueIt it(to); it != INVALID; ++it) {
+  for (typename GR::BlueNodeIt it(to); it != INVALID; ++it) {
     check(bncr[it] == ncr[it], "Wrong copy.");
     check(bnr[bncr[it]] == it, "Wrong copy.");
   }

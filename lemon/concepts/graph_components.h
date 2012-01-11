@@ -1206,12 +1206,12 @@ namespace lemon {
       /// \brief This iterator goes through each red node.
       ///
       /// This iterator goes through each red node.
-      typedef GraphItemIt<BpGraph, RedNode> RedIt;
+      typedef GraphItemIt<BpGraph, RedNode> RedNodeIt;
 
       /// \brief This iterator goes through each blue node.
       ///
       /// This iterator goes through each blue node.
-      typedef GraphItemIt<BpGraph, BlueNode> BlueIt;
+      typedef GraphItemIt<BpGraph, BlueNode> BlueNodeIt;
 
       /// @}
 
@@ -1228,9 +1228,9 @@ namespace lemon {
           bpgraph.next(bn);
 
           checkConcept<GraphItemIt<_BpGraph, typename _BpGraph::RedNode>,
-            typename _BpGraph::RedIt>();
+            typename _BpGraph::RedNodeIt>();
           checkConcept<GraphItemIt<_BpGraph, typename _BpGraph::BlueNode>,
-            typename _BpGraph::BlueIt>();
+            typename _BpGraph::BlueNodeIt>();
         }
 
         const _BpGraph& bpgraph;
@@ -1715,7 +1715,8 @@ namespace lemon {
     /// This class describes the interface of mappable undirected
     /// bipartite graphs.  It extends \ref MappableGraphComponent with
     /// the standard graph map class for red and blue nodes (\c
-    /// RedMap and BlueMap). This concept is part of the BpGraph concept.
+    /// RedNodeMap and BlueNodeMap). This concept is part of the
+    /// BpGraph concept.
     template <typename BAS = BaseBpGraphComponent>
     class MappableBpGraphComponent : public MappableGraphComponent<BAS>  {
     public:
@@ -1730,33 +1731,33 @@ namespace lemon {
       /// Standard graph map for the red nodes.
       /// It conforms to the ReferenceMap concept.
       template <typename V>
-      class RedMap : public GraphMap<MappableBpGraphComponent, Node, V> {
+      class RedNodeMap : public GraphMap<MappableBpGraphComponent, Node, V> {
         typedef GraphMap<MappableBpGraphComponent, Node, V> Parent;
 
       public:
         /// \brief Construct a new map.
         ///
         /// Construct a new map for the graph.
-        explicit RedMap(const MappableBpGraphComponent& graph)
+        explicit RedNodeMap(const MappableBpGraphComponent& graph)
           : Parent(graph) {}
 
         /// \brief Construct a new map with default value.
         ///
         /// Construct a new map for the graph and initalize the values.
-        RedMap(const MappableBpGraphComponent& graph, const V& value)
+        RedNodeMap(const MappableBpGraphComponent& graph, const V& value)
           : Parent(graph, value) {}
 
       private:
         /// \brief Copy constructor.
         ///
         /// Copy Constructor.
-        RedMap(const RedMap& nm) : Parent(nm) {}
+        RedNodeMap(const RedNodeMap& nm) : Parent(nm) {}
 
         /// \brief Assignment operator.
         ///
         /// Assignment operator.
         template <typename CMap>
-        RedMap& operator=(const CMap&) {
+        RedNodeMap& operator=(const CMap&) {
           checkConcept<ReadMap<Node, V>, CMap>();
           return *this;
         }
@@ -1768,33 +1769,33 @@ namespace lemon {
       /// Standard graph map for the blue nodes.
       /// It conforms to the ReferenceMap concept.
       template <typename V>
-      class BlueMap : public GraphMap<MappableBpGraphComponent, Node, V> {
+      class BlueNodeMap : public GraphMap<MappableBpGraphComponent, Node, V> {
         typedef GraphMap<MappableBpGraphComponent, Node, V> Parent;
 
       public:
         /// \brief Construct a new map.
         ///
         /// Construct a new map for the graph.
-        explicit BlueMap(const MappableBpGraphComponent& graph)
+        explicit BlueNodeMap(const MappableBpGraphComponent& graph)
           : Parent(graph) {}
 
         /// \brief Construct a new map with default value.
         ///
         /// Construct a new map for the graph and initalize the values.
-        BlueMap(const MappableBpGraphComponent& graph, const V& value)
+        BlueNodeMap(const MappableBpGraphComponent& graph, const V& value)
           : Parent(graph, value) {}
 
       private:
         /// \brief Copy constructor.
         ///
         /// Copy Constructor.
-        BlueMap(const BlueMap& nm) : Parent(nm) {}
+        BlueNodeMap(const BlueNodeMap& nm) : Parent(nm) {}
 
         /// \brief Assignment operator.
         ///
         /// Assignment operator.
         template <typename CMap>
-        BlueMap& operator=(const CMap&) {
+        BlueNodeMap& operator=(const CMap&) {
           checkConcept<ReadMap<Node, V>, CMap>();
           return *this;
         }
@@ -1815,31 +1816,37 @@ namespace lemon {
           checkConcept<MappableGraphComponent<Base>, _BpGraph>();
 
           { // int map test
-            typedef typename _BpGraph::template RedMap<int> IntRedMap;
+            typedef typename _BpGraph::template RedNodeMap<int>
+              IntRedNodeMap;
             checkConcept<GraphMap<_BpGraph, typename _BpGraph::RedNode, int>,
-              IntRedMap >();
+              IntRedNodeMap >();
           } { // bool map test
-            typedef typename _BpGraph::template RedMap<bool> BoolRedMap;
+            typedef typename _BpGraph::template RedNodeMap<bool>
+              BoolRedNodeMap;
             checkConcept<GraphMap<_BpGraph, typename _BpGraph::RedNode, bool>,
-              BoolRedMap >();
+              BoolRedNodeMap >();
           } { // Dummy map test
-            typedef typename _BpGraph::template RedMap<Dummy> DummyRedMap;
+            typedef typename _BpGraph::template RedNodeMap<Dummy>
+              DummyRedNodeMap;
             checkConcept<GraphMap<_BpGraph, typename _BpGraph::RedNode, Dummy>,
-              DummyRedMap >();
+              DummyRedNodeMap >();
           }
 
           { // int map test
-            typedef typename _BpGraph::template BlueMap<int> IntBlueMap;
+            typedef typename _BpGraph::template BlueNodeMap<int>
+              IntBlueNodeMap;
             checkConcept<GraphMap<_BpGraph, typename _BpGraph::BlueNode, int>,
-              IntBlueMap >();
+              IntBlueNodeMap >();
           } { // bool map test
-            typedef typename _BpGraph::template BlueMap<bool> BoolBlueMap;
+            typedef typename _BpGraph::template BlueNodeMap<bool>
+              BoolBlueNodeMap;
             checkConcept<GraphMap<_BpGraph, typename _BpGraph::BlueNode, bool>,
-              BoolBlueMap >();
+              BoolBlueNodeMap >();
           } { // Dummy map test
-            typedef typename _BpGraph::template BlueMap<Dummy> DummyBlueMap;
+            typedef typename _BpGraph::template BlueNodeMap<Dummy>
+              DummyBlueNodeMap;
             checkConcept<GraphMap<_BpGraph, typename _BpGraph::BlueNode, Dummy>,
-              DummyBlueMap >();
+              DummyBlueNodeMap >();
           }
         }
 

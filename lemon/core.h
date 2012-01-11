@@ -150,10 +150,11 @@ namespace lemon {
 
   ///Create convenience typedefs for the bipartite graph types and iterators
 
-  ///This \c \#define creates the same convenient type definitions as defined
-  ///by \ref GRAPH_TYPEDEFS(BpGraph) and ten more, namely it creates
-  ///\c RedNode, \c RedIt, \c BoolRedMap, \c IntRedMap, \c DoubleRedMap,
-  ///\c BlueNode, \c BlueIt, \c BoolBlueMap, \c IntBlueMap, \c DoubleBlueMap.
+  ///This \c \#define creates the same convenient type definitions as
+  ///defined by \ref GRAPH_TYPEDEFS(BpGraph) and ten more, namely it
+  ///creates \c RedNode, \c RedNodeIt, \c BoolRedNodeMap,
+  ///\c IntRedNodeMap, \c DoubleRedNodeMap, \c BlueNode, \c BlueNodeIt,
+  ///\c BoolBlueNodeMap, \c IntBlueNodeMap, \c DoubleBlueNodeMap.
   ///
   ///\note If the graph type is a dependent type, ie. the graph type depend
   ///on a template parameter, then use \c TEMPLATE_BPGRAPH_TYPEDEFS()
@@ -161,15 +162,15 @@ namespace lemon {
 #define BPGRAPH_TYPEDEFS(BpGraph)                                       \
   GRAPH_TYPEDEFS(BpGraph);                                              \
   typedef BpGraph::RedNode RedNode;                                     \
-  typedef BpGraph::RedIt RedIt;                                         \
-  typedef BpGraph::RedMap<bool> BoolRedMap;                             \
-  typedef BpGraph::RedMap<int> IntRedMap;                               \
-  typedef BpGraph::RedMap<double> DoubleRedMap;                         \
+  typedef BpGraph::RedNodeIt RedNodeIt;                                 \
+  typedef BpGraph::RedNodeMap<bool> BoolRedNodeMap;                     \
+  typedef BpGraph::RedNodeMap<int> IntRedNodeMap;                       \
+  typedef BpGraph::RedNodeMap<double> DoubleRedNodeMap;                 \
   typedef BpGraph::BlueNode BlueNode;                                   \
-  typedef BpGraph::BlueIt BlueIt;                                       \
-  typedef BpGraph::BlueMap<bool> BoolBlueMap;                           \
-  typedef BpGraph::BlueMap<int> IntBlueMap;                             \
-  typedef BpGraph::BlueMap<double> DoubleBlueMap
+  typedef BpGraph::BlueNodeIt BlueNodeIt;                               \
+  typedef BpGraph::BlueNodeMap<bool> BoolBlueNodeMap;                   \
+  typedef BpGraph::BlueNodeMap<int> IntBlueNodeMap;                     \
+  typedef BpGraph::BlueNodeMap<double> DoubleBlueNodeMap
 
   ///Create convenience typedefs for the bipartite graph types and iterators
 
@@ -177,18 +178,18 @@ namespace lemon {
   ///
   ///\note Use this macro, if the graph type is a dependent type,
   ///ie. the graph type depend on a template parameter.
-#define TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph)                              \
-  TEMPLATE_GRAPH_TYPEDEFS(BpGraph);                                     \
-  typedef typename BpGraph::RedNode RedNode;                            \
-  typedef typename BpGraph::RedIt RedIt;                                \
-  typedef typename BpGraph::template RedMap<bool> BoolRedMap;           \
-  typedef typename BpGraph::template RedMap<int> IntRedMap;             \
-  typedef typename BpGraph::template RedMap<double> DoubleRedMap;       \
-  typedef typename BpGraph::BlueNode BlueNode;                          \
-  typedef typename BpGraph::BlueIt BlueIt;                              \
-  typedef typename BpGraph::template BlueMap<bool> BoolBlueMap;         \
-  typedef typename BpGraph::template BlueMap<int> IntBlueMap;           \
-  typedef typename BpGraph::template BlueMap<double> DoubleBlueMap
+#define TEMPLATE_BPGRAPH_TYPEDEFS(BpGraph)                                  \
+  TEMPLATE_GRAPH_TYPEDEFS(BpGraph);                                         \
+  typedef typename BpGraph::RedNode RedNode;                                \
+  typedef typename BpGraph::RedNodeIt RedNodeIt;                            \
+  typedef typename BpGraph::template RedNodeMap<bool> BoolRedNodeMap;       \
+  typedef typename BpGraph::template RedNodeMap<int> IntRedNodeMap;         \
+  typedef typename BpGraph::template RedNodeMap<double> DoubleRedNodeMap;   \
+  typedef typename BpGraph::BlueNode BlueNode;                              \
+  typedef typename BpGraph::BlueNodeIt BlueNodeIt;                          \
+  typedef typename BpGraph::template BlueNodeMap<bool> BoolBlueNodeMap;     \
+  typedef typename BpGraph::template BlueNodeMap<int> IntBlueNodeMap;       \
+  typedef typename BpGraph::template BlueNodeMap<double> DoubleBlueNodeMap
 
   /// \brief Function to count the items in a graph.
   ///
@@ -565,10 +566,10 @@ namespace lemon {
                        BlueNodeRefMap& blueNodeRefMap,
                        EdgeRefMap& edgeRefMap) {
         to.clear();
-        for (typename From::RedIt it(from); it != INVALID; ++it) {
+        for (typename From::RedNodeIt it(from); it != INVALID; ++it) {
           redNodeRefMap[it] = to.addRedNode();
         }
-        for (typename From::BlueIt it(from); it != INVALID; ++it) {
+        for (typename From::BlueNodeIt it(from); it != INVALID; ++it) {
           blueNodeRefMap[it] = to.addBlueNode();
         }
         for (typename From::EdgeIt it(from); it != INVALID; ++it) {
@@ -1164,10 +1165,10 @@ namespace lemon {
   ///  // Create cross references (inverse) for the edges
   ///  NewBpGraph::EdgeMap<OrigBpGraph::Edge> ecr(new_graph);
   ///  cg.edgeCrossRef(ecr);
-  ///  // Copy a red map
-  ///  OrigBpGraph::RedMap<double> ormap(orig_graph);
-  ///  NewBpGraph::RedMap<double> nrmap(new_graph);
-  ///  cg.edgeMap(ormap, nrmap);
+  ///  // Copy a red node map
+  ///  OrigBpGraph::RedNodeMap<double> ormap(orig_graph);
+  ///  NewBpGraph::RedNodeMap<double> nrmap(new_graph);
+  ///  cg.redNodeMap(ormap, nrmap);
   ///  // Copy a node
   ///  OrigBpGraph::Node on;
   ///  NewBpGraph::Node nn;
@@ -1194,8 +1195,8 @@ namespace lemon {
     typedef typename To::Arc TArc;
     typedef typename To::Edge TEdge;
 
-    typedef typename From::template RedMap<TRedNode> RedNodeRefMap;
-    typedef typename From::template BlueMap<TBlueNode> BlueNodeRefMap;
+    typedef typename From::template RedNodeMap<TRedNode> RedNodeRefMap;
+    typedef typename From::template BlueNodeMap<TBlueNode> BlueNodeRefMap;
     typedef typename From::template EdgeMap<TEdge> EdgeRefMap;
 
     struct NodeRefMap {
@@ -1352,7 +1353,7 @@ namespace lemon {
     /// the original map \c map should be the Node type of the source
     /// graph.
     template <typename FromMap, typename ToMap>
-    BpGraphCopy& redMap(const FromMap& map, ToMap& tmap) {
+    BpGraphCopy& redNodeMap(const FromMap& map, ToMap& tmap) {
       _red_maps.push_back(new _core_bits::MapCopy<From, RedNode,
                           RedNodeRefMap, FromMap, ToMap>(map, tmap));
       return *this;
@@ -1403,7 +1404,7 @@ namespace lemon {
     /// the original map \c map should be the Node type of the source
     /// graph.
     template <typename FromMap, typename ToMap>
-    BpGraphCopy& blueMap(const FromMap& map, ToMap& tmap) {
+    BpGraphCopy& blueNodeMap(const FromMap& map, ToMap& tmap) {
       _blue_maps.push_back(new _core_bits::MapCopy<From, BlueNode,
                            BlueNodeRefMap, FromMap, ToMap>(map, tmap));
       return *this;

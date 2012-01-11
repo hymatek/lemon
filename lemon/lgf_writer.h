@@ -1629,7 +1629,7 @@ namespace lemon {
   /// reads the red and blue nodes from separate sections, and these
   /// sections can contain different set of maps.
   ///
-  /// The red and blue maps are written to the corresponding
+  /// The red and blue node maps are written to the corresponding
   /// sections. The node maps are written to both of these sections
   /// with the same map name.
   template <typename BGR>
@@ -1805,11 +1805,11 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Red map writing rule
+    /// \brief Red node map writing rule
     ///
-    /// Add a red map writing rule to the writer.
+    /// Add a red node map writing rule to the writer.
     template <typename Map>
-    BpGraphWriter& redMap(const std::string& caption, const Map& map) {
+    BpGraphWriter& redNodeMap(const std::string& caption, const Map& map) {
       checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
       _writer_bits::MapStorageBase<Node>* storage =
         new _writer_bits::MapStorage<Node, Map>(map);
@@ -1817,13 +1817,13 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Red map writing rule
+    /// \brief Red node map writing rule
     ///
-    /// Add a red map writing rule with specialized converter to the
+    /// Add a red node map writing rule with specialized converter to the
     /// writer.
     template <typename Map, typename Converter>
-    BpGraphWriter& redMap(const std::string& caption, const Map& map,
-                          const Converter& converter = Converter()) {
+    BpGraphWriter& redNodeMap(const std::string& caption, const Map& map,
+                              const Converter& converter = Converter()) {
       checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
       _writer_bits::MapStorageBase<Node>* storage =
         new _writer_bits::MapStorage<Node, Map, Converter>(map, converter);
@@ -1831,11 +1831,11 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Blue map writing rule
+    /// \brief Blue node map writing rule
     ///
-    /// Add a blue map writing rule to the writer.
+    /// Add a blue node map writing rule to the writer.
     template <typename Map>
-    BpGraphWriter& blueMap(const std::string& caption, const Map& map) {
+    BpGraphWriter& blueNodeMap(const std::string& caption, const Map& map) {
       checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
       _writer_bits::MapStorageBase<Node>* storage =
         new _writer_bits::MapStorage<Node, Map>(map);
@@ -1843,13 +1843,13 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Blue map writing rule
+    /// \brief Blue node map writing rule
     ///
-    /// Add a blue map writing rule with specialized converter to the
+    /// Add a blue node map writing rule with specialized converter to the
     /// writer.
     template <typename Map, typename Converter>
-    BpGraphWriter& blueMap(const std::string& caption, const Map& map,
-                           const Converter& converter = Converter()) {
+    BpGraphWriter& blueNodeMap(const std::string& caption, const Map& map,
+                               const Converter& converter = Converter()) {
       checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
       _writer_bits::MapStorageBase<Node>* storage =
         new _writer_bits::MapStorage<Node, Map, Converter>(map, converter);
@@ -2058,7 +2058,7 @@ namespace lemon {
       *_os << std::endl;
 
       std::vector<Node> nodes;
-      for (RedIt n(_graph); n != INVALID; ++n) {
+      for (RedNodeIt n(_graph); n != INVALID; ++n) {
         nodes.push_back(n);
       }
 
@@ -2118,7 +2118,7 @@ namespace lemon {
       *_os << std::endl;
 
       std::vector<Node> nodes;
-      for (BlueIt n(_graph); n != INVALID; ++n) {
+      for (BlueNodeIt n(_graph); n != INVALID; ++n) {
         nodes.push_back(n);
       }
 

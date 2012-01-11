@@ -48,9 +48,9 @@ namespace lemon {
     /// The bipartite graphs also fulfill the concept of \ref Graph
     /// "undirected graphs". Bipartite graphs provide a bipartition of
     /// the node set, namely a red and blue set of the nodes. The
-    /// nodes can be iterated with the RedIt and BlueIt in the two
-    /// node sets. With RedMap and BlueMap values can be assigned to
-    /// the nodes in the two sets.
+    /// nodes can be iterated with the RedNodeIt and BlueNodeIt in the
+    /// two node sets. With RedNodeMap and BlueNodeMap values can be
+    /// assigned to the nodes in the two sets.
     ///
     /// The edges of the graph cannot connect two nodes of the same
     /// set. The edges inherent orientation is from the red nodes to
@@ -187,38 +187,38 @@ namespace lemon {
       /// int count=0;
       /// for (BpGraph::RedNodeIt n(g); n!=INVALID; ++n) ++count;
       ///\endcode
-      class RedIt : public RedNode {
+      class RedNodeIt : public RedNode {
       public:
         /// Default constructor
 
         /// Default constructor.
         /// \warning It sets the iterator to an undefined value.
-        RedIt() { }
+        RedNodeIt() { }
         /// Copy constructor.
 
         /// Copy constructor.
         ///
-        RedIt(const RedIt& n) : RedNode(n) { }
+        RedNodeIt(const RedNodeIt& n) : RedNode(n) { }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
         /// \sa Invalid for more details.
-        RedIt(Invalid) { }
+        RedNodeIt(Invalid) { }
         /// Sets the iterator to the first red node.
 
         /// Sets the iterator to the first red node of the given
         /// digraph.
-        explicit RedIt(const BpGraph&) { }
+        explicit RedNodeIt(const BpGraph&) { }
         /// Sets the iterator to the given red node.
 
         /// Sets the iterator to the given red node of the given
         /// digraph.
-        RedIt(const BpGraph&, const RedNode&) { }
+        RedNodeIt(const BpGraph&, const RedNode&) { }
         /// Next node.
 
         /// Assign the iterator to the next red node.
         ///
-        RedIt& operator++() { return *this; }
+        RedNodeIt& operator++() { return *this; }
       };
 
       /// Iterator class for the blue nodes.
@@ -230,38 +230,38 @@ namespace lemon {
       /// int count=0;
       /// for (BpGraph::BlueNodeIt n(g); n!=INVALID; ++n) ++count;
       ///\endcode
-      class BlueIt : public BlueNode {
+      class BlueNodeIt : public BlueNode {
       public:
         /// Default constructor
 
         /// Default constructor.
         /// \warning It sets the iterator to an undefined value.
-        BlueIt() { }
+        BlueNodeIt() { }
         /// Copy constructor.
 
         /// Copy constructor.
         ///
-        BlueIt(const BlueIt& n) : BlueNode(n) { }
+        BlueNodeIt(const BlueNodeIt& n) : BlueNode(n) { }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
         /// \sa Invalid for more details.
-        BlueIt(Invalid) { }
+        BlueNodeIt(Invalid) { }
         /// Sets the iterator to the first blue node.
 
         /// Sets the iterator to the first blue node of the given
         /// digraph.
-        explicit BlueIt(const BpGraph&) { }
+        explicit BlueNodeIt(const BpGraph&) { }
         /// Sets the iterator to the given blue node.
 
         /// Sets the iterator to the given blue node of the given
         /// digraph.
-        BlueIt(const BpGraph&, const BlueNode&) { }
+        BlueNodeIt(const BpGraph&, const BlueNode&) { }
         /// Next node.
 
         /// Assign the iterator to the next blue node.
         ///
-        BlueIt& operator++() { return *this; }
+        BlueNodeIt& operator++() { return *this; }
       };
 
       /// Iterator class for the nodes.
@@ -663,22 +663,22 @@ namespace lemon {
       /// Standard graph map type for the red nodes.
       /// It conforms to the ReferenceMap concept.
       template<class T>
-      class RedMap : public ReferenceMap<Node, T, T&, const T&>
+      class RedNodeMap : public ReferenceMap<Node, T, T&, const T&>
       {
       public:
 
         /// Constructor
-        explicit RedMap(const BpGraph&) { }
+        explicit RedNodeMap(const BpGraph&) { }
         /// Constructor with given initial value
-        RedMap(const BpGraph&, T) { }
+        RedNodeMap(const BpGraph&, T) { }
 
       private:
         ///Copy constructor
-        RedMap(const RedMap& nm) :
+        RedNodeMap(const RedNodeMap& nm) :
           ReferenceMap<Node, T, T&, const T&>(nm) { }
         ///Assignment operator
         template <typename CMap>
-        RedMap& operator=(const CMap&) {
+        RedNodeMap& operator=(const CMap&) {
           checkConcept<ReadMap<Node, T>, CMap>();
           return *this;
         }
@@ -689,22 +689,22 @@ namespace lemon {
       /// Standard graph map type for the blue nodes.
       /// It conforms to the ReferenceMap concept.
       template<class T>
-      class BlueMap : public ReferenceMap<Node, T, T&, const T&>
+      class BlueNodeMap : public ReferenceMap<Node, T, T&, const T&>
       {
       public:
 
         /// Constructor
-        explicit BlueMap(const BpGraph&) { }
+        explicit BlueNodeMap(const BpGraph&) { }
         /// Constructor with given initial value
-        BlueMap(const BpGraph&, T) { }
+        BlueNodeMap(const BpGraph&, T) { }
 
       private:
         ///Copy constructor
-        BlueMap(const BlueMap& nm) :
+        BlueNodeMap(const BlueNodeMap& nm) :
           ReferenceMap<Node, T, T&, const T&>(nm) { }
         ///Assignment operator
         template <typename CMap>
-        BlueMap& operator=(const CMap&) {
+        BlueNodeMap& operator=(const CMap&) {
           checkConcept<ReadMap<Node, T>, CMap>();
           return *this;
         }
