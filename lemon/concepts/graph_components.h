@@ -318,7 +318,7 @@ namespace lemon {
       /// \brief Class to represent red nodes.
       ///
       /// This class represents the red nodes of the graph. The red
-      /// nodes can be used also as normal nodes.
+      /// nodes can also be used as normal nodes.
       class RedNode : public Node {
         typedef Node Parent;
 
@@ -347,7 +347,7 @@ namespace lemon {
       /// \brief Class to represent blue nodes.
       ///
       /// This class represents the blue nodes of the graph. The blue
-      /// nodes can be used also as normal nodes.
+      /// nodes can also be used as normal nodes.
       class BlueNode : public Node {
         typedef Node Parent;
 
@@ -402,28 +402,28 @@ namespace lemon {
 
       /// \brief Converts the node to red node object.
       ///
-      /// This class is converts unsafely the node to red node
+      /// This function converts unsafely the node to red node
       /// object. It should be called only if the node is from the red
       /// partition or INVALID.
       RedNode asRedNodeUnsafe(const Node&) const { return RedNode(); }
 
       /// \brief Converts the node to blue node object.
       ///
-      /// This class is converts unsafely the node to blue node
+      /// This function converts unsafely the node to blue node
       /// object. It should be called only if the node is from the red
       /// partition or INVALID.
       BlueNode asBlueNodeUnsafe(const Node&) const { return BlueNode(); }
 
       /// \brief Converts the node to red node object.
       ///
-      /// This class is converts safely the node to red node
+      /// This function converts safely the node to red node
       /// object. If the node is not from the red partition, then it
       /// returns INVALID.
       RedNode asRedNode(const Node&) const { return RedNode(); }
 
       /// \brief Converts the node to blue node object.
       ///
-      /// This class is converts unsafely the node to blue node
+      /// This function converts unsafely the node to blue node
       /// object. If the node is not from the blue partition, then it
       /// returns INVALID.
       BlueNode asBlueNode(const Node&) const { return BlueNode(); }
