@@ -402,17 +402,24 @@ namespace lemon {
     ///
     ///\param digraph the digraph the algorithm will run on.
     ///\param capacity the capacity map used by the algorithm.
-    ///When no capacity map given, a constant 1 capacity map will
-    ///be allocated.
-#ifdef DOXYGEN
     MaxCardinalitySearch(const Digraph& digraph,
-			 const CapacityMap& capacity=0 ) :
-#else
-    MaxCardinalitySearch(const Digraph& digraph,
-			 const CapacityMap& capacity=*static_cast<const CapacityMap*>(0) ) :
-#endif
+			 const CapacityMap& capacity) :
       _graph(&digraph),
       _capacity(&capacity), local_capacity(false),
+      _cardinality(0), local_cardinality(false),
+      _processed(0), local_processed(false),
+      _heap_cross_ref(0), local_heap_cross_ref(false),
+      _heap(0), local_heap(false)
+    { }
+
+    /// \brief Constructor.
+    ///
+    ///\param digraph the digraph the algorithm will run on.
+    ///
+    ///A constant 1 capacity map will be allocated.
+    MaxCardinalitySearch(const Digraph& digraph) :
+      _graph(&digraph),
+      _capacity(0), local_capacity(false),
       _cardinality(0), local_cardinality(false),
       _processed(0), local_processed(false),
       _heap_cross_ref(0), local_heap_cross_ref(false),
