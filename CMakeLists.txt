@@ -66,17 +66,17 @@ ELSE()
     #        (performance warning)
     # C4996: 'function': was declared deprecated
   ELSE()
-    SET(CXX_WARNING "-Wall -W")
+    SET(CXX_WARNING "-Wall")
   ENDIF()
 ENDIF()
 SET(LEMON_CXX_WARNING_FLAGS ${CXX_WARNING} CACHE STRING "LEMON warning flags.")
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LEMON_CXX_WARNING_FLAGS}")
 
-SET( CMAKE_CXX_FLAGS_MAINTAINER "-Werror -ggdb" CACHE STRING
+SET( CMAKE_CXX_FLAGS_MAINTAINER "-Werror -ggdb -O0" CACHE STRING
     "Flags used by the C++ compiler during maintainer builds."
     FORCE )
-SET( CMAKE_C_FLAGS_MAINTAINER "-Werror" CACHE STRING
+SET( CMAKE_C_FLAGS_MAINTAINER "-Werror -O0" CACHE STRING
     "Flags used by the C compiler during maintainer builds."
     FORCE )
 SET( CMAKE_EXE_LINKER_FLAGS_MAINTAINER

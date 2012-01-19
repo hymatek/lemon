@@ -159,6 +159,7 @@ namespace lemon {
           ignore_unused_variable_warning(ed);
         }
         _Path& p;
+        PathDumperConstraints() {}
       };
 
       template <typename _Digraph, typename _Path>
@@ -184,6 +185,7 @@ namespace lemon {
           ignore_unused_variable_warning(ed);
         }
         _Path& p;
+        PathDumperConstraints() {}
       };
 
     }

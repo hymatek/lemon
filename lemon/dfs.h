@@ -1191,6 +1191,7 @@ namespace lemon {
         visitor.backtrack(arc);
       }
       _Visitor& visitor;
+      Constraints() {}
     };
   };
 #endif
