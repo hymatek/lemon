@@ -300,7 +300,12 @@ namespace lemon {
       }
     }
 
-  public :
+  protected:
+    //This is here to avoid a gcc-3.3 compilation error.
+    //It should never be called.
+    NagamochiIbaraki() {} 
+    
+  public:
 
     typedef NagamochiIbaraki Create;
 
