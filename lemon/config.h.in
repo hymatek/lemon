@@ -24,3 +24,9 @@
 
 /* Define to 1 if you have CBC */
 #undef LEMON_HAVE_CBC
+
+/* Define to 1 if you have pthread */
+#undef LEMON_USE_PTHREAD
+
+/* Define to 1 if you have win32 threads */
+#undef LEMON_USE_WIN32_THREADS

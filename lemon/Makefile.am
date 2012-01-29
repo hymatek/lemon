@@ -138,6 +138,7 @@ bits_HEADERS += \
 	lemon/bits/enable_if.h \
 	lemon/bits/graph_adaptor_extender.h \
 	lemon/bits/graph_extender.h \
+	lemon/bits/lock.h \
 	lemon/bits/map_extender.h \
 	lemon/bits/path_dump.h \
 	lemon/bits/solver_bits.h \

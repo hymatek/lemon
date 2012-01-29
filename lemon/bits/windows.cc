@@ -130,5 +130,35 @@ namespace lemon {
       return getpid() + tv.tv_sec + tv.tv_usec;
 #endif
     }
+
+    WinLock::WinLock() {
+#ifdef WIN32
+      CRITICAL_SECTION *lock = new CRITICAL_SECTION;
+      InitializeCriticalSection(lock);
+      _repr = lock;
+#endif
+    }
+    
+    WinLock::~WinLock() {
+#ifdef WIN32
+      CRITICAL_SECTION *lock = static_cast<CRITICAL_SECTION*>(_repr);
+      DeleteCriticalSection(lock);
+      delete lock;
+#endif
+    }
+
+    void WinLock::lock() {
+#ifdef WIN32
+      CRITICAL_SECTION *lock = static_cast<CRITICAL_SECTION*>(_repr);
+      EnterCriticalSection(lock);
+#endif
+    }
+
+    void WinLock::unlock() {
+#ifdef WIN32
+      CRITICAL_SECTION *lock = static_cast<CRITICAL_SECTION*>(_repr);
+      LeaveCriticalSection(lock);
+#endif
+    }
   }
 }

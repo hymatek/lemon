@@ -28,6 +28,16 @@ namespace lemon {
                          double &cutime, double &cstime);
     std::string getWinFormattedDate();
     int getWinRndSeed();
+
+    class WinLock {
+    public:
+      WinLock();
+      ~WinLock();
+      void lock();
+      void unlock();
+    private:
+      void *_repr;
+    };
   }
 }
 

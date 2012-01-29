@@ -6,3 +6,5 @@
 #cmakedefine LEMON_HAVE_CPLEX 1
 #cmakedefine LEMON_HAVE_CLP 1
 #cmakedefine LEMON_HAVE_CBC 1
+#cmakedefine LEMON_USE_PTHREAD 1
+#cmakedefine LEMON_USE_WIN32_THREADS 1
