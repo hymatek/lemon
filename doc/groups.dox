@@ -407,9 +407,14 @@ LEMON contains several algorithms for this problem.
    strongly polynomial \ref klein67primal, \ref goldberg89cyclecanceling.
 
 In general, \ref NetworkSimplex and \ref CostScaling are the most efficient
-implementations, but the other two algorithms could be faster in special cases.
+implementations, but the other algorithms could be faster in special cases.
 For example, if the total supply and/or capacities are rather small,
 \ref CapacityScaling is usually the fastest algorithm (without effective scaling).
+
+These classes are intended to be used with integer-valued input data
+(capacities, supply values, and costs), except for \ref CapacityScaling,
+which is capable of handling real-valued arc costs (other numerical
+data are required to be integer).
 */
 
 /**
@@ -448,7 +453,7 @@ see the \ref max_flow "maximum flow problem".
 \brief Algorithms for finding minimum mean cycles.
 
 This group contains the algorithms for finding minimum mean cycles
-\ref clrs01algorithms, \ref amo93networkflows.
+\ref amo93networkflows, \ref karp78characterization.
 
 The \e minimum \e mean \e cycle \e problem is to find a directed cycle
 of minimum mean length (cost) in a digraph.
@@ -464,12 +469,11 @@ arc lengths uniformly by \f$\epsilon\f$ results in a conservative length
 function.
 
 LEMON contains three algorithms for solving the minimum mean cycle problem:
-- \ref KarpMmc Karp's original algorithm \ref amo93networkflows,
-  \ref dasdan98minmeancycle.
+- \ref KarpMmc Karp's original algorithm \ref karp78characterization.
 - \ref HartmannOrlinMmc Hartmann-Orlin's algorithm, which is an improved
-  version of Karp's algorithm \ref dasdan98minmeancycle.
+  version of Karp's algorithm \ref hartmann93finding.
 - \ref HowardMmc Howard's policy iteration algorithm
-  \ref dasdan98minmeancycle.
+  \ref dasdan98minmeancycle, \ref dasdan04experimental.
 
 In practice, the \ref HowardMmc "Howard" algorithm turned out to be by far the
 most efficient one, though the best known theoretical bound on its running
