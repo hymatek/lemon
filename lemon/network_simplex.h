@@ -122,14 +122,17 @@ namespace lemon {
     /// Enum type containing constants for selecting the pivot rule for
     /// the \ref run() function.
     ///
-    /// \ref NetworkSimplex provides five different pivot rule
-    /// implementations that significantly affect the running time
+    /// \ref NetworkSimplex provides five different implementations for
+    /// the pivot strategy that significantly affects the running time
     /// of the algorithm.
-    /// By default, \ref BLOCK_SEARCH "Block Search" is used, which
-    /// turend out to be the most efficient and the most robust on various
-    /// test inputs.
-    /// However, another pivot rule can be selected using the \ref run()
-    /// function with the proper parameter.
+    /// According to experimental tests conducted on various problem
+    /// instances, \ref BLOCK_SEARCH "Block Search" and
+    /// \ref ALTERING_LIST "Altering Candidate List" rules turned out
+    /// to be the most efficient.
+    /// Since \ref BLOCK_SEARCH "Block Search" is a simpler strategy that
+    /// seemed to be slightly more robust, it is used by default.
+    /// However, another pivot rule can easily be selected using the
+    /// \ref run() function with the proper parameter.
     enum PivotRule {
 
       /// The \e First \e Eligible pivot rule.
@@ -155,7 +158,7 @@ namespace lemon {
 
       /// The \e Altering \e Candidate \e List pivot rule.
       /// It is a modified version of the Candidate List method.
-      /// It keeps only the several best eligible arcs from the former
+      /// It keeps only a few of the best eligible arcs from the former
       /// candidate list and extends this list in every iteration.
       ALTERING_LIST
     };
@@ -538,7 +541,7 @@ namespace lemon {
       public:
         SortFunc(const CostVector &map) : _map(map) {}
         bool operator()(int left, int right) {
-          return _map[left] > _map[right];
+          return _map[left] < _map[right];
         }
       };
 
@@ -556,7 +559,7 @@ namespace lemon {
         // The main parameters of the pivot rule
         const double BLOCK_SIZE_FACTOR = 1.0;
         const int MIN_BLOCK_SIZE = 10;
-        const double HEAD_LENGTH_FACTOR = 0.1;
+        const double HEAD_LENGTH_FACTOR = 0.01;
         const int MIN_HEAD_LENGTH = 3;
 
         _block_size = std::max( int(BLOCK_SIZE_FACTOR *
@@ -600,9 +603,9 @@ namespace lemon {
           }
         }
         for (e = 0; e != _next_arc; ++e) {
-          _cand_cost[e] = _state[e] *
-            (_cost[e] + _pi[_source[e]] - _pi[_target[e]]);
-          if (_cand_cost[e] < 0) {
+          c = _state[e] * (_cost[e] + _pi[_source[e]] - _pi[_target[e]]);
+          if (c < 0) {
+            _cand_cost[e] = c;
             _candidates[_curr_length++] = e;
           }
           if (--cnt == 0) {
@@ -615,16 +618,16 @@ namespace lemon {
 
       search_end:
 
-        // Make heap of the candidate list (approximating a partial sort)
-        make_heap( _candidates.begin(), _candidates.begin() + _curr_length,
-                   _sort_func );
+        // Perform partial sort operation on the candidate list
+        int new_length = std::min(_head_length + 1, _curr_length);
+        std::partial_sort(_candidates.begin(), _candidates.begin() + new_length,
+                          _candidates.begin() + _curr_length, _sort_func);
 
-        // Pop the first element of the heap
+        // Select the entering arc and remove it from the list
         _in_arc = _candidates[0];
         _next_arc = e;
-        pop_heap( _candidates.begin(), _candidates.begin() + _curr_length,
-                  _sort_func );
-        _curr_length = std::min(_head_length, _curr_length - 1);
+        _candidates[0] = _candidates[new_length - 1];
+        _curr_length = new_length - 1;
         return true;
       }
 
