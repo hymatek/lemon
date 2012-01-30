@@ -407,7 +407,12 @@ LEMON contains several algorithms for this problem.
    strongly polynomial \ref klein67primal, \ref goldberg89cyclecanceling.
 
 In general, \ref NetworkSimplex and \ref CostScaling are the most efficient
-implementations, but the other algorithms could be faster in special cases.
+implementations.
+\ref NetworkSimplex is usually the fastest on relatively small graphs (up to
+several thousands of nodes) and on dense graphs, while \ref CostScaling is
+typically more efficient on large graphs (e.g. hundreds of thousands of
+nodes or above), especially if they are sparse.
+However, other algorithms could be faster in special cases.
 For example, if the total supply and/or capacities are rather small,
 \ref CapacityScaling is usually the fastest algorithm (without effective scaling).
 

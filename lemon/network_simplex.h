@@ -48,7 +48,8 @@ namespace lemon {
   /// flow problem.
   ///
   /// In general, \ref NetworkSimplex and \ref CostScaling are the fastest
-  /// implementations available in LEMON for this problem.
+  /// implementations available in LEMON for solving this problem.
+  /// (For more information, see \ref min_cost_flow_algs "the module page".)
   /// Furthermore, this class supports both directions of the supply/demand
   /// inequality constraints. For more information, see \ref SupplyType.
   ///
@@ -1006,7 +1007,8 @@ namespace lemon {
       return _flow[_arc_id[a]];
     }
 
-    /// \brief Return the flow map (the primal solution).
+    /// \brief Copy the flow values (the primal solution) into the
+    /// given map.
     ///
     /// This function copies the flow value on each arc into the given
     /// map. The \c Value type of the algorithm must be convertible to
@@ -1030,7 +1032,8 @@ namespace lemon {
       return _pi[_node_id[n]];
     }
 
-    /// \brief Return the potential map (the dual solution).
+    /// \brief Copy the potential values (the dual solution) into the
+    /// given map.
     ///
     /// This function copies the potential (dual value) of each node
     /// into the given map.
