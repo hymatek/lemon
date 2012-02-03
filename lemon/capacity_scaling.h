@@ -87,8 +87,8 @@ namespace lemon {
   /// consider to use the named template parameters instead.
   ///
   /// \warning Both \c V and \c C must be signed number types.
-  /// \warning All input data (capacities, supply values, and costs) must
-  /// be integer.
+  /// \warning Capacity bounds and supply values must be integer, but
+  /// arc costs can be arbitrary real numbers.
   /// \warning This algorithm does not support negative costs for
   /// arcs having infinite upper bound.
 #ifdef DOXYGEN
