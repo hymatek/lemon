@@ -2953,7 +2953,10 @@ namespace lemon {
             throw FormatError(msg.str());
           }
 
-          e = _graph.addEdge(source, target);
+          // It is checked that source is red and
+          // target is blue, so this should be safe:
+          e = _graph.addEdge(_graph.asRedNodeUnsafe(source),
+                             _graph.asBlueNodeUnsafe(target));
           if (label_index != -1)
             _edge_index.insert(std::make_pair(tokens[label_index], e));
         } else {
