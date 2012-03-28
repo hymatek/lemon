@@ -117,16 +117,17 @@ void solve_min(ArgParser &ap, std::istream &is, std::ostream &,
   }
   if (report) std::cerr << "Read the file: " << ti << '\n';
 
+  typedef NetworkSimplex<Digraph, Value> MCF;
   ti.restart();
-  NetworkSimplex<Digraph, Value> ns(g);
+  MCF ns(g);
   ns.lowerMap(lower).upperMap(cap).costMap(cost).supplyMap(sup);
   if (sum_sup > 0) ns.supplyType(ns.LEQ);
   if (report) std::cerr << "Setup NetworkSimplex class: " << ti << '\n';
   ti.restart();
-  bool res = ns.run();
+  typename MCF::ProblemType res = ns.run();
   if (report) {
     std::cerr << "Run NetworkSimplex: " << ti << "\n\n";
-    std::cerr << "Feasible flow: " << (res ? "found" : "not found") << '\n';
+    std::cerr << "Feasible flow: " << (res == MCF::OPTIMAL ? "found" : "not found") << '\n';
     if (res) std::cerr << "Min flow cost: " << ns.totalCost() << '\n';
   }
 }
@@ -186,9 +187,6 @@ void solve(ArgParser &ap, std::istream &is, std::ostream &os,
 }
 
 int main(int argc, const char *argv[]) {
-  typedef SmartDigraph Digraph;
-
-  typedef Digraph::Arc Arc;
 
   std::string inputName;
   std::string outputName;
