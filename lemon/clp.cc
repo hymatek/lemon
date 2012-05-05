@@ -424,8 +424,6 @@ namespace lemon {
   void ClpLp::_clear() {
     delete _prob;
     _prob = new ClpSimplex();
-    rows.clear();
-    cols.clear();
     _col_names_ref.clear();
     _clear_temporals();
   }

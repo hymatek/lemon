@@ -437,8 +437,6 @@ namespace lemon {
     CPXfreeprob(cplexEnv(),&_prob);
     int status;
     _prob = CPXcreateprob(cplexEnv(), &status, "Cplex problem");
-    rows.clear();
-    cols.clear();
   }
 
   void CplexBase::_messageLevel(MessageLevel level) {

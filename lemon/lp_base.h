@@ -1542,7 +1542,7 @@ namespace lemon {
     void min() { _setSense(MIN); }
 
     ///Clears the problem
-    void clear() { _clear(); }
+    void clear() { _clear(); rows.clear(); cols.clear(); }
 
     /// Sets the message level of the solver
     void messageLevel(MessageLevel level) { _messageLevel(level); }

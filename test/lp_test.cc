@@ -41,10 +41,37 @@
 
 using namespace lemon;
 
+int countCols(LpBase & lp) {
+  int count=0;
+  for (LpBase::ColIt c(lp); c!=INVALID; ++c) ++count;
+  return count;
+}
+
+int countRows(LpBase & lp) {
+  int count=0;
+  for (LpBase::RowIt r(lp); r!=INVALID; ++r) ++count;
+  return count;
+}
+
+
 void lpTest(LpSolver& lp)
 {
 
   typedef LpSolver LP;
+
+  // Test LpBase::clear()
+  check(countRows(lp)==0, "Wrong number of rows");
+  check(countCols(lp)==0, "Wrong number of cols");
+  lp.addCol(); lp.addRow(); lp.addRow();
+  check(countRows(lp)==2, "Wrong number of rows");
+  check(countCols(lp)==1, "Wrong number of cols");
+  lp.clear();
+  check(countRows(lp)==0, "Wrong number of rows");
+  check(countCols(lp)==0, "Wrong number of cols");
+  lp.addCol(); lp.addCol(); lp.addCol(); lp.addRow();
+  check(countRows(lp)==1, "Wrong number of rows");
+  check(countCols(lp)==3, "Wrong number of cols");
+  lp.clear();
 
   std::vector<LP::Col> x(10);
   //  for(int i=0;i<10;i++) x.push_back(lp.addCol());

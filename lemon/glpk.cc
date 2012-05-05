@@ -520,8 +520,6 @@ namespace lemon {
 
   void GlpkBase::_clear() {
     glp_erase_prob(lp);
-    rows.clear();
-    cols.clear();
   }
 
   void GlpkBase::freeEnv() {

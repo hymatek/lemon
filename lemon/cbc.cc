@@ -423,8 +423,6 @@ namespace lemon {
     }
 
     _prob = new CoinModel();
-    rows.clear();
-    cols.clear();
   }
 
   void CbcMip::_messageLevel(MessageLevel level) {
