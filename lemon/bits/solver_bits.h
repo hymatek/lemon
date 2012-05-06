@@ -44,6 +44,7 @@ namespace lemon {
 
       void clear() {
         first_item = -1;
+        last_item = -1;
         first_free_item = -1;
         items.clear();
         cross.clear();
