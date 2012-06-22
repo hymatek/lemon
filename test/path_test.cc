@@ -38,7 +38,36 @@ void check_concepts() {
   checkConcept<concepts::Path<ListDigraph>, ListPath<ListDigraph> >();
 }
 
+// Check if proper copy consructor is called (use valgrind for testing)
+template<class _Path>
+void checkCopy()
+{
+  ListDigraph g;
+  ListDigraph::Arc a  = g.addArc(g.addNode(), g.addNode());
+  
+  _Path p,q;
+  p.addBack(a);
+  q=p;
+  _Path r(p);
+  StaticPath<ListDigraph> s(r);
+}
+  
 int main() {
   check_concepts();
+
+  checkCopy<Path<ListDigraph> >();
+  checkCopy<SimplePath<ListDigraph> >();
+  checkCopy<ListPath<ListDigraph> >();
+
+  ListDigraph g;
+  ListDigraph::Arc a  = g.addArc(g.addNode(), g.addNode());
+  
+  Path<ListDigraph> p;
+  StaticPath<ListDigraph> q,r;
+  p.addBack(a);
+  q=p;
+  r=q;
+  StaticPath<ListDigraph> s(q);
+
   return 0;
 }
