@@ -582,6 +582,15 @@ namespace lemon {
     }
   }
 
+  void GlpkBase::_write(std::string file, std::string format) const
+  {
+    if(format == "MPS")
+      glp_write_mps(lp, GLP_MPS_FILE, 0, file.c_str());
+    else if(format == "LP")
+      glp_write_lp(lp, 0, file.c_str());
+    else throw UnsupportedFormatError(format);
+  }
+
   GlpkBase::FreeEnvHelper GlpkBase::freeEnvHelper;
 
   // GlpkLp members
@@ -997,5 +1006,7 @@ namespace lemon {
   GlpkMip* GlpkMip::cloneSolver() const {return new GlpkMip(*this); }
 
   const char* GlpkMip::_solverName() const { return "GlpkMip"; }
+
+
 
 } //END OF NAMESPACE LEMON

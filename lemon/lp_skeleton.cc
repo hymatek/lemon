@@ -91,6 +91,8 @@ namespace lemon {
 
   void SkeletonSolverBase::_messageLevel(MessageLevel) {}
 
+  void SkeletonSolverBase::_write(std::string, std::string) const {}
+
   LpSkeleton::SolveExitStatus LpSkeleton::_solve() { return SOLVED; }
 
   LpSkeleton::Value LpSkeleton::_getPrimal(int) const { return 0; }
