@@ -108,7 +108,7 @@ You find a list of the most useful options below.
 
 -DGLPK_ROOT_DIR=DIRECTORY
 -DCOIN_ROOT_DIR=DIRECTORY
--DCPLEX_ROOT_DIR=DIRECTORY
+-DILOG_ROOT_DIR=DIRECTORY
 
   Install root directory prefixes of optional third party libraries.
 
