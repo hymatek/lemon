@@ -494,6 +494,8 @@ namespace lemon {
           _GraphItemIt it2;
           _GraphItemIt it3 = it1;
           _GraphItemIt it4 = INVALID;
+          ignore_unused_variable_warning(it3);
+          ignore_unused_variable_warning(it4);
 
           it2 = ++it1;
           ++it2 = it1;
@@ -583,6 +585,8 @@ namespace lemon {
           _GraphIncIt it2;
           _GraphIncIt it3 = it1;
           _GraphIncIt it4 = INVALID;
+          ignore_unused_variable_warning(it3);
+          ignore_unused_variable_warning(it4);
 
           it2 = ++it1;
           ++it2 = it1;

@@ -587,13 +587,13 @@ namespace lemon {
     //
     // Returns the base node of the iterator
     Node baseNode(const IncEdgeIt &edge) const {
-      return edge._direction ? u(edge) : v(edge);
+      return edge._direction ? this->u(edge) : this->v(edge);
     }
     // Running node of the iterator
     //
     // Returns the running node of the iterator
     Node runningNode(const IncEdgeIt &edge) const {
-      return edge._direction ? v(edge) : u(edge);
+      return edge._direction ? this->v(edge) : this->u(edge);
     }
 
     // Mappable extension
