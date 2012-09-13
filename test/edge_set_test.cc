@@ -44,10 +44,12 @@ void checkSmartArcSet() {
     n2 = digraph.addNode();
 
   Digraph::Arc ga1 = digraph.addArc(n1, n2);
+  ignore_unused_variable_warning(ga1);
 
   ArcSet arc_set(digraph);
 
   Digraph::Arc ga2 = digraph.addArc(n2, n1);
+  ignore_unused_variable_warning(ga2);
 
   checkGraphNodeList(arc_set, 2);
   checkGraphArcList(arc_set, 0);
@@ -75,6 +77,8 @@ void checkSmartArcSet() {
   ArcSet::Arc a2 = arc_set.addArc(n2, n1),
     a3 = arc_set.addArc(n2, n3),
     a4 = arc_set.addArc(n2, n3);
+  ignore_unused_variable_warning(a2,a3,a4);
+
   checkGraphNodeList(arc_set, 3);
   checkGraphArcList(arc_set, 4);
 
@@ -110,10 +114,12 @@ void checkListArcSet() {
     n2 = digraph.addNode();
 
   Digraph::Arc ga1 = digraph.addArc(n1, n2);
+  ignore_unused_variable_warning(ga1);
 
   ArcSet arc_set(digraph);
 
   Digraph::Arc ga2 = digraph.addArc(n2, n1);
+  ignore_unused_variable_warning(ga2);
 
   checkGraphNodeList(arc_set, 2);
   checkGraphArcList(arc_set, 0);
@@ -141,6 +147,8 @@ void checkListArcSet() {
   ArcSet::Arc a2 = arc_set.addArc(n2, n1),
     a3 = arc_set.addArc(n2, n3),
     a4 = arc_set.addArc(n2, n3);
+  ignore_unused_variable_warning(a2,a3,a4);
+
   checkGraphNodeList(arc_set, 3);
   checkGraphArcList(arc_set, 4);
 
@@ -190,10 +198,12 @@ void checkSmartEdgeSet() {
     n2 = digraph.addNode();
 
   Digraph::Arc ga1 = digraph.addArc(n1, n2);
+  ignore_unused_variable_warning(ga1);
 
   EdgeSet edge_set(digraph);
 
   Digraph::Arc ga2 = digraph.addArc(n2, n1);
+  ignore_unused_variable_warning(ga2);
 
   checkGraphNodeList(edge_set, 2);
   checkGraphArcList(edge_set, 0);
@@ -230,6 +240,8 @@ void checkSmartEdgeSet() {
   EdgeSet::Edge e2 = edge_set.addEdge(n2, n1),
     e3 = edge_set.addEdge(n2, n3),
     e4 = edge_set.addEdge(n2, n3);
+  ignore_unused_variable_warning(e2,e3,e4);
+
   checkGraphNodeList(edge_set, 3);
   checkGraphEdgeList(edge_set, 4);
 
@@ -274,10 +286,12 @@ void checkListEdgeSet() {
     n2 = digraph.addNode();
 
   Digraph::Arc ga1 = digraph.addArc(n1, n2);
+  ignore_unused_variable_warning(ga1);
 
   EdgeSet edge_set(digraph);
 
   Digraph::Arc ga2 = digraph.addArc(n2, n1);
+  ignore_unused_variable_warning(ga2);
 
   checkGraphNodeList(edge_set, 2);
   checkGraphArcList(edge_set, 0);
@@ -314,6 +328,8 @@ void checkListEdgeSet() {
   EdgeSet::Edge e2 = edge_set.addEdge(n2, n1),
     e3 = edge_set.addEdge(n2, n3),
     e4 = edge_set.addEdge(n2, n3);
+  ignore_unused_variable_warning(e2,e3,e4);
+
   checkGraphNodeList(edge_set, 3);
   checkGraphEdgeList(edge_set, 4);
 

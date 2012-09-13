@@ -17,6 +17,7 @@
  */
 
 #include <lemon/time_measure.h>
+#include <lemon/concept_check.h>
 
 using namespace lemon;
 
@@ -32,7 +33,10 @@ void g()
   static Timer T;
 
   for(int i=0;i<1000;i++)
-    TimeStamp x(T);
+    {
+      TimeStamp x(T);
+      ignore_unused_variable_warning(x);
+    }
 }
 
 int main()

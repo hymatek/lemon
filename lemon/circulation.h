@@ -572,8 +572,6 @@ template< typename GR,
     {
 
       Node act;
-      Node bact=INVALID;
-      Node last_activated=INVALID;
       while((act=_level->highestActive())!=INVALID) {
         int actlevel=(*_level)[act];
         int mlevel=_node_num;

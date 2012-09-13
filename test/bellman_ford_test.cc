@@ -190,7 +190,7 @@ void checkBellmanFord() {
   check(pathTarget(gr, p) == t, "path() found a wrong path.");
 
   ListPath<Digraph> path;
-  Value dist;
+  Value dist = 0;
   bool reached = bellmanFord(gr,length).path(path).dist(dist).run(s,t);
 
   check(reached && dist == -1, "Bellman-Ford found a wrong path.");
