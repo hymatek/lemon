@@ -1251,6 +1251,7 @@ namespace lemon {
         visitor.examine(arc);
       }
       _Visitor& visitor;
+      Constraints() {}
     };
   };
 #endif

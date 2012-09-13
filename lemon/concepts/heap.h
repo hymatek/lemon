@@ -314,6 +314,7 @@ namespace lemon {
 
         _Heap& heap;
         ItemIntMap& map;
+        Constraints() {}
       };
     };
 

@@ -115,6 +115,7 @@ namespace lemon {
 
         const _GraphItem &ia;
         const _GraphItem &ib;
+        Constraints() {}
       };
     };
 
@@ -174,6 +175,7 @@ namespace lemon {
         }
 
         const _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -290,6 +292,7 @@ namespace lemon {
         }
 
         const _Graph& graph;
+      Constraints() {}
       };
 
     };
@@ -369,6 +372,7 @@ namespace lemon {
         }
 
         const _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -421,6 +425,7 @@ namespace lemon {
         }
 
         const _Graph& graph;
+        Constraints() {}
       };
     };
 
@@ -489,6 +494,8 @@ namespace lemon {
           _GraphItemIt it2;
           _GraphItemIt it3 = it1;
           _GraphItemIt it4 = INVALID;
+          ignore_unused_variable_warning(it3);
+          ignore_unused_variable_warning(it4);
 
           it2 = ++it1;
           ++it2 = it1;
@@ -498,6 +505,7 @@ namespace lemon {
           bi = it2;
         }
         const GR& g;
+        Constraints() {}
       };
     };
 
@@ -577,6 +585,8 @@ namespace lemon {
           _GraphIncIt it2;
           _GraphIncIt it3 = it1;
           _GraphIncIt it4 = INVALID;
+          ignore_unused_variable_warning(it3);
+          ignore_unused_variable_warning(it4);
 
           it2 = ++it1;
           ++it2 = it1;
@@ -586,6 +596,7 @@ namespace lemon {
         }
         const Base& node;
         const GR& graph;
+        Constraints() {}
       };
     };
 
@@ -762,6 +773,7 @@ namespace lemon {
         }
 
         const _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -886,6 +898,7 @@ namespace lemon {
         }
 
         const _Graph& graph;
+        Constraints() {}
       };
     };
 
@@ -943,6 +956,7 @@ namespace lemon {
         }
 
         const _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -984,6 +998,7 @@ namespace lemon {
         }
 
         const _Graph& graph;
+        Constraints() {}
       };
     };
 
@@ -1061,6 +1076,7 @@ namespace lemon {
         const _Map &m;
         const GR &g;
         const typename GraphMap::Value &t;
+        Constraints() {}
       };
 
     };
@@ -1199,6 +1215,7 @@ namespace lemon {
         }
 
         const _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -1284,6 +1301,7 @@ namespace lemon {
         }
 
         const _Graph& graph;
+        Constraints() {}
       };
     };
 
@@ -1328,6 +1346,7 @@ namespace lemon {
         }
 
         _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -1372,6 +1391,7 @@ namespace lemon {
         }
 
         _Graph& graph;
+        Constraints() {}
       };
     };
 
@@ -1411,6 +1431,7 @@ namespace lemon {
         }
 
         _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -1450,6 +1471,7 @@ namespace lemon {
         }
 
         _Graph& graph;
+        Constraints() {}
       };
     };
 
@@ -1478,6 +1500,7 @@ namespace lemon {
         }
 
         _Digraph& digraph;
+        Constraints() {}
       };
     };
 
@@ -1506,6 +1529,7 @@ namespace lemon {
         }
 
         _Graph& graph;
+        Constraints() {}
       };
     };
 

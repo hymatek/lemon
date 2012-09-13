@@ -64,6 +64,12 @@ namespace lemon {
     /// Default constructor
     Path() {}
 
+    /// \brief Copy constructor
+    ///
+    Path(const Path& cpath) {
+      pathCopy(cpath, *this);
+    }
+
     /// \brief Template copy constructor
     ///
     /// This constuctor initializes the path from any other path type.
@@ -71,6 +77,13 @@ namespace lemon {
     template <typename CPath>
     Path(const CPath& cpath) {
       pathCopy(cpath, *this);
+    }
+
+    /// \brief Copy assignment
+    ///
+    Path& operator=(const Path& cpath) {
+      pathCopy(cpath, *this);
+      return *this;
     }
 
     /// \brief Template copy assignment
@@ -252,6 +265,12 @@ namespace lemon {
     /// Default constructor
     SimplePath() {}
 
+    /// \brief Copy constructor
+    ///
+    SimplePath(const SimplePath& cpath) {
+      pathCopy(cpath, *this);
+    }
+
     /// \brief Template copy constructor
     ///
     /// This path can be initialized with any other path type. It just
@@ -259,6 +278,13 @@ namespace lemon {
     template <typename CPath>
     SimplePath(const CPath& cpath) {
       pathCopy(cpath, *this);
+    }
+
+    /// \brief Copy assignment
+    ///
+    SimplePath& operator=(const SimplePath& cpath) {
+      pathCopy(cpath, *this);
+      return *this;
     }
 
     /// \brief Template copy assignment
@@ -431,6 +457,12 @@ namespace lemon {
     /// Default constructor
     ListPath() : first(0), last(0) {}
 
+    /// \brief Copy constructor
+    ///
+    ListPath(const ListPath& cpath) : first(0), last(0) {
+      pathCopy(cpath, *this);
+    }
+
     /// \brief Template copy constructor
     ///
     /// This path can be initialized with any other path type. It just
@@ -445,6 +477,13 @@ namespace lemon {
     /// Destructor of the path
     ~ListPath() {
       clear();
+    }
+
+    /// \brief Copy assignment
+    ///
+    ListPath& operator=(const ListPath& cpath) {
+      pathCopy(cpath, *this);
+      return *this;
     }
 
     /// \brief Template copy assignment
@@ -758,6 +797,12 @@ namespace lemon {
     /// Default constructor
     StaticPath() : len(0), arcs(0) {}
 
+    /// \brief Copy constructor
+    ///
+    StaticPath(const StaticPath& cpath) : arcs(0) {
+      pathCopy(cpath, *this);
+    }
+
     /// \brief Template copy constructor
     ///
     /// This path can be initialized from any other path type.
@@ -771,6 +816,13 @@ namespace lemon {
     /// Destructor of the path
     ~StaticPath() {
       if (arcs) delete[] arcs;
+    }
+
+    /// \brief Copy assignment
+    ///
+    StaticPath& operator=(const StaticPath& cpath) {
+      pathCopy(cpath, *this);
+      return *this;
     }
 
     /// \brief Template copy assignment
