@@ -72,7 +72,6 @@ namespace lemon {
       }
 
       void discover(const Arc& arc) {
-        Node source = _graph.source(arc);
         Node target = _graph.target(arc);
 
         _tree_map[arc] = true;

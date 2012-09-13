@@ -442,6 +442,7 @@ void checkStaticDigraph() {
     a2 = g.addArc(n2, n1),
     a3 = g.addArc(n2, n3),
     a4 = g.addArc(n2, n3);
+  ignore_unused_variable_warning(a2,a3,a4);
 
   digraphCopy(g, G).nodeRef(nref).run();
 
