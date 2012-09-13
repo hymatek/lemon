@@ -136,6 +136,8 @@ namespace lemon {
       CRITICAL_SECTION *lock = new CRITICAL_SECTION;
       InitializeCriticalSection(lock);
       _repr = lock;
+#else
+      _repr = 0; //Just to avoid 'unused variable' warning with clang
 #endif
     }
     
