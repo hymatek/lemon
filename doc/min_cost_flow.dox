@@ -101,7 +101,7 @@ equalities are required in the supply/demand contraints.
     sup(u) \quad \forall u\in V \f]
 \f[ lower(uv) \leq f(uv) \leq upper(uv) \quad \forall uv\in A \f]
 
-However if the sum of the supply values is zero, then these two problems
+However, if the sum of the supply values is zero, then these two problems
 are equivalent.
 The \ref min_cost_flow_algs "algorithms" in LEMON support the general
 form, so if you need the equality form, you have to ensure this additional

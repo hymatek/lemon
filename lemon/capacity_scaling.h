@@ -70,6 +70,11 @@ namespace lemon {
   /// \ref edmondskarp72theoretical. It is an efficient dual
   /// solution method.
   ///
+  /// This algorithm is typically slower than \ref CostScaling and
+  /// \ref NetworkSimplex, but in special cases, it can be more
+  /// efficient than them.
+  /// (For more information, see \ref min_cost_flow_algs "the module page".)
+  ///
   /// Most of the parameters of the problem (except for the digraph)
   /// can be given using separate functions, and the algorithm can be
   /// executed using the \ref run() function. If some parameters are not
@@ -676,7 +681,8 @@ namespace lemon {
       return _res_cap[_arc_idb[a]];
     }
 
-    /// \brief Return the flow map (the primal solution).
+    /// \brief Copy the flow values (the primal solution) into the
+    /// given map.
     ///
     /// This function copies the flow value on each arc into the given
     /// map. The \c Value type of the algorithm must be convertible to
@@ -700,7 +706,8 @@ namespace lemon {
       return _pi[_node_id[n]];
     }
 
-    /// \brief Return the potential map (the dual solution).
+    /// \brief Copy the potential values (the dual solution) into the
+    /// given map.
     ///
     /// This function copies the potential (dual value) of each node
     /// into the given map.
