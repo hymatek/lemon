@@ -149,6 +149,23 @@ namespace lemon {
     /// The \ref HowardMmcDefaultTraits "traits class" of the algorithm
     typedef TR Traits;
 
+    /// \brief Constants for the causes of search termination.
+    ///
+    /// Enum type containing constants for the different causes of search
+    /// termination. The \ref findCycleMean() function returns one of
+    /// these values.
+    enum TerminationCause {
+      
+      /// No directed cycle can be found in the digraph.
+      NO_CYCLE = 0,
+    
+      /// Optimal solution (minimum cycle mean) is found.
+      OPTIMAL = 1,
+
+      /// The iteration count limit is reached.
+      ITERATION_LIMIT
+    };
+
   private:
 
     TEMPLATE_DIGRAPH_TYPEDEFS(Digraph);
@@ -324,25 +341,46 @@ namespace lemon {
       return findCycleMean() && findCycle();
     }
 
-    /// \brief Find the minimum cycle mean.
+    /// \brief Find the minimum cycle mean (or an upper bound).
     ///
     /// This function finds the minimum mean cost of the directed
-    /// cycles in the digraph.
+    /// cycles in the digraph (or an upper bound for it).
     ///
-    /// \return \c true if a directed cycle exists in the digraph.
-    bool findCycleMean() {
+    /// By default, the function finds the exact minimum cycle mean,
+    /// but an optional limit can also be specified for the number of
+    /// iterations performed during the search process.
+    /// The return value indicates if the optimal solution is found
+    /// or the iteration limit is reached. In the latter case, an
+    /// approximate solution is provided, which corresponds to a directed
+    /// cycle whose mean cost is relatively small, but not necessarily
+    /// minimal.
+    ///
+    /// \param limit  The maximum allowed number of iterations during
+    /// the search process. Its default value implies that the algorithm 
+    /// runs until it finds the exact optimal solution.
+    ///
+    /// \return The termination cause of the search process.
+    /// For more information, see \ref TerminationCause. 
+    TerminationCause findCycleMean(int limit = std::numeric_limits<int>::max()) {
       // Initialize and find strongly connected components
       init();
       findComponents();
 
       // Find the minimum cycle mean in the components
+      int iter_count = 0;
+      bool iter_limit_reached = false;
       for (int comp = 0; comp < _comp_num; ++comp) {
         // Find the minimum mean cycle in the current component
         if (!buildPolicyGraph(comp)) continue;
         while (true) {
+          if (++iter_count > limit) {
+            iter_limit_reached = true;
+            break;
+          }
           findPolicyCycle();
           if (!computeNodeDistances()) break;
         }
+
         // Update the best cycle (global minimum mean cycle)
         if ( _curr_found && (!_best_found ||
              _curr_cost * _best_size < _best_cost * _curr_size) ) {
@@ -351,8 +389,15 @@ namespace lemon {
           _best_size = _curr_size;
           _best_node = _curr_node;
         }
+        
+        if (iter_limit_reached) break;
       }
-      return _best_found;
+
+      if (iter_limit_reached) {
+        return ITERATION_LIMIT;
+      } else {
+        return _best_found ? OPTIMAL : NO_CYCLE;
+      }
     }
 
     /// \brief Find a minimum mean directed cycle.
