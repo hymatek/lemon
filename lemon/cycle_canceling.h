@@ -35,6 +35,7 @@
 #include <lemon/circulation.h>
 #include <lemon/bellman_ford.h>
 #include <lemon/howard_mmc.h>
+#include <lemon/hartmann_orlin_mmc.h>
 
 namespace lemon {
 
@@ -927,19 +928,42 @@ namespace lemon {
 
     // Execute the "Minimum Mean Cycle Canceling" method
     void startMinMeanCycleCanceling() {
-      typedef SimplePath<StaticDigraph> SPath;
+      typedef Path<StaticDigraph> SPath;
       typedef typename SPath::ArcIt SPathArcIt;
       typedef typename HowardMmc<StaticDigraph, CostArcMap>
-        ::template SetPath<SPath>::Create MMC;
+        ::template SetPath<SPath>::Create HwMmc;
+      typedef typename HartmannOrlinMmc<StaticDigraph, CostArcMap>
+        ::template SetPath<SPath>::Create HoMmc;
+
+      const double HW_ITER_LIMIT_FACTOR = 1.0;
+      const int HW_ITER_LIMIT_MIN_VALUE = 5;
+
+      const int hw_iter_limit =
+          std::max(static_cast<int>(HW_ITER_LIMIT_FACTOR * _node_num),
+                   HW_ITER_LIMIT_MIN_VALUE);
 
       SPath cycle;
-      MMC mmc(_sgr, _cost_map);
-      mmc.cycle(cycle);
+      HwMmc hw_mmc(_sgr, _cost_map);
+      hw_mmc.cycle(cycle);
       buildResidualNetwork();
-      while (mmc.findCycleMean() && mmc.cycleCost() < 0) {
-        // Find the cycle
-        mmc.findCycle();
-
+      while (true) {
+        
+        typename HwMmc::TerminationCause hw_tc =
+            hw_mmc.findCycleMean(hw_iter_limit);
+        if (hw_tc == HwMmc::ITERATION_LIMIT) {
+          // Howard's algorithm reached the iteration limit, start a
+          // strongly polynomial algorithm instead
+          HoMmc ho_mmc(_sgr, _cost_map);
+          ho_mmc.cycle(cycle);
+          // Find a minimum mean cycle (Hartmann-Orlin algorithm)
+          if (!(ho_mmc.findCycleMean() && ho_mmc.cycleCost() < 0)) break;
+          ho_mmc.findCycle();
+        } else {
+          // Find a minimum mean cycle (Howard algorithm)
+          if (!(hw_tc == HwMmc::OPTIMAL && hw_mmc.cycleCost() < 0)) break;
+          hw_mmc.findCycle();
+        }
+        
         // Compute delta value
         Value delta = INF;
         for (SPathArcIt a(cycle); a != INVALID; ++a) {
@@ -964,6 +988,12 @@ namespace lemon {
       // Constants for the min mean cycle computations
       const double LIMIT_FACTOR = 1.0;
       const int MIN_LIMIT = 5;
+      const double HW_ITER_LIMIT_FACTOR = 1.0;
+      const int HW_ITER_LIMIT_MIN_VALUE = 5;
+
+      const int hw_iter_limit =
+          std::max(static_cast<int>(HW_ITER_LIMIT_FACTOR * _node_num),
+                   HW_ITER_LIMIT_MIN_VALUE);
 
       // Contruct auxiliary data vectors
       DoubleVector pi(_res_node_num, 0.0);
@@ -1137,17 +1167,30 @@ namespace lemon {
             }
           }
         } else {
-          typedef HowardMmc<StaticDigraph, CostArcMap> MMC;
+          typedef HowardMmc<StaticDigraph, CostArcMap> HwMmc;
+          typedef HartmannOrlinMmc<StaticDigraph, CostArcMap> HoMmc;
           typedef typename BellmanFord<StaticDigraph, CostArcMap>
             ::template SetDistMap<CostNodeMap>::Create BF;
 
           // Set epsilon to the minimum cycle mean
+          Cost cycle_cost = 0;
+          int cycle_size = 1;
           buildResidualNetwork();
-          MMC mmc(_sgr, _cost_map);
-          mmc.findCycleMean();
-          epsilon = -mmc.cycleMean();
-          Cost cycle_cost = mmc.cycleCost();
-          int cycle_size = mmc.cycleSize();
+          HwMmc hw_mmc(_sgr, _cost_map);
+          if (hw_mmc.findCycleMean(hw_iter_limit) == HwMmc::ITERATION_LIMIT) {
+            // Howard's algorithm reached the iteration limit, start a
+            // strongly polynomial algorithm instead
+            HoMmc ho_mmc(_sgr, _cost_map);
+            ho_mmc.findCycleMean();
+            epsilon = -ho_mmc.cycleMean();
+            cycle_cost = ho_mmc.cycleCost();
+            cycle_size = ho_mmc.cycleSize();
+          } else {
+            // Set epsilon
+            epsilon = -hw_mmc.cycleMean();
+            cycle_cost = hw_mmc.cycleCost();
+            cycle_size = hw_mmc.cycleSize();
+          }
 
           // Compute feasible potentials for the current epsilon
           for (int i = 0; i != int(_cost_vec.size()); ++i) {
