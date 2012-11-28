@@ -108,6 +108,8 @@ namespace lemon {
           i1 = i2 = i3;
 
           bool b;
+          ignore_unused_variable_warning(b);
+
           b = (ia == ib) && (ia != ib);
           b = (ia == INVALID) && (ib != INVALID);
           b = (ia < ib);

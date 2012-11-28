@@ -73,6 +73,7 @@ void checkCirculationCompile()
   BarrierMap bar;
   VType v;
   bool b;
+  ignore_unused_variable_warning(v,b);
 
   typedef Circulation<Digraph, CapMap, CapMap, SupplyMap>
             ::SetFlowMap<FlowMap>

@@ -67,6 +67,8 @@ void checkDfsCompile()
   Arc e;
   int l, i;
   bool b;
+  ignore_unused_variable_warning(l,i,b);
+
   DType::DistMap d(G);
   DType::PredMap p(G);
   Path<Digraph> pp;
@@ -151,6 +153,8 @@ void checkDfsFunctionCompile()
 
   Digraph g;
   bool b;
+  ignore_unused_variable_warning(b);
+
   dfs(g).run(Node());
   b=dfs(g).run(Node(),Node());
   dfs(g).run();

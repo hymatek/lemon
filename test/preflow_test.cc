@@ -86,6 +86,7 @@ void checkPreflowCompile()
   CutMap cut;
   VType v;
   bool b;
+  ignore_unused_variable_warning(v,b);
 
   typedef Preflow<Digraph, CapMap>
             ::SetFlowMap<FlowMap>
