@@ -91,6 +91,7 @@ void checkMinCostArborescenceCompile()
   Arc e;
   VType c;
   bool b;
+  ignore_unused_variable_warning(c,b);
   int i;
   CostMap cost;
   ArbMap arb;
