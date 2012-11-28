@@ -117,6 +117,8 @@ void checkSuurballeCompile()
 
   int f;
   VType c;
+  ignore_unused_variable_warning(f,c);
+
   c = const_suurb_test.totalLength();
   f = const_suurb_test.flow(e);
   const SuurballeType::FlowMap& fm =
