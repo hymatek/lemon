@@ -4,6 +4,8 @@ SET(abs_top_srcdir ${PROJECT_SOURCE_DIR})
 SET(abs_top_builddir ${PROJECT_BINARY_DIR})
 
 SET(LEMON_DOC_SOURCE_BROWSER "NO" CACHE STRING "Include source into the doc (YES/NO).")
+SET(LEMON_DOC_USE_MATHJAX "NO" CACHE STRING "Use MathJax to display math formulae (YES/NO).")
+SET(LEMON_DOC_MATHJAX_RELPATH "http://www.mathjax.org/mathjax" CACHE STRING "MathJax library location.")
 
 CONFIGURE_FILE(
   ${PROJECT_SOURCE_DIR}/doc/Doxyfile.in

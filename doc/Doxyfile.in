@@ -182,8 +182,8 @@ TREEVIEW_WIDTH         = 250
 EXT_LINKS_IN_WINDOW    = NO
 FORMULA_FONTSIZE       = 10
 FORMULA_TRANSPARENT    = YES
-USE_MATHJAX            = NO
-MATHJAX_RELPATH        = http://www.mathjax.org/mathjax
+USE_MATHJAX            = @LEMON_DOC_USE_MATHJAX@
+MATHJAX_RELPATH        = @LEMON_DOC_MATHJAX_RELPATH@
 SEARCHENGINE           = YES
 SERVER_BASED_SEARCH    = NO
 #---------------------------------------------------------------------------

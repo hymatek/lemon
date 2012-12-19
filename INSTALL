@@ -106,6 +106,34 @@ You find a list of the most useful options below.
   Build shared library instead of static one. Think twice if you
   really want to use this option.
 
+-DLEMON_DOC_SOURCE_BROWSER=YES
+
+  Include the browsable cross referenced LEMON source code into the
+  doc. It makes the doc quite bloated, but may be useful for
+  developing LEMON itself.
+
+-DLEMON_DOC_USE_MATHJAX=YES
+
+  Use MathJax (http://mathjax.org) for rendering the math formulae in
+  the doc.  It of much higher quality compared to the default LaTeX
+  generated static images and it allows copy&paste of the formulae to
+  LaTeX, Open Office, MS Word etc. documents.
+
+  On the other hand, it needs either Internet access or a locally
+  installed version of MathJax to properly render the doc.
+
+-DLEMON_DOC_MATHJAX_RELPATH=DIRECTORY
+  
+  The location of the MathJax library. It defaults to
+  http://www.mathjax.org/mathjax, which necessitates Internet access
+  for proper rendering. The easiest way to make it usable offline is
+  to set this parameter to 'mathjax' and copy all files of the MathJax
+  library into the 'doc/html/mathjax' subdirectory of the build
+  location.
+
+  See http://docs.mathjax.org/en/latest/installation.html for more details.
+
+  
 -DGLPK_ROOT_DIR=DIRECTORY
 -DCOIN_ROOT_DIR=DIRECTORY
 -DCPLEX_ROOT_DIR=DIRECTORY
