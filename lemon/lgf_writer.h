@@ -185,26 +185,55 @@ namespace lemon {
     public:
       ValueStorage(const Value& value, const Converter& converter = Converter())
         : _value(value), _converter(converter) {}
-
+      
       virtual std::string get() {
         return _converter(_value);
       }
     };
 
-    template <typename Value>
+    template <typename Value,
+              typename Map = std::map<Value, std::string> >
     struct MapLookUpConverter {
-      const std::map<Value, std::string>& _map;
+      const Map& _map;
 
-      MapLookUpConverter(const std::map<Value, std::string>& map)
+      MapLookUpConverter(const Map& map)
         : _map(map) {}
 
-      std::string operator()(const Value& str) {
-        typename std::map<Value, std::string>::const_iterator it =
-          _map.find(str);
+      std::string operator()(const Value& value) {
+        typename Map::const_iterator it = _map.find(value);
         if (it == _map.end()) {
           throw FormatError("Item not found");
         }
         return it->second;
+      }
+    };
+
+    template <typename Value,
+              typename Map1 = std::map<Value, std::string>,
+              typename Map2 = std::map<Value, std::string> >
+    struct DoubleMapLookUpConverter {
+      const Map1& _map1;
+      const Map2& _map2;
+
+      DoubleMapLookUpConverter(const Map1& map1, const Map2& map2)
+        : _map1(map1), _map2(map2) {}
+
+      std::string operator()(const Value& value) {
+        typename Map1::const_iterator it1 = _map1.find(value);
+        typename Map1::const_iterator it2 = _map2.find(value);
+        if (it1 == _map1.end()) {
+          if (it2 == _map2.end()) {
+            throw FormatError("Item not found");
+          } else {
+            return it2->second;
+          }
+        } else {
+          if (it2 == _map2.end()) {
+            return it1->second;
+          } else {
+            throw FormatError("Item is ambigous");
+          }
+        }
       }
     };
 
@@ -1651,15 +1680,19 @@ namespace lemon {
     std::string _edges_caption;
     std::string _attributes_caption;
 
-    typedef std::map<Node, std::string> NodeIndex;
-    NodeIndex _node_index;
+    typedef std::map<Node, std::string> RedNodeIndex;
+    RedNodeIndex _red_node_index;
+    typedef std::map<Node, std::string> BlueNodeIndex;
+    BlueNodeIndex _blue_node_index;
     typedef std::map<Edge, std::string> EdgeIndex;
     EdgeIndex _edge_index;
 
     typedef std::vector<std::pair<std::string,
-      _writer_bits::MapStorageBase<Node>* > > NodeMaps;
-    NodeMaps _red_maps;
-    NodeMaps _blue_maps;
+      _writer_bits::MapStorageBase<RedNode>* > > RedNodeMaps;
+    RedNodeMaps _red_node_maps;
+    typedef std::vector<std::pair<std::string,
+      _writer_bits::MapStorageBase<BlueNode>* > > BlueNodeMaps;
+    BlueNodeMaps _blue_node_maps;
 
     typedef std::vector<std::pair<std::string,
       _writer_bits::MapStorageBase<Edge>* > >EdgeMaps;
@@ -1710,13 +1743,13 @@ namespace lemon {
 
     /// \brief Destructor
     ~BpGraphWriter() {
-      for (typename NodeMaps::iterator it = _red_maps.begin();
-           it != _red_maps.end(); ++it) {
+      for (typename RedNodeMaps::iterator it = _red_node_maps.begin();
+           it != _red_node_maps.end(); ++it) {
         delete it->second;
       }
 
-      for (typename NodeMaps::iterator it = _blue_maps.begin();
-           it != _blue_maps.end(); ++it) {
+      for (typename BlueNodeMaps::iterator it = _blue_node_maps.begin();
+           it != _blue_node_maps.end(); ++it) {
         delete it->second;
       }
 
@@ -1753,11 +1786,12 @@ namespace lemon {
       other._os = 0;
       other.local_os = false;
 
-      _node_index.swap(other._node_index);
+      _red_node_index.swap(other._red_node_index);
+      _blue_node_index.swap(other._blue_node_index);
       _edge_index.swap(other._edge_index);
 
-      _red_maps.swap(other._red_maps);
-      _blue_maps.swap(other._blue_maps);
+      _red_node_maps.swap(other._red_node_maps);
+      _blue_node_maps.swap(other._blue_node_maps);
       _edge_maps.swap(other._edge_maps);
       _attributes.swap(other._attributes);
 
@@ -1779,12 +1813,12 @@ namespace lemon {
     template <typename Map>
     BpGraphWriter& nodeMap(const std::string& caption, const Map& map) {
       checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
-      _writer_bits::MapStorageBase<Node>* red_storage =
-        new _writer_bits::MapStorage<Node, Map>(map);
-      _red_maps.push_back(std::make_pair(caption, red_storage));
-      _writer_bits::MapStorageBase<Node>* blue_storage =
-        new _writer_bits::MapStorage<Node, Map>(map);
-      _blue_maps.push_back(std::make_pair(caption, blue_storage));
+      _writer_bits::MapStorageBase<RedNode>* red_storage =
+        new _writer_bits::MapStorage<RedNode, Map>(map);
+      _red_node_maps.push_back(std::make_pair(caption, red_storage));
+      _writer_bits::MapStorageBase<BlueNode>* blue_storage =
+        new _writer_bits::MapStorage<BlueNode, Map>(map);
+      _blue_node_maps.push_back(std::make_pair(caption, blue_storage));
       return *this;
     }
 
@@ -1796,12 +1830,12 @@ namespace lemon {
     BpGraphWriter& nodeMap(const std::string& caption, const Map& map,
                            const Converter& converter = Converter()) {
       checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
-      _writer_bits::MapStorageBase<Node>* red_storage =
-        new _writer_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _red_maps.push_back(std::make_pair(caption, red_storage));
-      _writer_bits::MapStorageBase<Node>* blue_storage =
-        new _writer_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _blue_maps.push_back(std::make_pair(caption, blue_storage));
+      _writer_bits::MapStorageBase<RedNode>* red_storage =
+        new _writer_bits::MapStorage<RedNode, Map, Converter>(map, converter);
+      _red_node_maps.push_back(std::make_pair(caption, red_storage));
+      _writer_bits::MapStorageBase<BlueNode>* blue_storage =
+        new _writer_bits::MapStorage<BlueNode, Map, Converter>(map, converter);
+      _blue_node_maps.push_back(std::make_pair(caption, blue_storage));
       return *this;
     }
 
@@ -1810,10 +1844,10 @@ namespace lemon {
     /// Add a red node map writing rule to the writer.
     template <typename Map>
     BpGraphWriter& redNodeMap(const std::string& caption, const Map& map) {
-      checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
-      _writer_bits::MapStorageBase<Node>* storage =
-        new _writer_bits::MapStorage<Node, Map>(map);
-      _red_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::ReadMap<RedNode, typename Map::Value>, Map>();
+      _writer_bits::MapStorageBase<RedNode>* storage =
+        new _writer_bits::MapStorage<RedNode, Map>(map);
+      _red_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
@@ -1824,10 +1858,10 @@ namespace lemon {
     template <typename Map, typename Converter>
     BpGraphWriter& redNodeMap(const std::string& caption, const Map& map,
                               const Converter& converter = Converter()) {
-      checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
-      _writer_bits::MapStorageBase<Node>* storage =
-        new _writer_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _red_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::ReadMap<RedNode, typename Map::Value>, Map>();
+      _writer_bits::MapStorageBase<RedNode>* storage =
+        new _writer_bits::MapStorage<RedNode, Map, Converter>(map, converter);
+      _red_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
@@ -1836,10 +1870,10 @@ namespace lemon {
     /// Add a blue node map writing rule to the writer.
     template <typename Map>
     BpGraphWriter& blueNodeMap(const std::string& caption, const Map& map) {
-      checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
-      _writer_bits::MapStorageBase<Node>* storage =
-        new _writer_bits::MapStorage<Node, Map>(map);
-      _blue_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::ReadMap<BlueNode, typename Map::Value>, Map>();
+      _writer_bits::MapStorageBase<BlueNode>* storage =
+        new _writer_bits::MapStorage<BlueNode, Map>(map);
+      _blue_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
@@ -1850,10 +1884,10 @@ namespace lemon {
     template <typename Map, typename Converter>
     BpGraphWriter& blueNodeMap(const std::string& caption, const Map& map,
                                const Converter& converter = Converter()) {
-      checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
-      _writer_bits::MapStorageBase<Node>* storage =
-        new _writer_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _blue_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::ReadMap<BlueNode, typename Map::Value>, Map>();
+      _writer_bits::MapStorageBase<BlueNode>* storage =
+        new _writer_bits::MapStorage<BlueNode, Map, Converter>(map, converter);
+      _blue_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
@@ -1945,8 +1979,33 @@ namespace lemon {
     ///
     /// Add a node writing rule to the writer.
     BpGraphWriter& node(const std::string& caption, const Node& node) {
+      typedef _writer_bits::DoubleMapLookUpConverter<
+        Node, RedNodeIndex, BlueNodeIndex> Converter;
+      Converter converter(_red_node_index, _blue_node_index);
+      _writer_bits::ValueStorageBase* storage =
+        new _writer_bits::ValueStorage<Node, Converter>(node, converter);
+      _attributes.push_back(std::make_pair(caption, storage));
+      return *this;
+    }
+
+    /// \brief Red node writing rule
+    ///
+    /// Add a red node writing rule to the writer.
+    BpGraphWriter& redNode(const std::string& caption, const RedNode& node) {
       typedef _writer_bits::MapLookUpConverter<Node> Converter;
-      Converter converter(_node_index);
+      Converter converter(_red_node_index);
+      _writer_bits::ValueStorageBase* storage =
+        new _writer_bits::ValueStorage<Node, Converter>(node, converter);
+      _attributes.push_back(std::make_pair(caption, storage));
+      return *this;
+    }
+
+    /// \brief Blue node writing rule
+    ///
+    /// Add a blue node writing rule to the writer.
+    BpGraphWriter& blueNode(const std::string& caption, const BlueNode& node) {
+      typedef _writer_bits::MapLookUpConverter<Node> Converter;
+      Converter converter(_blue_node_index);
       _writer_bits::ValueStorageBase* storage =
         new _writer_bits::ValueStorage<Node, Converter>(node, converter);
       _attributes.push_back(std::make_pair(caption, storage));
@@ -2033,9 +2092,9 @@ namespace lemon {
   private:
 
     void writeRedNodes() {
-      _writer_bits::MapStorageBase<Node>* label = 0;
-      for (typename NodeMaps::iterator it = _red_maps.begin();
-           it != _red_maps.end(); ++it) {
+      _writer_bits::MapStorageBase<RedNode>* label = 0;
+      for (typename RedNodeMaps::iterator it = _red_node_maps.begin();
+           it != _red_node_maps.end(); ++it) {
         if (it->first == "label") {
           label = it->second;
           break;
@@ -2051,13 +2110,13 @@ namespace lemon {
       if (label == 0) {
         *_os << "label" << '\t';
       }
-      for (typename NodeMaps::iterator it = _red_maps.begin();
-           it != _red_maps.end(); ++it) {
+      for (typename RedNodeMaps::iterator it = _red_node_maps.begin();
+           it != _red_node_maps.end(); ++it) {
         _writer_bits::writeToken(*_os, it->first) << '\t';
       }
       *_os << std::endl;
 
-      std::vector<Node> nodes;
+      std::vector<RedNode> nodes;
       for (RedNodeIt n(_graph); n != INVALID; ++n) {
         nodes.push_back(n);
       }
@@ -2071,20 +2130,20 @@ namespace lemon {
       }
 
       for (int i = 0; i < static_cast<int>(nodes.size()); ++i) {
-        Node n = nodes[i];
+        RedNode n = nodes[i];
         if (label == 0) {
           std::ostringstream os;
-          os << _graph.id(n);
+          os << _graph.id(static_cast<Node>(n));
           _writer_bits::writeToken(*_os, os.str());
           *_os << '\t';
-          _node_index.insert(std::make_pair(n, os.str()));
+          _red_node_index.insert(std::make_pair(n, os.str()));
         }
-        for (typename NodeMaps::iterator it = _red_maps.begin();
-             it != _red_maps.end(); ++it) {
+        for (typename RedNodeMaps::iterator it = _red_node_maps.begin();
+             it != _red_node_maps.end(); ++it) {
           std::string value = it->second->get(n);
           _writer_bits::writeToken(*_os, value);
           if (it->first == "label") {
-            _node_index.insert(std::make_pair(n, value));
+            _red_node_index.insert(std::make_pair(n, value));
           }
           *_os << '\t';
         }
@@ -2093,9 +2152,9 @@ namespace lemon {
     }
 
     void writeBlueNodes() {
-      _writer_bits::MapStorageBase<Node>* label = 0;
-      for (typename NodeMaps::iterator it = _blue_maps.begin();
-           it != _blue_maps.end(); ++it) {
+      _writer_bits::MapStorageBase<BlueNode>* label = 0;
+      for (typename BlueNodeMaps::iterator it = _blue_node_maps.begin();
+           it != _blue_node_maps.end(); ++it) {
         if (it->first == "label") {
           label = it->second;
           break;
@@ -2111,13 +2170,13 @@ namespace lemon {
       if (label == 0) {
         *_os << "label" << '\t';
       }
-      for (typename NodeMaps::iterator it = _blue_maps.begin();
-           it != _blue_maps.end(); ++it) {
+      for (typename BlueNodeMaps::iterator it = _blue_node_maps.begin();
+           it != _blue_node_maps.end(); ++it) {
         _writer_bits::writeToken(*_os, it->first) << '\t';
       }
       *_os << std::endl;
 
-      std::vector<Node> nodes;
+      std::vector<BlueNode> nodes;
       for (BlueNodeIt n(_graph); n != INVALID; ++n) {
         nodes.push_back(n);
       }
@@ -2131,20 +2190,20 @@ namespace lemon {
       }
 
       for (int i = 0; i < static_cast<int>(nodes.size()); ++i) {
-        Node n = nodes[i];
+        BlueNode n = nodes[i];
         if (label == 0) {
           std::ostringstream os;
-          os << _graph.id(n);
+          os << _graph.id(static_cast<Node>(n));
           _writer_bits::writeToken(*_os, os.str());
           *_os << '\t';
-          _node_index.insert(std::make_pair(n, os.str()));
+          _blue_node_index.insert(std::make_pair(n, os.str()));
         }
-        for (typename NodeMaps::iterator it = _blue_maps.begin();
-             it != _blue_maps.end(); ++it) {
+        for (typename BlueNodeMaps::iterator it = _blue_node_maps.begin();
+             it != _blue_node_maps.end(); ++it) {
           std::string value = it->second->get(n);
           _writer_bits::writeToken(*_os, value);
           if (it->first == "label") {
-            _node_index.insert(std::make_pair(n, value));
+            _blue_node_index.insert(std::make_pair(n, value));
           }
           *_os << '\t';
         }
@@ -2153,9 +2212,9 @@ namespace lemon {
     }
 
     void createRedNodeIndex() {
-      _writer_bits::MapStorageBase<Node>* label = 0;
-      for (typename NodeMaps::iterator it = _red_maps.begin();
-           it != _red_maps.end(); ++it) {
+      _writer_bits::MapStorageBase<RedNode>* label = 0;
+      for (typename RedNodeMaps::iterator it = _red_node_maps.begin();
+           it != _red_node_maps.end(); ++it) {
         if (it->first == "label") {
           label = it->second;
           break;
@@ -2163,23 +2222,23 @@ namespace lemon {
       }
 
       if (label == 0) {
-        for (NodeIt n(_graph); n != INVALID; ++n) {
+        for (RedNodeIt n(_graph); n != INVALID; ++n) {
           std::ostringstream os;
           os << _graph.id(n);
-          _node_index.insert(std::make_pair(n, os.str()));
+          _red_node_index.insert(std::make_pair(n, os.str()));
         }
       } else {
-        for (NodeIt n(_graph); n != INVALID; ++n) {
+        for (RedNodeIt n(_graph); n != INVALID; ++n) {
           std::string value = label->get(n);
-          _node_index.insert(std::make_pair(n, value));
+          _red_node_index.insert(std::make_pair(n, value));
         }
       }
     }
 
     void createBlueNodeIndex() {
-      _writer_bits::MapStorageBase<Node>* label = 0;
-      for (typename NodeMaps::iterator it = _blue_maps.begin();
-           it != _blue_maps.end(); ++it) {
+      _writer_bits::MapStorageBase<BlueNode>* label = 0;
+      for (typename BlueNodeMaps::iterator it = _blue_node_maps.begin();
+           it != _blue_node_maps.end(); ++it) {
         if (it->first == "label") {
           label = it->second;
           break;
@@ -2187,15 +2246,15 @@ namespace lemon {
       }
 
       if (label == 0) {
-        for (NodeIt n(_graph); n != INVALID; ++n) {
+        for (BlueNodeIt n(_graph); n != INVALID; ++n) {
           std::ostringstream os;
           os << _graph.id(n);
-          _node_index.insert(std::make_pair(n, os.str()));
+          _blue_node_index.insert(std::make_pair(n, os.str()));
         }
       } else {
-        for (NodeIt n(_graph); n != INVALID; ++n) {
+        for (BlueNodeIt n(_graph); n != INVALID; ++n) {
           std::string value = label->get(n);
-          _node_index.insert(std::make_pair(n, value));
+          _blue_node_index.insert(std::make_pair(n, value));
         }
       }
     }
@@ -2241,10 +2300,10 @@ namespace lemon {
 
       for (int i = 0; i < static_cast<int>(edges.size()); ++i) {
         Edge e = edges[i];
-        _writer_bits::writeToken(*_os, _node_index.
+        _writer_bits::writeToken(*_os, _red_node_index.
                                  find(_graph.redNode(e))->second);
         *_os << '\t';
-        _writer_bits::writeToken(*_os, _node_index.
+        _writer_bits::writeToken(*_os, _blue_node_index.
                                  find(_graph.blueNode(e))->second);
         *_os << '\t';
         if (label == 0) {

@@ -154,22 +154,55 @@ namespace lemon {
       }
     };
 
-    template <typename Value>
+    template <typename Value,
+              typename Map = std::map<std::string, Value> >
     struct MapLookUpConverter {
-      const std::map<std::string, Value>& _map;
+      const Map& _map;
 
-      MapLookUpConverter(const std::map<std::string, Value>& map)
+      MapLookUpConverter(const Map& map)
         : _map(map) {}
 
       Value operator()(const std::string& str) {
-        typename std::map<std::string, Value>::const_iterator it =
-          _map.find(str);
+        typename Map::const_iterator it = _map.find(str);
         if (it == _map.end()) {
           std::ostringstream msg;
           msg << "Item not found: " << str;
           throw FormatError(msg.str());
         }
         return it->second;
+      }
+    };
+
+    template <typename Value,
+              typename Map1 = std::map<std::string, Value>,
+              typename Map2 = std::map<std::string, Value> >
+    struct DoubleMapLookUpConverter {
+      const Map1& _map1;
+      const Map2& _map2;
+
+      DoubleMapLookUpConverter(const Map1& map1, const Map2& map2)
+        : _map1(map1), _map2(map2) {}
+
+      Value operator()(const std::string& str) {
+        typename Map1::const_iterator it1 = _map1.find(str);
+        typename Map2::const_iterator it2 = _map2.find(str);
+        if (it1 == _map1.end()) {
+          if (it2 == _map2.end()) {
+            std::ostringstream msg;
+            msg << "Item not found: " << str;
+            throw FormatError(msg.str());
+          } else {
+            return it2->second;
+          }
+        } else {
+          if (it2 == _map2.end()) {
+            return it1->second;
+          } else {
+            std::ostringstream msg;
+            msg << "Item is ambigous: " << str;
+            throw FormatError(msg.str());
+          }
+        }
       }
     };
 
@@ -2171,15 +2204,19 @@ namespace lemon {
     std::string _edges_caption;
     std::string _attributes_caption;
 
-    typedef std::map<std::string, Node> NodeIndex;
-    NodeIndex _node_index;
+    typedef std::map<std::string, RedNode> RedNodeIndex;
+    RedNodeIndex _red_node_index;
+    typedef std::map<std::string, BlueNode> BlueNodeIndex;
+    BlueNodeIndex _blue_node_index;
     typedef std::map<std::string, Edge> EdgeIndex;
     EdgeIndex _edge_index;
 
     typedef std::vector<std::pair<std::string,
-      _reader_bits::MapStorageBase<Node>*> > NodeMaps;
-    NodeMaps _red_maps;
-    NodeMaps _blue_maps;
+      _reader_bits::MapStorageBase<RedNode>*> > RedNodeMaps;
+    RedNodeMaps _red_node_maps;
+    typedef std::vector<std::pair<std::string,
+      _reader_bits::MapStorageBase<BlueNode>*> > BlueNodeMaps;
+    BlueNodeMaps _blue_node_maps;
 
     typedef std::vector<std::pair<std::string,
       _reader_bits::MapStorageBase<Edge>*> > EdgeMaps;
@@ -2241,13 +2278,13 @@ namespace lemon {
 
     /// \brief Destructor
     ~BpGraphReader() {
-      for (typename NodeMaps::iterator it = _red_maps.begin();
-           it != _red_maps.end(); ++it) {
+      for (typename RedNodeMaps::iterator it = _red_node_maps.begin();
+           it != _red_node_maps.end(); ++it) {
         delete it->second;
       }
 
-      for (typename NodeMaps::iterator it = _blue_maps.begin();
-           it != _blue_maps.end(); ++it) {
+      for (typename BlueNodeMaps::iterator it = _blue_node_maps.begin();
+           it != _blue_node_maps.end(); ++it) {
         delete it->second;
       }
 
@@ -2284,11 +2321,12 @@ namespace lemon {
       other._is = 0;
       other.local_is = false;
 
-      _node_index.swap(other._node_index);
+      _red_node_index.swap(other._red_node_index);
+      _blue_node_index.swap(other._blue_node_index);
       _edge_index.swap(other._edge_index);
 
-      _red_maps.swap(other._red_maps);
-      _blue_maps.swap(other._blue_maps);
+      _red_node_maps.swap(other._red_node_maps);
+      _blue_node_maps.swap(other._blue_node_maps);
       _edge_maps.swap(other._edge_maps);
       _attributes.swap(other._attributes);
 
@@ -2311,12 +2349,12 @@ namespace lemon {
     template <typename Map>
     BpGraphReader& nodeMap(const std::string& caption, Map& map) {
       checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
-      _reader_bits::MapStorageBase<Node>* red_storage =
-        new _reader_bits::MapStorage<Node, Map>(map);
-      _red_maps.push_back(std::make_pair(caption, red_storage));
-      _reader_bits::MapStorageBase<Node>* blue_storage =
-        new _reader_bits::MapStorage<Node, Map>(map);
-      _blue_maps.push_back(std::make_pair(caption, blue_storage));
+      _reader_bits::MapStorageBase<RedNode>* red_storage =
+        new _reader_bits::MapStorage<RedNode, Map>(map);
+      _red_node_maps.push_back(std::make_pair(caption, red_storage));
+      _reader_bits::MapStorageBase<BlueNode>* blue_storage =
+        new _reader_bits::MapStorage<BlueNode, Map>(map);
+      _blue_node_maps.push_back(std::make_pair(caption, blue_storage));
       return *this;
     }
 
@@ -2328,22 +2366,22 @@ namespace lemon {
     BpGraphReader& nodeMap(const std::string& caption, Map& map,
                            const Converter& converter = Converter()) {
       checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
-      _reader_bits::MapStorageBase<Node>* red_storage =
-        new _reader_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _red_maps.push_back(std::make_pair(caption, red_storage));
-      _reader_bits::MapStorageBase<Node>* blue_storage =
-        new _reader_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _blue_maps.push_back(std::make_pair(caption, blue_storage));
+      _reader_bits::MapStorageBase<RedNode>* red_storage =
+        new _reader_bits::MapStorage<RedNode, Map, Converter>(map, converter);
+      _red_node_maps.push_back(std::make_pair(caption, red_storage));
+      _reader_bits::MapStorageBase<BlueNode>* blue_storage =
+        new _reader_bits::MapStorage<BlueNode, Map, Converter>(map, converter);
+      _blue_node_maps.push_back(std::make_pair(caption, blue_storage));
       return *this;
     }
 
     /// Add a red node map reading rule to the reader.
     template <typename Map>
     BpGraphReader& redNodeMap(const std::string& caption, Map& map) {
-      checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
-      _reader_bits::MapStorageBase<Node>* storage =
-        new _reader_bits::MapStorage<Node, Map>(map);
-      _red_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::WriteMap<RedNode, typename Map::Value>, Map>();
+      _reader_bits::MapStorageBase<RedNode>* storage =
+        new _reader_bits::MapStorage<RedNode, Map>(map);
+      _red_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
@@ -2354,20 +2392,20 @@ namespace lemon {
     template <typename Map, typename Converter>
     BpGraphReader& redNodeMap(const std::string& caption, Map& map,
                               const Converter& converter = Converter()) {
-      checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
-      _reader_bits::MapStorageBase<Node>* storage =
-        new _reader_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _red_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::WriteMap<RedNode, typename Map::Value>, Map>();
+      _reader_bits::MapStorageBase<RedNode>* storage =
+        new _reader_bits::MapStorage<RedNode, Map, Converter>(map, converter);
+      _red_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
     /// Add a blue node map reading rule to the reader.
     template <typename Map>
     BpGraphReader& blueNodeMap(const std::string& caption, Map& map) {
-      checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
-      _reader_bits::MapStorageBase<Node>* storage =
-        new _reader_bits::MapStorage<Node, Map>(map);
-      _blue_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::WriteMap<BlueNode, typename Map::Value>, Map>();
+      _reader_bits::MapStorageBase<BlueNode>* storage =
+        new _reader_bits::MapStorage<BlueNode, Map>(map);
+      _blue_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
@@ -2378,10 +2416,10 @@ namespace lemon {
     template <typename Map, typename Converter>
     BpGraphReader& blueNodeMap(const std::string& caption, Map& map,
                                const Converter& converter = Converter()) {
-      checkConcept<concepts::WriteMap<Node, typename Map::Value>, Map>();
-      _reader_bits::MapStorageBase<Node>* storage =
-        new _reader_bits::MapStorage<Node, Map, Converter>(map, converter);
-      _blue_maps.push_back(std::make_pair(caption, storage));
+      checkConcept<concepts::WriteMap<BlueNode, typename Map::Value>, Map>();
+      _reader_bits::MapStorageBase<BlueNode>* storage =
+        new _reader_bits::MapStorage<BlueNode, Map, Converter>(map, converter);
+      _blue_node_maps.push_back(std::make_pair(caption, storage));
       return *this;
     }
 
@@ -2473,10 +2511,35 @@ namespace lemon {
     ///
     /// Add a node reading rule to reader.
     BpGraphReader& node(const std::string& caption, Node& node) {
-      typedef _reader_bits::MapLookUpConverter<Node> Converter;
-      Converter converter(_node_index);
+      typedef _reader_bits::DoubleMapLookUpConverter<
+        Node, RedNodeIndex, BlueNodeIndex> Converter;
+      Converter converter(_red_node_index, _blue_node_index);
       _reader_bits::ValueStorageBase* storage =
         new _reader_bits::ValueStorage<Node, Converter>(node, converter);
+      _attributes.insert(std::make_pair(caption, storage));
+      return *this;
+    }
+
+    /// \brief Red node reading rule
+    ///
+    /// Add a red node reading rule to reader.
+    BpGraphReader& redNode(const std::string& caption, RedNode& node) {
+      typedef _reader_bits::MapLookUpConverter<RedNode> Converter;
+      Converter converter(_red_node_index);
+      _reader_bits::ValueStorageBase* storage =
+        new _reader_bits::ValueStorage<RedNode, Converter>(node, converter);
+      _attributes.insert(std::make_pair(caption, storage));
+      return *this;
+    }
+
+    /// \brief Blue node reading rule
+    ///
+    /// Add a blue node reading rule to reader.
+    BpGraphReader& blueNode(const std::string& caption, BlueNode& node) {
+      typedef _reader_bits::MapLookUpConverter<BlueNode> Converter;
+      Converter converter(_blue_node_index);
+      _reader_bits::ValueStorageBase* storage =
+        new _reader_bits::ValueStorage<BlueNode, Converter>(node, converter);
       _attributes.insert(std::make_pair(caption, storage));
       return *this;
     }
@@ -2549,8 +2612,11 @@ namespace lemon {
       LEMON_ASSERT(!_use_nodes, "Multiple usage of useNodes() member");
       _use_nodes = true;
       _writer_bits::DefaultConverter<typename Map::Value> converter;
-      for (NodeIt n(_graph); n != INVALID; ++n) {
-        _node_index.insert(std::make_pair(converter(map[n]), n));
+      for (RedNodeIt n(_graph); n != INVALID; ++n) {
+        _red_node_index.insert(std::make_pair(converter(map[n]), n));
+      }
+      for (BlueNodeIt n(_graph); n != INVALID; ++n) {
+        _blue_node_index.insert(std::make_pair(converter(map[n]), n));
       }
       return *this;
     }
@@ -2566,8 +2632,11 @@ namespace lemon {
       checkConcept<concepts::ReadMap<Node, typename Map::Value>, Map>();
       LEMON_ASSERT(!_use_nodes, "Multiple usage of useNodes() member");
       _use_nodes = true;
-      for (NodeIt n(_graph); n != INVALID; ++n) {
-        _node_index.insert(std::make_pair(converter(map[n]), n));
+      for (RedNodeIt n(_graph); n != INVALID; ++n) {
+        _red_node_index.insert(std::make_pair(converter(map[n]), n));
+      }
+      for (BlueNodeIt n(_graph); n != INVALID; ++n) {      
+        _blue_node_index.insert(std::make_pair(converter(map[n]), n));
       }
       return *this;
     }
@@ -2664,13 +2733,13 @@ namespace lemon {
 
     void readRedNodes() {
 
-      std::vector<int> map_index(_red_maps.size());
+      std::vector<int> map_index(_red_node_maps.size());
       int map_num, label_index;
 
       char c;
       if (!readLine() || !(line >> c) || c == '@') {
         if (readSuccess() && line) line.putback(c);
-        if (!_red_maps.empty())
+        if (!_red_node_maps.empty())
           throw FormatError("Cannot find map names");
         return;
       }
@@ -2691,12 +2760,12 @@ namespace lemon {
           ++index;
         }
 
-        for (int i = 0; i < static_cast<int>(_red_maps.size()); ++i) {
+        for (int i = 0; i < static_cast<int>(_red_node_maps.size()); ++i) {
           std::map<std::string, int>::iterator jt =
-            maps.find(_red_maps[i].first);
+            maps.find(_red_node_maps[i].first);
           if (jt == maps.end()) {
             std::ostringstream msg;
-            msg << "Map not found: " << _red_maps[i].first;
+            msg << "Map not found: " << _red_node_maps[i].first;
             throw FormatError(msg.str());
           }
           map_index[i] = jt->second;
@@ -2727,17 +2796,17 @@ namespace lemon {
         if (line >> std::ws >> c)
           throw FormatError("Extra character at the end of line");
 
-        Node n;
+        RedNode n;
         if (!_use_nodes) {
           n = _graph.addRedNode();
           if (label_index != -1)
-            _node_index.insert(std::make_pair(tokens[label_index], n));
+            _red_node_index.insert(std::make_pair(tokens[label_index], n));
         } else {
           if (label_index == -1)
             throw FormatError("Label map not found");
-          typename std::map<std::string, Node>::iterator it =
-            _node_index.find(tokens[label_index]);
-          if (it == _node_index.end()) {
+          typename std::map<std::string, RedNode>::iterator it =
+            _red_node_index.find(tokens[label_index]);
+          if (it == _red_node_index.end()) {
             std::ostringstream msg;
             msg << "Node with label not found: " << tokens[label_index];
             throw FormatError(msg.str());
@@ -2745,8 +2814,8 @@ namespace lemon {
           n = it->second;
         }
 
-        for (int i = 0; i < static_cast<int>(_red_maps.size()); ++i) {
-          _red_maps[i].second->set(n, tokens[map_index[i]]);
+        for (int i = 0; i < static_cast<int>(_red_node_maps.size()); ++i) {
+          _red_node_maps[i].second->set(n, tokens[map_index[i]]);
         }
 
       }
@@ -2757,13 +2826,13 @@ namespace lemon {
 
     void readBlueNodes() {
 
-      std::vector<int> map_index(_blue_maps.size());
+      std::vector<int> map_index(_blue_node_maps.size());
       int map_num, label_index;
 
       char c;
       if (!readLine() || !(line >> c) || c == '@') {
         if (readSuccess() && line) line.putback(c);
-        if (!_blue_maps.empty())
+        if (!_blue_node_maps.empty())
           throw FormatError("Cannot find map names");
         return;
       }
@@ -2784,12 +2853,12 @@ namespace lemon {
           ++index;
         }
 
-        for (int i = 0; i < static_cast<int>(_blue_maps.size()); ++i) {
+        for (int i = 0; i < static_cast<int>(_blue_node_maps.size()); ++i) {
           std::map<std::string, int>::iterator jt =
-            maps.find(_blue_maps[i].first);
+            maps.find(_blue_node_maps[i].first);
           if (jt == maps.end()) {
             std::ostringstream msg;
-            msg << "Map not found: " << _blue_maps[i].first;
+            msg << "Map not found: " << _blue_node_maps[i].first;
             throw FormatError(msg.str());
           }
           map_index[i] = jt->second;
@@ -2820,17 +2889,17 @@ namespace lemon {
         if (line >> std::ws >> c)
           throw FormatError("Extra character at the end of line");
 
-        Node n;
+        BlueNode n;
         if (!_use_nodes) {
           n = _graph.addBlueNode();
           if (label_index != -1)
-            _node_index.insert(std::make_pair(tokens[label_index], n));
+            _blue_node_index.insert(std::make_pair(tokens[label_index], n));
         } else {
           if (label_index == -1)
             throw FormatError("Label map not found");
-          typename std::map<std::string, Node>::iterator it =
-            _node_index.find(tokens[label_index]);
-          if (it == _node_index.end()) {
+          typename std::map<std::string, BlueNode>::iterator it =
+            _blue_node_index.find(tokens[label_index]);
+          if (it == _blue_node_index.end()) {
             std::ostringstream msg;
             msg << "Node with label not found: " << tokens[label_index];
             throw FormatError(msg.str());
@@ -2838,8 +2907,8 @@ namespace lemon {
           n = it->second;
         }
 
-        for (int i = 0; i < static_cast<int>(_blue_maps.size()); ++i) {
-          _blue_maps[i].second->set(n, tokens[map_index[i]]);
+        for (int i = 0; i < static_cast<int>(_blue_node_maps.size()); ++i) {
+          _blue_node_maps[i].second->set(n, tokens[map_index[i]]);
         }
 
       }
@@ -2924,39 +2993,26 @@ namespace lemon {
 
         Edge e;
         if (!_use_edges) {
-
-          typename NodeIndex::iterator it;
-
-          it = _node_index.find(source_token);
-          if (it == _node_index.end()) {
+          typename RedNodeIndex::iterator rit =
+            _red_node_index.find(source_token);
+          if (rit == _red_node_index.end()) {
             std::ostringstream msg;
             msg << "Item not found: " << source_token;
             throw FormatError(msg.str());
           }
-          Node source = it->second;
-          if (!_graph.red(source)) {
-            std::ostringstream msg;
-            msg << "Item is not red node: " << source_token;
-            throw FormatError(msg.str());
-          }
-
-          it = _node_index.find(target_token);
-          if (it == _node_index.end()) {
+          RedNode source = rit->second;
+          typename BlueNodeIndex::iterator it =
+            _blue_node_index.find(target_token);
+          if (it == _blue_node_index.end()) {
             std::ostringstream msg;
             msg << "Item not found: " << target_token;
             throw FormatError(msg.str());
           }
-          Node target = it->second;
-          if (!_graph.blue(target)) {
-            std::ostringstream msg;
-            msg << "Item is not red node: " << source_token;
-            throw FormatError(msg.str());
-          }
+          BlueNode target = it->second;
 
           // It is checked that source is red and
           // target is blue, so this should be safe:
-          e = _graph.addEdge(_graph.asRedNodeUnsafe(source),
-                             _graph.asBlueNodeUnsafe(target));
+          e = _graph.addEdge(source, target);
           if (label_index != -1)
             _edge_index.insert(std::make_pair(tokens[label_index], e));
         } else {

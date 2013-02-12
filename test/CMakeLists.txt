@@ -35,6 +35,7 @@ SET(TESTS
   hao_orlin_test
   heap_test
   kruskal_test
+  lgf_reader_writer_test
   lgf_test
   maps_test
   matching_test
