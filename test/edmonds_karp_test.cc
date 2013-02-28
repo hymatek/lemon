@@ -83,7 +83,7 @@ void checkEdmondKarpCompile() {
   bool b;
   ignore_unused_variable_warning(v,b);
   typedef EdmondsKarp<Digraph, CapMap>
-              ::DefFlowMap<FlowMap>
+              ::SetFlowMap<FlowMap>
               ::Create EKType;
   EKType ek_test(g, cap, n, n);
   const EKType& const_ek_test = ek_test;

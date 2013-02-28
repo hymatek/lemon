@@ -172,7 +172,7 @@ namespace lemon {
     ///@{
 
     template <typename T>
-    struct DefFlowMapTraits : public Traits {
+    struct SetFlowMapTraits : public Traits {
       typedef T FlowMap;
       static FlowMap *createFlowMap(const Digraph&) {
 	LEMON_ASSERT(false, "FlowMap is not initialized");
@@ -186,10 +186,9 @@ namespace lemon {
     /// \ref named-templ-param "Named parameter" for setting FlowMap
     /// type
     template <typename T>
-    struct DefFlowMap 
-      : public EdmondsKarp<Digraph, CapacityMap, DefFlowMapTraits<T> > {
-      typedef EdmondsKarp<Digraph, CapacityMap, DefFlowMapTraits<T> >
-      Create;
+    struct SetFlowMap 
+      : public EdmondsKarp<Digraph, CapacityMap, SetFlowMapTraits<T> > {
+      typedef EdmondsKarp<Digraph, CapacityMap, SetFlowMapTraits<T> > Create;
     };
 
     /// @}
