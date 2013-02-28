@@ -45,19 +45,24 @@ namespace lemon {
     /// It must meet the \ref concepts::ReadMap "ReadMap" concept.
     typedef CAP CapacityMap;
 
-    /// \brief The type of the length of the arcs.
+    /// \brief The type of the flow values.
     typedef typename CapacityMap::Value Value;
 
-    /// \brief The map type that stores the flow values.
+    /// \brief The type of the map that stores the flow values.
     ///
-    /// The map type that stores the flow values. 
+    /// The type of the map that stores the flow values.
     /// It must meet the \ref concepts::ReadWriteMap "ReadWriteMap" concept.
+#ifdef DOXYGEN
+    typedef GR::ArcMap<Value> FlowMap;
+#else
     typedef typename Digraph::template ArcMap<Value> FlowMap;
+#endif
 
     /// \brief Instantiates a FlowMap.
     ///
     /// This function instantiates a \ref FlowMap. 
-    /// \param digraph The digraph, to which we would like to define the flow map.
+    /// \param digraph The digraph for which we would like to define
+    /// the flow map.
     static FlowMap* createFlowMap(const Digraph& digraph) {
       return new FlowMap(digraph);
     }
@@ -74,24 +79,28 @@ namespace lemon {
   /// \brief Edmonds-Karp algorithms class.
   ///
   /// This class provides an implementation of the \e Edmonds-Karp \e
-  /// algorithm producing a flow of maximum value in directed
-  /// digraphs. The Edmonds-Karp algorithm is slower than the Preflow
-  /// algorithm but it has an advantage of the step-by-step execution
+  /// algorithm producing a \ref max_flow "flow of maximum value" in a
+  /// digraph \ref clrs01algorithms, \ref amo93networkflows,
+  /// \ref edmondskarp72theoretical.
+  /// The Edmonds-Karp algorithm is slower than the Preflow
+  /// algorithm, but it has an advantage of the step-by-step execution
   /// control with feasible flow solutions. The \e source node, the \e
   /// target node, the \e capacity of the arcs and the \e starting \e
   /// flow value of the arcs should be passed to the algorithm
   /// through the constructor.
   ///
   /// The time complexity of the algorithm is \f$ O(nm^2) \f$ in
-  /// worst case.  Always try the preflow algorithm instead of this if
+  /// worst case. Always try the Preflow algorithm instead of this if
   /// you just want to compute the optimal flow.
   ///
-  /// \param GR The digraph type the algorithm runs on.
-  /// \param CAP The capacity map type.
-  /// \param TR Traits class to set various data types used by
-  /// the algorithm.  The default traits class is \ref
-  /// EdmondsKarpDefaultTraits.  See \ref EdmondsKarpDefaultTraits for the
-  /// documentation of a Edmonds-Karp traits class. 
+  /// \tparam GR The type of the digraph the algorithm runs on.
+  /// \tparam CAP The type of the capacity map. The default map
+  /// type is \ref concepts::Digraph::ArcMap "GR::ArcMap<int>". 
+  /// \tparam TR The traits class that defines various types used by the
+  /// algorithm. By default, it is \ref EdmondsKarpDefaultTraits
+  /// "EdmondsKarpDefaultTraits<GR, CAP>".
+  /// In most cases, this parameter should not be set directly,
+  /// consider to use the named template parameters instead.
 
 #ifdef DOXYGEN
   template <typename GR, typename CAP, typename TR>
@@ -103,12 +112,18 @@ namespace lemon {
   class EdmondsKarp {
   public:
 
+    /// The \ref EdmondsKarpDefaultTraits "traits class" of the algorithm.
     typedef TR Traits;
+    /// The type of the digraph the algorithm runs on.
     typedef typename Traits::Digraph Digraph;
+    /// The type of the capacity map.
     typedef typename Traits::CapacityMap CapacityMap;
+    /// The type of the flow values.
     typedef typename Traits::Value Value; 
 
+    /// The type of the flow map.
     typedef typename Traits::FlowMap FlowMap;
+    /// The type of the tolerance.
     typedef typename Traits::Tolerance Tolerance;
 
   private:
@@ -160,7 +175,7 @@ namespace lemon {
     struct DefFlowMapTraits : public Traits {
       typedef T FlowMap;
       static FlowMap *createFlowMap(const Digraph&) {
-	LEMON_ASSERT(false,"Uninitialized parameter.");
+	LEMON_ASSERT(false, "FlowMap is not initialized");
         return 0;
       }
     };
@@ -173,10 +188,9 @@ namespace lemon {
     template <typename T>
     struct DefFlowMap 
       : public EdmondsKarp<Digraph, CapacityMap, DefFlowMapTraits<T> > {
-      typedef EdmondsKarp<Digraph, CapacityMap, DefFlowMapTraits<T> > 
+      typedef EdmondsKarp<Digraph, CapacityMap, DefFlowMapTraits<T> >
       Create;
     };
-
 
     /// @}
 
@@ -198,7 +212,8 @@ namespace lemon {
       : _graph(digraph), _capacity(&capacity), _source(source), _target(target),
 	_flow(0), _local_flow(false), _pred(0), _tolerance(), _flow_value()
     {
-      LEMON_ASSERT(_source != _target,"Flow source and target are the same nodes.");
+      LEMON_ASSERT(_source != _target,
+                   "Flow source and target are the same nodes.");
     }
 
     /// \brief Destructor.
@@ -211,7 +226,7 @@ namespace lemon {
     /// \brief Sets the capacity map.
     ///
     /// Sets the capacity map.
-    /// \return \c (*this)
+    /// \return <tt>(*this)</tt>
     EdmondsKarp& capacityMap(const CapacityMap& map) {
       _capacity = &map;
       return *this;
@@ -220,7 +235,11 @@ namespace lemon {
     /// \brief Sets the flow map.
     ///
     /// Sets the flow map.
-    /// \return \c (*this)
+    /// If you don't use this function before calling \ref run() or
+    /// \ref init(), an instance will be allocated automatically.
+    /// The destructor deallocates this automatically allocated map,
+    /// of course.
+    /// \return <tt>(*this)</tt>
     EdmondsKarp& flowMap(FlowMap& map) {
       if (_local_flow) {
 	delete _flow;
@@ -230,17 +249,10 @@ namespace lemon {
       return *this;
     }
 
-    /// \brief Returns the flow map.
-    ///
-    /// \return The flow map.
-    const FlowMap& flowMap() const {
-      return *_flow;
-    }
-
     /// \brief Sets the source node.
     ///
     /// Sets the source node.
-    /// \return \c (*this)
+    /// \return <tt>(*this)</tt>
     EdmondsKarp& source(const Node& node) {
       _source = node;
       return *this;
@@ -249,7 +261,7 @@ namespace lemon {
     /// \brief Sets the target node.
     ///
     /// Sets the target node.
-    /// \return \c (*this)
+    /// \return <tt>(*this)</tt>
     EdmondsKarp& target(const Node& node) {
       _target = node;
       return *this;
@@ -258,31 +270,32 @@ namespace lemon {
     /// \brief Sets the tolerance used by algorithm.
     ///
     /// Sets the tolerance used by algorithm.
+    /// \return <tt>(*this)</tt>
     EdmondsKarp& tolerance(const Tolerance& tolerance) {
       _tolerance = tolerance;
       return *this;
     } 
 
-    /// \brief Returns the tolerance used by algorithm.
+    /// \brief Returns a const reference to the tolerance.
     ///
-    /// Returns the tolerance used by algorithm.
+    /// Returns a const reference to the tolerance object used by
+    /// the algorithm.
     const Tolerance& tolerance() const {
       return _tolerance;
     } 
 
     /// \name Execution control
-    /// The simplest way to execute the
-    /// algorithm is to use the \c run() member functions.
-    /// \n
-    /// If you need more control on initial solution or
-    /// execution then you have to call one \ref init() function and then
-    /// the start() or multiple times the \c augment() member function.  
+    /// The simplest way to execute the algorithm is to use \ref run().\n
+    /// If you need better control on the initial solution or the execution,
+    /// you have to call one of the \ref init() functions first, then
+    /// \ref start() or multiple times the \ref augment() function.
     
     ///@{
 
-    /// \brief Initializes the algorithm
-    /// 
-    /// Sets the flow to empty flow.
+    /// \brief Initializes the algorithm.
+    ///
+    /// Initializes the internal data structures and sets the initial
+    /// flow to zero on each arc.
     void init() {
       createStructures();
       for (ArcIt it(_graph); it != INVALID; ++it) {
@@ -291,11 +304,12 @@ namespace lemon {
       _flow_value = 0;
     }
     
-    /// \brief Initializes the algorithm
-    /// 
-    /// Initializes the flow to the \c flowMap. The \c flowMap should
-    /// contain a feasible flow, ie. in each node excluding the source
-    /// and the target the incoming flow should be equal to the
+    /// \brief Initializes the algorithm using the given flow map.
+    ///
+    /// Initializes the internal data structures and sets the initial
+    /// flow to the given \c flowMap. The \c flowMap should
+    /// contain a feasible flow, i.e. at each node excluding the source
+    /// and the target, the incoming flow should be equal to the
     /// outgoing flow.
     template <typename FlowMap>
     void flowInit(const FlowMap& flowMap) {
@@ -312,13 +326,14 @@ namespace lemon {
       }
     }
 
-    /// \brief Initializes the algorithm
-    /// 
-    /// Initializes the flow to the \c flowMap. The \c flowMap should
-    /// contain a feasible flow, ie. in each node excluding the source
-    /// and the target the incoming flow should be equal to the
-    /// outgoing flow.  
-    /// \return %False when the given flowMap does not contain
+    /// \brief Initializes the algorithm using the given flow map.
+    ///
+    /// Initializes the internal data structures and sets the initial
+    /// flow to the given \c flowMap. The \c flowMap should
+    /// contain a feasible flow, i.e. at each node excluding the source
+    /// and the target, the incoming flow should be equal to the
+    /// outgoing flow. 
+    /// \return \c false when the given \c flowMap does not contain a
     /// feasible flow.
     template <typename FlowMap>
     bool checkedFlowInit(const FlowMap& flowMap) {
@@ -354,15 +369,15 @@ namespace lemon {
       return true;
     }
 
-    /// \brief Augment the solution on an arc shortest path.
+    /// \brief Augments the solution along a shortest path.
     /// 
-    /// Augment the solution on an arc shortest path. It searches an
-    /// arc shortest path between the source and the target
-    /// in the residual digraph by the bfs algoritm.
+    /// Augments the solution along a shortest path. This function searches a
+    /// shortest path between the source and the target
+    /// in the residual digraph by the Bfs algoritm.
     /// Then it increases the flow on this path with the minimal residual
-    /// capacity on the path. If there is no such path it gives back
+    /// capacity on the path. If there is no such path, it gives back
     /// false.
-    /// \return %False when the augmenting didn't success so the
+    /// \return \c false when the augmenting did not success, i.e. the
     /// current flow is a feasible and optimal solution.
     bool augment() {
       for (NodeIt n(_graph); n != INVALID; ++n) {
@@ -439,15 +454,18 @@ namespace lemon {
 
     /// \brief Executes the algorithm
     ///
-    /// It runs augmenting phases until the optimal solution is reached. 
+    /// Executes the algorithm by performing augmenting phases until the
+    /// optimal solution is reached. 
+    /// \pre One of the \ref init() functions must be called before
+    /// using this function.
     void start() {
       while (augment()) {}
     }
 
     /// \brief Runs the algorithm.
     /// 
-    /// It is just a shorthand for:
-    ///
+    /// Runs the Edmonds-Karp algorithm.
+    /// \note ek.run() is just a shortcut of the following code.
     ///\code 
     /// ek.init();
     /// ek.start();
@@ -462,42 +480,63 @@ namespace lemon {
     /// \name Query Functions
     /// The result of the Edmonds-Karp algorithm can be obtained using these
     /// functions.\n
-    /// Before the use of these functions,
-    /// either run() or start() must be called.
+    /// Either \ref run() or \ref start() should be called before using them.
     
     ///@{
 
     /// \brief Returns the value of the maximum flow.
     ///
-    /// Returns the value of the maximum flow by returning the excess
-    /// of the target node \c t.
-
+    /// Returns the value of the maximum flow found by the algorithm.
+    ///
+    /// \pre Either \ref run() or \ref init() must be called before
+    /// using this function.
     Value flowValue() const {
       return _flow_value;
     }
 
-
-    /// \brief Returns the flow on the arc.
+    /// \brief Returns the flow value on the given arc.
     ///
-    /// Sets the \c flowMap to the flow on the arcs.
+    /// Returns the flow value on the given arc.
+    ///
+    /// \pre Either \ref run() or \ref init() must be called before
+    /// using this function.
     Value flow(const Arc& arc) const {
       return (*_flow)[arc];
     }
 
-    /// \brief Returns true when the node is on the source side of minimum cut.
+    /// \brief Returns a const reference to the flow map.
     ///
+    /// Returns a const reference to the arc map storing the found flow.
+    ///
+    /// \pre Either \ref run() or \ref init() must be called before
+    /// using this function.
+    const FlowMap& flowMap() const {
+      return *_flow;
+    }
 
-    /// Returns true when the node is on the source side of minimum
-    /// cut.
-
+    /// \brief Returns \c true when the node is on the source side of the
+    /// minimum cut.
+    ///
+    /// Returns true when the node is on the source side of the found
+    /// minimum cut.
+    ///
+    /// \pre Either \ref run() or \ref init() must be called before
+    /// using this function.
     bool minCut(const Node& node) const {
       return ((*_pred)[node] != INVALID) or node == _source;
     }
 
-    /// \brief Returns a minimum value cut.
+    /// \brief Gives back a minimum value cut.
     ///
-    /// Sets \c cutMap to the characteristic vector of a minimum value cut.
-
+    /// Sets \c cutMap to the characteristic vector of a minimum value
+    /// cut. \c cutMap should be a \ref concepts::WriteMap "writable"
+    /// node map with \c bool (or convertible) value type.
+    ///
+    /// \note This function calls \ref minCut() for each node, so it runs in
+    /// O(n) time.
+    ///
+    /// \pre Either \ref run() or \ref init() must be called before
+    /// using this function.
     template <typename CutMap>
     void minCutMap(CutMap& cutMap) const {
       for (NodeIt n(_graph); n != INVALID; ++n) {
