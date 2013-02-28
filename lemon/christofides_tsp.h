@@ -209,12 +209,23 @@ namespace lemon {
       /// \brief Gives back the node sequence of the found tour.
       ///
       /// This function copies the node sequence of the found tour into
-      /// the given standard container.
+      /// an STL container through the given output iterator. The
+      /// <tt>value_type</tt> of the container must be <tt>FullGraph::Node</tt>.
+      /// For example,
+      /// \code
+      /// std::vector<FullGraph::Node> nodes(countNodes(graph));
+      /// tsp.tourNodes(nodes.begin());
+      /// \endcode
+      /// or
+      /// \code
+      /// std::list<FullGraph::Node> nodes;
+      /// tsp.tourNodes(std::back_inserter(nodes));
+      /// \endcode
       ///
       /// \pre run() must be called before using this function.
-      template <typename Container>
-      void tourNodes(Container &container) const {
-        container.assign(_path.begin(), _path.end());
+      template <typename Iterator>
+      void tourNodes(Iterator out) const {
+        std::copy(_path.begin(), _path.end(), out);
       }
       
       /// \brief Gives back the found tour as a path.

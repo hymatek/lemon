@@ -61,21 +61,23 @@ using namespace lemon;
 // }
 
 // Checks tour validity
-bool checkTour(const FullGraph &gr, const std::vector<FullGraph::Node> &p) {
+template <typename Container>
+bool checkTour(const FullGraph &gr, const Container &p) {
   FullGraph::NodeMap<bool> used(gr, false);
   
-  int nodes = 0;
-  for (int i = 0; i < int(p.size()); ++i) {
-    if (used[p[i]]) return false;
-    used[p[i]] = true;
-    ++nodes;
+  int node_cnt = 0;
+  for (typename Container::const_iterator it = p.begin(); it != p.end(); ++it) {
+    FullGraph::Node node = *it;
+    if (used[node]) return false;
+    used[node] = true;
+    ++node_cnt;
   }
   
-  return (nodes == gr.nodeNum());
+  return (node_cnt == gr.nodeNum());
 }
 
 // Checks tour validity
-bool checkTour(const FullGraph &gr, const Path<FullGraph> &p) {
+bool checkTourPath(const FullGraph &gr, const Path<FullGraph> &p) {
   FullGraph::NodeMap<bool> used(gr, false);
   
   if (!checkPath(gr, p)) return false;
@@ -134,21 +136,24 @@ void tspTestSmall(const std::string &alg_name) {
     check(alg.run() == esize, alg_name + ": Wrong total cost");
     check(alg.tourCost() == esize, alg_name + ": Wrong total cost");
 
-    std::list<Node> list;
-    std::vector<Node> vec;
-    alg.tourNodes(list);
-    alg.tourNodes(vec);
-    check(list.size() == nsize, alg_name + ": Wrong node sequence");
-    check(vec.size() == nsize,  alg_name + ": Wrong node sequence");
-    check(alg.tourNodes().size() == nsize, alg_name + ": Wrong node sequence");
-    check(checkTour(g, vec), alg_name + ": Wrong node sequence");
-    check(checkCost(g, vec, constMap<Edge, int>(1), esize),
+    std::list<Node> list1(nsize), list2;
+    std::vector<Node> vec1(nsize), vec2;
+    alg.tourNodes(list1.begin());
+    alg.tourNodes(vec1.begin());
+    alg.tourNodes(std::front_inserter(list2));
+    alg.tourNodes(std::back_inserter(vec2));
+    check(checkTour(g, alg.tourNodes()), alg_name + ": Wrong node sequence");
+    check(checkTour(g, list1), alg_name + ": Wrong node sequence");
+    check(checkTour(g, vec1), alg_name + ": Wrong node sequence");
+    check(checkTour(g, list2), alg_name + ": Wrong node sequence");
+    check(checkTour(g, vec2), alg_name + ": Wrong node sequence");
+    check(checkCost(g, vec1, constMap<Edge, int>(1), esize),
       alg_name + ": Wrong tour cost");
 
     SimplePath<FullGraph> path;
     alg.tour(path);
     check(path.length() == esize, alg_name + ": Wrong tour");
-    check(checkTour(g, path), alg_name + ": Wrong tour");
+    check(checkTourPath(g, path), alg_name + ": Wrong tour");
     check(checkCost(g, path, constMap<Edge, int>(1), esize),
       alg_name + ": Wrong tour cost");
   }
@@ -180,14 +185,14 @@ void tspTestRandom(const std::string &alg_name) {
     check(alg.run() > 0, alg_name + ": Wrong total cost");
 
     std::vector<Node> vec;
-    alg.tourNodes(vec);
+    alg.tourNodes(std::back_inserter(vec));
     check(checkTour(g, vec), alg_name + ": Wrong node sequence");
     check(checkCost(g, vec, cost, alg.tourCost()),
       alg_name + ": Wrong tour cost");
 
     SimplePath<FullGraph> path;
     alg.tour(path);
-    check(checkTour(g, path), alg_name + ": Wrong tour");
+    check(checkTourPath(g, path), alg_name + ": Wrong tour");
     check(checkCost(g, path, cost, alg.tourCost()),
       alg_name + ": Wrong tour cost");
     
