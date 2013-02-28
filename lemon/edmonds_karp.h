@@ -524,7 +524,7 @@ namespace lemon {
     /// \pre Either \ref run() or \ref init() must be called before
     /// using this function.
     bool minCut(const Node& node) const {
-      return ((*_pred)[node] != INVALID) or node == _source;
+      return ((*_pred)[node] != INVALID) || node == _source;
     }
 
     /// \brief Gives back a minimum value cut.
