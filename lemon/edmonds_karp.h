@@ -311,7 +311,7 @@ namespace lemon {
     /// and the target, the incoming flow should be equal to the
     /// outgoing flow.
     template <typename FlowMap>
-    void flowInit(const FlowMap& flowMap) {
+    void init(const FlowMap& flowMap) {
       createStructures();
       for (ArcIt e(_graph); e != INVALID; ++e) {
 	_flow->set(e, flowMap[e]);
@@ -335,7 +335,7 @@ namespace lemon {
     /// \return \c false when the given \c flowMap does not contain a
     /// feasible flow.
     template <typename FlowMap>
-    bool checkedFlowInit(const FlowMap& flowMap) {
+    bool checkedInit(const FlowMap& flowMap) {
       createStructures();
       for (ArcIt e(_graph); e != INVALID; ++e) {
 	_flow->set(e, flowMap[e]);

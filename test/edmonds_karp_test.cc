@@ -186,7 +186,7 @@ int main() {
   int flow_value=ek_test.flowValue();
 
   for(ArcIt e(g); e!=INVALID; ++e) cap[e]=2*cap[e];
-  ek_test.flowInit(flow);
+  ek_test.init(flow);
   ek_test.start();
 
   CutMap min_cut1(g);
