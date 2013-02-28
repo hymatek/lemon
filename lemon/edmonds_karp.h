@@ -167,6 +167,8 @@ namespace lemon {
     
   public:
 
+    typedef EdmondsKarp Create;
+
     ///\name Named template parameters
 
     ///@{

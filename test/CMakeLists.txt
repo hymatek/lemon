@@ -25,7 +25,6 @@ SET(TESTS
   dijkstra_test
   dim_test
   edge_set_test
-  edmonds_karp_test
   error_test
   euler_test
   fractional_matching_test
@@ -42,13 +41,13 @@ SET(TESTS
   matching_test
   max_cardinality_search_test
   max_clique_test
+  max_flow_test
   min_cost_arborescence_test
   min_cost_flow_test
   min_mean_cycle_test
   nagamochi_ibaraki_test
   path_test
   planarity_test
-  preflow_test
   radix_sort_test
   random_test
   suurballe_test
