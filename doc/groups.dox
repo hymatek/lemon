@@ -558,6 +558,42 @@ embedding and drawing.
 \image html planar.png
 \image latex planar.eps "Plane graph" width=\textwidth
 */
+ 
+/**
+@defgroup tsp Traveling Salesman Problem
+@ingroup algs
+\brief Algorithms for the symmetric traveling salesman problem
+
+This group contains basic heuristic algorithms for the the symmetric
+\e traveling \e salesman \e problem (TSP).
+Given an \ref FullGraph "undirected full graph" with a cost map on its edges,
+the problem is to find a shortest possible tour that visits each node exactly
+once (i.e. the minimum cost Hamiltonian cycle).
+
+These TSP algorithms are intended to be used with a \e metric \e cost
+\e function, i.e. the edge costs should satisfy the triangle inequality.
+Otherwise the algorithms could yield worse results.
+
+LEMON provides five well-known heuristics for solving symmetric TSP:
+ - \ref NearestNeighborTsp Neareast neighbor algorithm
+ - \ref GreedyTsp Greedy algorithm
+ - \ref InsertionTsp Insertion heuristic (with four selection methods)
+ - \ref ChristofidesTsp Christofides algorithm
+ - \ref Opt2Tsp 2-opt algorithm
+
+\ref NearestNeighborTsp, \ref GreedyTsp, and \ref InsertionTsp are the fastest
+solution methods. Furthermore, \ref InsertionTsp is usually quite effective.
+
+\ref ChristofidesTsp is somewhat slower, but it has the best guaranteed
+approximation factor: 3/2.
+
+\ref Opt2Tsp usually provides the best results in practice, but
+it is the slowest method. It can also be used to improve given tours,
+for example, the results of other algorithms.
+
+\image html tsp.png
+\image latex tsp.eps "Traveling salesman problem" width=\textwidth
+*/
 
 /**
 @defgroup approx_algs Approximation Algorithms
