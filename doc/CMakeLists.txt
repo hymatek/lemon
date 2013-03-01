@@ -4,6 +4,8 @@ SET(abs_top_srcdir ${PROJECT_SOURCE_DIR})
 SET(abs_top_builddir ${PROJECT_BINARY_DIR})
 
 SET(LEMON_DOC_SOURCE_BROWSER "NO" CACHE STRING "Include source into the doc (YES/NO).")
+SET(LEMON_DOC_USE_MATHJAX "NO" CACHE STRING "Use MathJax to display math formulae (YES/NO).")
+SET(LEMON_DOC_MATHJAX_RELPATH "http://www.mathjax.org/mathjax" CACHE STRING "MathJax library location.")
 
 CONFIGURE_FILE(
   ${PROJECT_SOURCE_DIR}/doc/Doxyfile.in
@@ -73,12 +75,7 @@ ENDIF()
 
 IF(WGET_FOUND)
 ADD_CUSTOM_TARGET(update-external-tags
-  COMMAND ${CMAKE_COMMAND} -E make_directory dl
-  # COMMAND ${CMAKE_COMMAND} -E copy libstdc++.tag dl
-  COMMAND ${WGET_EXECUTABLE} wget -P dl -N libstdc++.tag.tmp http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/libstdc++.tag
-  COMMAND ${CMAKE_COMMAND} -E rename dl/libstdc++.tag libstdc++.tag
-  COMMAND ${CMAKE_COMMAND} -E remove dl/libstdc++.tag
-  COMMAND ${CMAKE_COMMAND} -E remove_directory dl
+  COMMAND ${WGET_EXECUTABLE} -N http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/libstdc++.tag
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 ENDIF()
