@@ -317,7 +317,7 @@ namespace lemon {
 
       /// Constructor with starting point
       ArcIt(const SimplePath &_path, int _idx)
-        : idx(_idx), path(&_path) {}
+        : path(&_path), idx(_idx) {}
 
     public:
 
