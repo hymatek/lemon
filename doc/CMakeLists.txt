@@ -35,6 +35,7 @@ IF(DOXYGEN_EXECUTABLE AND PYTHONINTERP_FOUND AND GHOSTSCRIPT_EXECUTABLE)
     COMMAND ${CMAKE_COMMAND} -E remove_directory gen-images
     COMMAND ${CMAKE_COMMAND} -E make_directory gen-images
     COMMAND ${GHOSTSCRIPT_EXECUTABLE} ${GHOSTSCRIPT_OPTIONS} -r20 -sOutputFile=gen-images/grid_graph.png ${CMAKE_CURRENT_SOURCE_DIR}/images/grid_graph.eps
+    COMMAND ${GHOSTSCRIPT_EXECUTABLE} ${GHOSTSCRIPT_OPTIONS} -r32 -sOutputFile=gen-images/adaptors2.png ${CMAKE_CURRENT_SOURCE_DIR}/images/adaptors2.eps
     COMMAND ${GHOSTSCRIPT_EXECUTABLE} ${GHOSTSCRIPT_OPTIONS} -r32 -sOutputFile=gen-images/connected_components.png ${CMAKE_CURRENT_SOURCE_DIR}/images/connected_components.eps
     COMMAND ${GHOSTSCRIPT_EXECUTABLE} ${GHOSTSCRIPT_OPTIONS} -r32 -sOutputFile=gen-images/strongly_connected_components.png ${CMAKE_CURRENT_SOURCE_DIR}/images/strongly_connected_components.eps
     COMMAND ${GHOSTSCRIPT_EXECUTABLE} ${GHOSTSCRIPT_OPTIONS} -r32 -sOutputFile=gen-images/node_biconnected_components.png ${CMAKE_CURRENT_SOURCE_DIR}/images/node_biconnected_components.eps

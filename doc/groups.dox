@@ -112,6 +112,14 @@ a range of weighted and cardinality optimization algorithms can be
 obtained. For other examples, the interested user is referred to the
 detailed documentation of particular adaptors.
 
+Since the adaptor classes conform to the \ref graph_concepts "graph concepts",
+an adaptor can even be applied to another one.
+The following image illustrates a situation when a \ref SubDigraph adaptor
+is applied on a digraph and \ref Undirector is applied on the subgraph.
+
+\image html adaptors2.png
+\image latex adaptors2.eps "Using graph adaptors" width=\textwidth
+
 The behavior of graph adaptors can be very different. Some of them keep
 capabilities of the original graph while in other cases this would be
 meaningless. This means that the concepts that they meet depend
@@ -722,6 +730,8 @@ This group contains methods for reading and writing
 
 This group contains general \c EPS drawing methods and special
 graph exporting tools.
+
+\image html graph_to_eps.png
 */
 
 /**
