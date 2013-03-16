@@ -270,8 +270,8 @@ namespace lemon {
     /// found cycle.
     ///
     /// If you don't call this function before calling \ref run() or
-    /// \ref findCycleMean(), it will allocate a local \ref Path "path"
-    /// structure. The destuctor deallocates this automatically
+    /// \ref findCycleMean(), a local \ref Path "path" structure
+    /// will be allocated. The destuctor deallocates this automatically
     /// allocated object, of course.
     ///
     /// \note The algorithm calls only the \ref lemon::Path::addFront()

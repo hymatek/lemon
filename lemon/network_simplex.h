@@ -1503,7 +1503,7 @@ namespace lemon {
             }
           }
         } else {
-          // Find the min. cost incomming arc for each demand node
+          // Find the min. cost incoming arc for each demand node
           for (int i = 0; i != int(demand_nodes.size()); ++i) {
             Node v = demand_nodes[i];
             Cost c, min_cost = std::numeric_limits<Cost>::max();

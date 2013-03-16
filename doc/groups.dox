@@ -392,7 +392,7 @@ For more information, see \ref Circulation.
 
 This group contains the algorithms for finding minimum cost flows and
 circulations \ref amo93networkflows. For more information about this
-problem and its dual solution, see \ref min_cost_flow
+problem and its dual solution, see: \ref min_cost_flow
 "Minimum Cost Flow Problem".
 
 LEMON contains several algorithms for this problem.
@@ -484,8 +484,7 @@ In practice, the \ref HowardMmc "Howard" algorithm turned out to be by far the
 most efficient one, though the best known theoretical bound on its running
 time is exponential.
 Both \ref KarpMmc "Karp" and \ref HartmannOrlinMmc "Hartmann-Orlin" algorithms
-run in time O(ne) and use space O(n<sup>2</sup>+e), but the latter one is
-typically faster due to the applied early termination scheme.
+run in time O(ne) and use space O(n<sup>2</sup>+e).
 */
 
 /**

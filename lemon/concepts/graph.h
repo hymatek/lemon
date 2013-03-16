@@ -757,13 +757,13 @@ namespace lemon {
 
       /// \brief The base node of the iterator.
       ///
-      /// Returns the base node of the given incomming arc iterator
+      /// Returns the base node of the given incoming arc iterator
       /// (i.e. the target node of the corresponding arc).
       Node baseNode(InArcIt) const { return INVALID; }
 
       /// \brief The running node of the iterator.
       ///
-      /// Returns the running node of the given incomming arc iterator
+      /// Returns the running node of the given incoming arc iterator
       /// (i.e. the source node of the corresponding arc).
       Node runningNode(InArcIt) const { return INVALID; }
 

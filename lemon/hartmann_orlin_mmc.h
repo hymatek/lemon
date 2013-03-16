@@ -99,9 +99,10 @@ namespace lemon {
   /// This class implements the Hartmann-Orlin algorithm for finding
   /// a directed cycle of minimum mean cost in a digraph
   /// \ref hartmann93finding, \ref dasdan98minmeancycle.
-  /// It is an improved version of \ref KarpMmc "Karp"'s original algorithm,
-  /// it applies an efficient early termination scheme.
-  /// It runs in time O(ne) and uses space O(n<sup>2</sup>+e).
+  /// This method is based on \ref KarpMmc "Karp"'s original algorithm, but
+  /// applies an early termination scheme. It makes the algorithm
+  /// significantly faster for some problem instances, but slower for others.
+  /// The algorithm runs in time O(ne) and uses space O(n<sup>2</sup>+e).
   ///
   /// \tparam GR The type of the digraph the algorithm runs on.
   /// \tparam CM The type of the cost map. The default
@@ -274,8 +275,8 @@ namespace lemon {
     /// found cycle.
     ///
     /// If you don't call this function before calling \ref run() or
-    /// \ref findCycleMean(), it will allocate a local \ref Path "path"
-    /// structure. The destuctor deallocates this automatically
+    /// \ref findCycleMean(), a local \ref Path "path" structure
+    /// will be allocated. The destuctor deallocates this automatically
     /// allocated object, of course.
     ///
     /// \note The algorithm calls only the \ref lemon::Path::addFront()

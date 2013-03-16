@@ -68,7 +68,9 @@ namespace lemon {
   /// of the successive shortest path algorithm for finding a
   /// \ref min_cost_flow "minimum cost flow" \ref amo93networkflows,
   /// \ref edmondskarp72theoretical. It is an efficient dual
-  /// solution method.
+  /// solution method, which runs in polynomial time
+  /// \f$O(e\log U (n+e)\log n)\f$, where <i>U</i> denotes the maximum
+  /// of node supply and arc capacity values.
   ///
   /// This algorithm is typically slower than \ref CostScaling and
   /// \ref NetworkSimplex, but in special cases, it can be more

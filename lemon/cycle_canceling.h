@@ -51,9 +51,9 @@ namespace lemon {
   /// \ref goldberg89cyclecanceling.
   /// The most efficent one is the \ref CANCEL_AND_TIGHTEN
   /// "Cancel-and-Tighten" algorithm, thus it is the default method.
-  /// It runs in strongly polynomial time, but in practice, it is typically
-  /// orders of magnitude slower than the scaling algorithms and
-  /// \ref NetworkSimplex.
+  /// It runs in strongly polynomial time O(n<sup>2</sup>e<sup>2</sup>log(n)),
+  /// but in practice, it is typically orders of magnitude slower than
+  /// the scaling algorithms and \ref NetworkSimplex.
   /// (For more information, see \ref min_cost_flow_algs "the module page".)
   ///
   /// Most of the parameters of the problem (except for the digraph)

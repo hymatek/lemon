@@ -875,15 +875,15 @@ namespace lemon {
       /// This function gives back the next arc in the iteration order.
       void next(Arc&) const {}
 
-      /// \brief Return the first arc incomming to the given node.
+      /// \brief Return the first arc incoming to the given node.
       ///
-      /// This function gives back the first arc incomming to the
+      /// This function gives back the first arc incoming to the
       /// given node.
       void firstIn(Arc&, const Node&) const {}
 
-      /// \brief Return the next arc incomming to the given node.
+      /// \brief Return the next arc incoming to the given node.
       ///
-      /// This function gives back the next arc incomming to the
+      /// This function gives back the next arc incoming to the
       /// given node.
       void nextIn(Arc&) const {}
 
