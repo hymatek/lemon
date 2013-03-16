@@ -94,7 +94,7 @@ url_rex = re.compile('\\\url\{([^}]*)\}')
 #
 # styles for html formatting
 #
-divstyle = 'margin-top: -4ex; margin-left: 8em;'
+divstyle = 'margin-top: -4ex; margin-left: 10em;'
 
 #
 # return the string parameter without braces
