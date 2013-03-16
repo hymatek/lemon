@@ -25,7 +25,7 @@
 and <b>O</b>ptimization in <b>N</b>etworks</i>.
 It is a C++ template library providing efficient implementations of common
 data structures and algorithms with focus on combinatorial optimization
-tasks connected mainly with graphs and networks.
+tasks connected mainly with graphs and networks \ref DezsoJuttnerKovacs11Lemon.
 
 <b>
 LEMON is an <a class="el" href="http://opensource.org/">open&nbsp;source</a>

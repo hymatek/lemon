@@ -428,6 +428,11 @@ These classes are intended to be used with integer-valued input data
 (capacities, supply values, and costs), except for \ref CapacityScaling,
 which is capable of handling real-valued arc costs (other numerical
 data are required to be integer).
+
+For more details about these implementations and for a comprehensive 
+experimental study, see the paper \ref KiralyKovacs12MCF.
+It also compares these codes to other publicly available
+minimum cost flow solvers.
 */
 
 /**
