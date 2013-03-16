@@ -737,6 +737,11 @@ namespace lemon {
       }
       if (_sum_supply > 0) return INFEASIBLE;
 
+      // Check lower and upper bounds
+      LEMON_DEBUG(checkBoundMaps(),
+          "Upper bounds must be greater or equal to the lower bounds");
+
+
       // Initialize vectors
       for (int i = 0; i != _root; ++i) {
         _pi[i] = 0;
@@ -829,6 +834,15 @@ namespace lemon {
       }
 
       return OPTIMAL;
+    }
+    
+    // Check if the upper bound is greater or equal to the lower bound
+    // on each arc.
+    bool checkBoundMaps() {
+      for (int j = 0; j != _res_arc_num; ++j) {
+        if (_upper[j] < _lower[j]) return false;
+      }
+      return true;
     }
 
     ProblemType start() {
