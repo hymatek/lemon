@@ -40,7 +40,7 @@ namespace lemon {
   ///
   /// \ref GrossoLocatelliPullanMc implements the iterated local search
   /// algorithm of Grosso, Locatelli, and Pullan for solving the \e maximum
-  /// \e clique \e problem \ref grosso08maxclique.
+  /// \e clique \e problem \cite grosso08maxclique.
   /// It is to find the largest complete subgraph (\e clique) in an
   /// undirected graph, i.e., the largest set of nodes where each
   /// pair of nodes is connected.

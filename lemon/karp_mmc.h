@@ -98,7 +98,7 @@ namespace lemon {
   ///
   /// This class implements Karp's algorithm for finding a directed
   /// cycle of minimum mean cost in a digraph
-  /// \ref karp78characterization, \ref dasdan98minmeancycle.
+  /// \cite karp78characterization, \cite dasdan98minmeancycle.
   /// It runs in time O(ne) and uses space O(n<sup>2</sup>+e).
   ///
   /// \tparam GR The type of the digraph the algorithm runs on.

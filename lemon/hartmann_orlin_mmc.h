@@ -98,7 +98,7 @@ namespace lemon {
   ///
   /// This class implements the Hartmann-Orlin algorithm for finding
   /// a directed cycle of minimum mean cost in a digraph
-  /// \ref hartmann93finding, \ref dasdan98minmeancycle.
+  /// \cite hartmann93finding, \cite dasdan98minmeancycle.
   /// This method is based on \ref KarpMmc "Karp"'s original algorithm, but
   /// applies an early termination scheme. It makes the algorithm
   /// significantly faster for some problem instances, but slower for others.

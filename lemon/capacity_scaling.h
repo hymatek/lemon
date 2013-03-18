@@ -66,8 +66,8 @@ namespace lemon {
   ///
   /// \ref CapacityScaling implements the capacity scaling version
   /// of the successive shortest path algorithm for finding a
-  /// \ref min_cost_flow "minimum cost flow" \ref amo93networkflows,
-  /// \ref edmondskarp72theoretical. It is an efficient dual
+  /// \ref min_cost_flow "minimum cost flow" \cite amo93networkflows,
+  /// \cite edmondskarp72theoretical. It is an efficient dual
   /// solution method, which runs in polynomial time
   /// \f$O(e\log U (n+e)\log n)\f$, where <i>U</i> denotes the maximum
   /// of node supply and arc capacity values.

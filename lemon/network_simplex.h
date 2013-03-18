@@ -41,8 +41,8 @@ namespace lemon {
   ///
   /// \ref NetworkSimplex implements the primal Network Simplex algorithm
   /// for finding a \ref min_cost_flow "minimum cost flow"
-  /// \ref amo93networkflows, \ref dantzig63linearprog,
-  /// \ref kellyoneill91netsimplex.
+  /// \cite amo93networkflows, \cite dantzig63linearprog,
+  /// \cite kellyoneill91netsimplex.
   /// This algorithm is a highly efficient specialized version of the
   /// linear programming simplex method directly for the minimum cost
   /// flow problem.

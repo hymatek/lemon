@@ -98,7 +98,7 @@ namespace lemon {
   ///
   /// This class implements Howard's policy iteration algorithm for finding
   /// a directed cycle of minimum mean cost in a digraph
-  /// \ref dasdan98minmeancycle, \ref dasdan04experimental.
+  /// \cite dasdan98minmeancycle, \cite dasdan04experimental.
   /// This class provides the most efficient algorithm for the
   /// minimum mean cycle problem, though the best known theoretical
   /// bound on its running time is exponential.

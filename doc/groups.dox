@@ -317,7 +317,7 @@ implemented in LEMON.
 
 This group contains the common graph search algorithms, namely
 \e breadth-first \e search (BFS) and \e depth-first \e search (DFS)
-\ref clrs01algorithms.
+\cite clrs01algorithms.
 */
 
 /**
@@ -326,7 +326,7 @@ This group contains the common graph search algorithms, namely
 \brief Algorithms for finding shortest paths.
 
 This group contains the algorithms for finding shortest paths in digraphs
-\ref clrs01algorithms.
+\cite clrs01algorithms.
 
  - \ref Dijkstra algorithm for finding shortest paths from a source node
    when all arc lengths are non-negative.
@@ -348,7 +348,7 @@ This group contains the algorithms for finding shortest paths in digraphs
 \brief Algorithms for finding minimum cost spanning trees and arborescences.
 
 This group contains the algorithms for finding minimum cost spanning
-trees and arborescences \ref clrs01algorithms.
+trees and arborescences \cite clrs01algorithms.
 */
 
 /**
@@ -357,7 +357,7 @@ trees and arborescences \ref clrs01algorithms.
 \brief Algorithms for finding maximum flows.
 
 This group contains the algorithms for finding maximum flows and
-feasible circulations \ref clrs01algorithms, \ref amo93networkflows.
+feasible circulations \cite clrs01algorithms, \cite amo93networkflows.
 
 The \e maximum \e flow \e problem is to find a flow of maximum value between
 a single source and a single target. Formally, there is a \f$G=(V,A)\f$
@@ -373,13 +373,13 @@ following optimization problem.
 
 LEMON contains several algorithms for solving maximum flow problems:
 - \ref EdmondsKarp Edmonds-Karp algorithm
-  \ref edmondskarp72theoretical.
+  \cite edmondskarp72theoretical.
 - \ref Preflow Goldberg-Tarjan's preflow push-relabel algorithm
-  \ref goldberg88newapproach.
+  \cite goldberg88newapproach.
 - \ref DinitzSleatorTarjan Dinitz's blocking flow algorithm with dynamic trees
-  \ref dinic70algorithm, \ref sleator83dynamic.
+  \cite dinic70algorithm, \cite sleator83dynamic.
 - \ref GoldbergTarjan !Preflow push-relabel algorithm with dynamic trees
-  \ref goldberg88newapproach, \ref sleator83dynamic.
+  \cite goldberg88newapproach, \cite sleator83dynamic.
 
 In most cases the \ref Preflow algorithm provides the
 fastest method for computing a maximum flow. All implementations
@@ -399,20 +399,20 @@ For more information, see \ref Circulation.
 \brief Algorithms for finding minimum cost flows and circulations.
 
 This group contains the algorithms for finding minimum cost flows and
-circulations \ref amo93networkflows. For more information about this
+circulations \cite amo93networkflows. For more information about this
 problem and its dual solution, see: \ref min_cost_flow
 "Minimum Cost Flow Problem".
 
 LEMON contains several algorithms for this problem.
  - \ref NetworkSimplex Primal Network Simplex algorithm with various
-   pivot strategies \ref dantzig63linearprog, \ref kellyoneill91netsimplex.
+   pivot strategies \cite dantzig63linearprog, \cite kellyoneill91netsimplex.
  - \ref CostScaling Cost Scaling algorithm based on push/augment and
-   relabel operations \ref goldberg90approximation, \ref goldberg97efficient,
-   \ref bunnagel98efficient.
+   relabel operations \cite goldberg90approximation, \cite goldberg97efficient,
+   \cite bunnagel98efficient.
  - \ref CapacityScaling Capacity Scaling algorithm based on the successive
-   shortest path method \ref edmondskarp72theoretical.
+   shortest path method \cite edmondskarp72theoretical.
  - \ref CycleCanceling Cycle-Canceling algorithms, two of which are
-   strongly polynomial \ref klein67primal, \ref goldberg89cyclecanceling.
+   strongly polynomial \cite klein67primal, \cite goldberg89cyclecanceling.
 
 In general, \ref NetworkSimplex and \ref CostScaling are the most efficient
 implementations.
@@ -430,7 +430,7 @@ which is capable of handling real-valued arc costs (other numerical
 data are required to be integer).
 
 For more details about these implementations and for a comprehensive 
-experimental study, see the paper \ref KiralyKovacs12MCF.
+experimental study, see the paper \cite KiralyKovacs12MCF.
 It also compares these codes to other publicly available
 minimum cost flow solvers.
 */
@@ -471,7 +471,7 @@ see the \ref max_flow "maximum flow problem".
 \brief Algorithms for finding minimum mean cycles.
 
 This group contains the algorithms for finding minimum mean cycles
-\ref amo93networkflows, \ref karp78characterization.
+\cite amo93networkflows, \cite karp78characterization.
 
 The \e minimum \e mean \e cycle \e problem is to find a directed cycle
 of minimum mean length (cost) in a digraph.
@@ -487,11 +487,11 @@ arc lengths uniformly by \f$\epsilon\f$ results in a conservative length
 function.
 
 LEMON contains three algorithms for solving the minimum mean cycle problem:
-- \ref KarpMmc Karp's original algorithm \ref karp78characterization.
+- \ref KarpMmc Karp's original algorithm \cite karp78characterization.
 - \ref HartmannOrlinMmc Hartmann-Orlin's algorithm, which is an improved
-  version of Karp's algorithm \ref hartmann93finding.
+  version of Karp's algorithm \cite hartmann93finding.
 - \ref HowardMmc Howard's policy iteration algorithm
-  \ref dasdan98minmeancycle, \ref dasdan04experimental.
+  \cite dasdan98minmeancycle, \cite dasdan04experimental.
 
 In practice, the \ref HowardMmc "Howard" algorithm turned out to be by far the
 most efficient one, though the best known theoretical bound on its running
@@ -647,8 +647,8 @@ This group contains LP and MIP solver interfaces for LEMON.
 Various LP solvers could be used in the same manner with this
 high-level interface.
 
-The currently supported solvers are \ref glpk, \ref clp, \ref cbc,
-\ref cplex, \ref soplex.
+The currently supported solvers are \cite glpk, \cite clp, \cite cbc,
+\cite cplex, \cite soplex.
 */
 
 /**
