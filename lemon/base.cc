@@ -21,6 +21,7 @@
 
 #include<lemon/tolerance.h>
 #include<lemon/core.h>
+#include<lemon/time_measure.h>
 namespace lemon {
 
   float Tolerance<float>::def_epsilon = static_cast<float>(1e-4);
@@ -30,5 +31,7 @@ namespace lemon {
 #ifndef LEMON_ONLY_TEMPLATES
   const Invalid INVALID = Invalid();
 #endif
+
+  TimeStamp::Format TimeStamp::_format = TimeStamp::NORMAL;
 
 } //namespace lemon
