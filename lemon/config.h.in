@@ -4,6 +4,7 @@
 #cmakedefine LEMON_HAVE_MIP 1
 #cmakedefine LEMON_HAVE_GLPK 1
 #cmakedefine LEMON_HAVE_CPLEX 1
+#cmakedefine LEMON_HAVE_SOPLEX 1
 #cmakedefine LEMON_HAVE_CLP 1
 #cmakedefine LEMON_HAVE_CBC 1
 #cmakedefine LEMON_DEFAULT_LP @LEMON_DEFAULT_LP@
