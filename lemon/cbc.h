@@ -16,7 +16,6 @@
  *
  */
 
-// -*- C++ -*-
 #ifndef LEMON_CBC_H
 #define LEMON_CBC_H
 

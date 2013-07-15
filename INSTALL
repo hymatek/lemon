@@ -134,11 +134,29 @@ You find a list of the most useful options below.
   See http://docs.mathjax.org/en/latest/installation.html for more details.
 
   
+-DLEMON_ENABLE_GLPK=NO
+-DLEMON_ENABLE_COIN=NO
+-DLEMON_ENABLE_ILOG=NO
+
+  Enable optional third party libraries. They are all enabled by default. 
+
+-DLEMON_DEFAULT_LP=GLPK
+
+  Sets the default LP solver backend. The supported values are
+  CPLEX, CLP and GLPK. By default, it is set to the first one which
+  is enabled and succesfully discovered.
+
+-DLEMON_DEFAULT_MIP=GLPK
+
+  Sets the default MIP solver backend. The supported values are
+  CPLEX, CBC and GLPK. By default, it is set to the first one which
+  is enabled and succesfully discovered.
+
 -DGLPK_ROOT_DIR=DIRECTORY
 -DCOIN_ROOT_DIR=DIRECTORY
--DCPLEX_ROOT_DIR=DIRECTORY
+-DILOG_ROOT_DIR=DIRECTORY
 
-  Install root directory prefixes of optional third party libraries.
+  Root directory prefixes of optional third party libraries.
 
 Makefile Variables
 ==================

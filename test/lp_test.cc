@@ -240,8 +240,7 @@ void lpTest(LpSolver& lp)
 
   {
     LP::DualExpr e,f,g;
-    LP::Row p1 = INVALID, p2 = INVALID, p3 = INVALID,
-      p4 = INVALID, p5 = INVALID;
+    LP::Row p1 = INVALID, p2 = INVALID;
 
     e[p1]=2;
     e[p1]+=2;

@@ -492,6 +492,17 @@ namespace lemon {
                    _message_enabled ? CPX_ON : CPX_OFF);
   }
 
+  void CplexBase::_write(std::string file, std::string format) const
+  {
+    if(format == "MPS" || format == "LP")
+      CPXwriteprob(cplexEnv(), cplexLp(), file.c_str(), format.c_str());
+    else if(format == "SOL")
+      CPXsolwrite(cplexEnv(), cplexLp(), file.c_str());
+    else throw UnsupportedFormatError(format);
+  }
+
+
+
   // CplexLp members
 
   CplexLp::CplexLp()
