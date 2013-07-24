@@ -535,7 +535,8 @@ int main()
           "Wrong SourceMap or TargetMap");
 
     typedef Orienter<Graph, const ConstMap<Edge, bool> > Digraph;
-    Digraph dgr(gr, constMap<Edge, bool>(true));
+    ConstMap<Edge, bool> true_edge_map(true);
+    Digraph dgr(gr, true_edge_map);
     OutDegMap<Digraph> odm(dgr);
     InDegMap<Digraph> idm(dgr);
 
