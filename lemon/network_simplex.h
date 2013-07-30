@@ -1067,6 +1067,10 @@ namespace lemon {
       if ( !((_stype == GEQ && _sum_supply <= 0) ||
              (_stype == LEQ && _sum_supply >= 0)) ) return false;
 
+      // Check lower and upper bounds
+      LEMON_DEBUG(checkBoundMaps(),
+          "Upper bounds must be greater or equal to the lower bounds");
+
       // Remove non-zero lower bounds
       if (_have_lower) {
         for (int i = 0; i != _arc_num; ++i) {
@@ -1228,6 +1232,15 @@ namespace lemon {
         _all_arc_num = f;
       }
 
+      return true;
+    }
+    
+    // Check if the upper bound is greater or equal to the lower bound
+    // on each arc.
+    bool checkBoundMaps() {
+      for (int j = 0; j != _arc_num; ++j) {
+        if (_upper[j] < _lower[j]) return false;
+      }
       return true;
     }
 
