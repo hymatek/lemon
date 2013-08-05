@@ -7,6 +7,11 @@ SET(LEMON_DOC_SOURCE_BROWSER "NO" CACHE STRING "Include source into the doc (YES
 SET(LEMON_DOC_USE_MATHJAX "NO" CACHE STRING "Use MathJax to display math formulae (YES/NO).")
 SET(LEMON_DOC_MATHJAX_RELPATH "http://www.mathjax.org/mathjax" CACHE STRING "MathJax library location.")
 
+SET(LEMON_DOC_LIBSTDC++_URL
+  "http://gcc.gnu.org/onlinedocs/gcc-4.7.3/libstdc++/api"
+  CACHE STRING "GCC libstdc++ doxygen doc url.")
+
+
 CONFIGURE_FILE(
   ${PROJECT_SOURCE_DIR}/doc/Doxyfile.in
   ${PROJECT_BINARY_DIR}/doc/Doxyfile
@@ -75,7 +80,7 @@ ENDIF()
 
 IF(WGET_FOUND)
 ADD_CUSTOM_TARGET(update-external-tags
-  COMMAND ${WGET_EXECUTABLE} -N http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/libstdc++.tag
+  COMMAND ${WGET_EXECUTABLE} -N ${LEMON_DOC_LIBSTDC++_URL}/libstdc++.tag
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 ENDIF()

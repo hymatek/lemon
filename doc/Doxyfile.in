@@ -253,7 +253,7 @@ SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references
 #---------------------------------------------------------------------------
-TAGFILES               = "@abs_top_builddir@/doc/libstdc++.tag = http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/  "
+TAGFILES               = "@abs_top_builddir@/doc/libstdc++.tag = @LEMON_DOC_LIBSTDC++_URL@"
 GENERATE_TAGFILE       = html/lemon.tag
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = NO
