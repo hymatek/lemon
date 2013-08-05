@@ -118,7 +118,8 @@ namespace lemon {
     /// The type of the heap used for internal Dijkstra computations
     typedef typename TR::Heap Heap;
 
-    /// The \ref CapacityScalingDefaultTraits "traits class" of the algorithm
+    /// \brief The \ref lemon::CapacityScalingDefaultTraits "traits class"
+    /// of the algorithm
     typedef TR Traits;
 
   public:

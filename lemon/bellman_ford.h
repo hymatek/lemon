@@ -200,11 +200,12 @@ namespace lemon {
     typedef typename TR::DistMap DistMap;
     /// The type of the paths.
     typedef PredMapPath<Digraph, PredMap> Path;
-    ///\brief The \ref BellmanFordDefaultOperationTraits
+    ///\brief The \ref lemon::BellmanFordDefaultOperationTraits
     /// "operation traits class" of the algorithm.
     typedef typename TR::OperationTraits OperationTraits;
 
-    ///The \ref BellmanFordDefaultTraits "traits class" of the algorithm.
+    ///\brief The \ref lemon::BellmanFordDefaultTraits "traits class"
+    ///of the algorithm.
     typedef TR Traits;
 
   private:

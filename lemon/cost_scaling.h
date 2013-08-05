@@ -152,7 +152,8 @@ namespace lemon {
     /// otherwise it is \c double.
     typedef typename TR::LargeCost LargeCost;
 
-    /// The \ref CostScalingDefaultTraits "traits class" of the algorithm
+    /// \brief The \ref lemon::CostScalingDefaultTraits "traits class"
+    /// of the algorithm
     typedef TR Traits;
 
   public:

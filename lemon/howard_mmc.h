@@ -142,11 +142,11 @@ namespace lemon {
     /// \brief The path type of the found cycles
     ///
     /// The path type of the found cycles.
-    /// Using the \ref HowardMmcDefaultTraits "default traits class",
+    /// Using the \ref lemon::HowardMmcDefaultTraits "default traits class",
     /// it is \ref lemon::Path "Path<Digraph>".
     typedef typename TR::Path Path;
 
-    /// The \ref HowardMmcDefaultTraits "traits class" of the algorithm
+    /// The \ref lemon::HowardMmcDefaultTraits "traits class" of the algorithm
     typedef TR Traits;
 
     /// \brief Constants for the causes of search termination.

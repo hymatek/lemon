@@ -143,11 +143,14 @@ namespace lemon {
     /// \brief The path type of the found cycles
     ///
     /// The path type of the found cycles.
-    /// Using the \ref HartmannOrlinMmcDefaultTraits "default traits class",
+    /// Using the \ref lemon::HartmannOrlinMmcDefaultTraits
+    /// "default traits class",
     /// it is \ref lemon::Path "Path<Digraph>".
     typedef typename TR::Path Path;
 
-    /// The \ref HartmannOrlinMmcDefaultTraits "traits class" of the algorithm
+    /// \brief The
+    /// \ref lemon::HartmannOrlinMmcDefaultTraits "traits class"
+    /// of the algorithm
     typedef TR Traits;
 
   private:

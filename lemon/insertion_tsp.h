@@ -225,7 +225,7 @@ namespace lemon {
       /// \brief Gives back the found tour as a path.
       ///
       /// This function copies the found tour as a list of arcs/edges into
-      /// the given \ref concept::Path "path structure".
+      /// the given \ref lemon::concepts::Path "path structure".
       ///
       /// \pre run() must be called before using this function.
       template <typename Path>

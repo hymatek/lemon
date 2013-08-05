@@ -128,7 +128,7 @@ namespace lemon {
   class MinCostArborescence {
   public:
 
-    /// \brief The \ref MinCostArborescenceDefaultTraits "traits class"
+    /// \brief The \ref lemon::MinCostArborescenceDefaultTraits "traits class"
     /// of the algorithm.
     typedef TR Traits;
     /// The type of the underlying digraph.

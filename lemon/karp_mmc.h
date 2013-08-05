@@ -140,11 +140,11 @@ namespace lemon {
     /// \brief The path type of the found cycles
     ///
     /// The path type of the found cycles.
-    /// Using the \ref KarpMmcDefaultTraits "default traits class",
+    /// Using the \ref lemon::KarpMmcDefaultTraits "default traits class",
     /// it is \ref lemon::Path "Path<Digraph>".
     typedef typename TR::Path Path;
 
-    /// The \ref KarpMmcDefaultTraits "traits class" of the algorithm
+    /// The \ref lemon::KarpMmcDefaultTraits "traits class" of the algorithm
     typedef TR Traits;
 
   private:

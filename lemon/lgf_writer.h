@@ -944,9 +944,10 @@ namespace lemon {
 
   /// \ingroup lemon_io
   ///
-  /// \brief Return a \ref DigraphWriter class
+  /// \brief Return a \ref lemon::DigraphWriter "DigraphWriter" class
   ///
-  /// This function just returns a \ref DigraphWriter class.
+  /// This function just returns a \ref lemon::DigraphWriter
+  /// "DigraphWriter" class.
   ///
   /// With this function a digraph can be write to a file or output
   /// stream in \ref lgf-format "LGF" format with several maps and
@@ -967,9 +968,10 @@ namespace lemon {
   ///  run();
   ///\endcode
   ///
-  /// For a complete documentation, please see the \ref DigraphWriter
+  /// For a complete documentation, please see the
+  /// \ref lemon::DigraphWriter "DigraphWriter"
   /// class documentation.
-  /// \warning Don't forget to put the \ref DigraphWriter::run() "run()"
+  /// \warning Don't forget to put the \ref lemon::DigraphWriter::run() "run()"
   /// to the end of the parameter list.
   /// \relates DigraphWriter
   /// \sa digraphWriter(const TDGR& digraph, const std::string& fn)
@@ -1583,9 +1585,9 @@ namespace lemon {
 
   /// \ingroup lemon_io
   ///
-  /// \brief Return a \ref GraphWriter class
+  /// \brief Return a \ref lemon::GraphWriter "GraphWriter" class
   ///
-  /// This function just returns a \ref GraphWriter class.
+  /// This function just returns a \ref lemon::GraphWriter "GraphWriter" class.
   ///
   /// With this function a graph can be write to a file or output
   /// stream in \ref lgf-format "LGF" format with several maps and
@@ -1602,9 +1604,10 @@ namespace lemon {
   ///  run();
   ///\endcode
   ///
-  /// For a complete documentation, please see the \ref GraphWriter
+  /// For a complete documentation, please see the
+  /// \ref lemon::GraphWriter "GraphWriter"
   /// class documentation.
-  /// \warning Don't forget to put the \ref GraphWriter::run() "run()"
+  /// \warning Don't forget to put the \ref lemon::GraphWriter::run() "run()"
   /// to the end of the parameter list.
   /// \relates GraphWriter
   /// \sa graphWriter(const TGR& graph, const std::string& fn)
@@ -2401,9 +2404,10 @@ namespace lemon {
 
   /// \ingroup lemon_io
   ///
-  /// \brief Return a \ref BpGraphWriter class
+  /// \brief Return a \ref lemon::BpGraphWriter "BpGraphWriter" class
   ///
-  /// This function just returns a \ref BpGraphWriter class.
+  /// This function just returns a \ref lemon::BpGraphWriter
+  /// "BpGraphWriter" class.
   ///
   /// With this function a bipartite graph can be write to a file or output
   /// stream in \ref lgf-format "LGF" format with several maps and
@@ -2420,9 +2424,10 @@ namespace lemon {
   ///  run();
   ///\endcode
   ///
-  /// For a complete documentation, please see the \ref BpGraphWriter
+  /// For a complete documentation, please see the
+  /// \ref lemon::BpGraphWriter "BpGraphWriter"
   /// class documentation.
-  /// \warning Don't forget to put the \ref BpGraphWriter::run() "run()"
+  /// \warning Don't forget to put the \ref lemon::BpGraphWriter::run() "run()"
   /// to the end of the parameter list.
   /// \relates BpGraphWriter
   /// \sa bpGraphWriter(const TBGR& graph, const std::string& fn)

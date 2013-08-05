@@ -152,7 +152,7 @@ namespace lemon {
     /// This function writes the problem or the solution
     /// to a file in the given format.
     /// Trying to write in an unsupported format will trigger
-    /// \ref UnsupportedFormatError.
+    /// \ref LpBase::UnsupportedFormatError.
     /// \param file The file path
     /// \param format The output file format.
     /// Supportted formats are "MPS" and "LP".

@@ -195,7 +195,8 @@ template< typename GR,
   class Circulation {
   public:
 
-    ///The \ref CirculationDefaultTraits "traits class" of the algorithm.
+    /// \brief The \ref lemon::CirculationDefaultTraits "traits class"
+    /// of the algorithm.
     typedef TR Traits;
     ///The type of the digraph the algorithm runs on.
     typedef typename Traits::Digraph Digraph;

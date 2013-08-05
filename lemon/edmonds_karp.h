@@ -80,8 +80,8 @@ namespace lemon {
   ///
   /// This class provides an implementation of the \e Edmonds-Karp \e
   /// algorithm producing a \ref max_flow "flow of maximum value" in a
-  /// digraph \ref clrs01algorithms, \ref amo93networkflows,
-  /// \ref edmondskarp72theoretical.
+  /// digraph \cite clrs01algorithms, \cite amo93networkflows,
+  /// \cite edmondskarp72theoretical.
   /// The Edmonds-Karp algorithm is slower than the Preflow
   /// algorithm, but it has an advantage of the step-by-step execution
   /// control with feasible flow solutions. The \e source node, the \e
@@ -112,7 +112,8 @@ namespace lemon {
   class EdmondsKarp {
   public:
 
-    /// The \ref EdmondsKarpDefaultTraits "traits class" of the algorithm.
+    /// \brief The \ref lemon::EdmondsKarpDefaultTraits "traits class"
+    /// of the algorithm.
     typedef TR Traits;
     /// The type of the digraph the algorithm runs on.
     typedef typename Traits::Digraph Digraph;

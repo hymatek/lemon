@@ -134,7 +134,7 @@ namespace lemon {
   class Preflow {
   public:
 
-    ///The \ref PreflowDefaultTraits "traits class" of the algorithm.
+    ///The \ref lemon::PreflowDefaultTraits "traits class" of the algorithm.
     typedef TR Traits;
     ///The type of the digraph the algorithm runs on.
     typedef typename Traits::Digraph Digraph;

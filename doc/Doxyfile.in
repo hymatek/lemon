@@ -99,8 +99,7 @@ INPUT                  = "@abs_top_srcdir@/doc" \
                          "@abs_top_srcdir@/contrib" \
                          "@abs_top_srcdir@/tools" \
                          "@abs_top_srcdir@/test/test_tools.h" \
-                         "@abs_top_builddir@/doc/mainpage.dox" \
-                         "@abs_top_builddir@/doc/references.dox"
+                         "@abs_top_builddir@/doc/mainpage.dox"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
                          *.cc \

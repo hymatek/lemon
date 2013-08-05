@@ -123,8 +123,8 @@ namespace lemon {
   class MaxFractionalMatching {
   public:
 
-    /// \brief The \ref MaxFractionalMatchingDefaultTraits "traits
-    /// class" of the algorithm.
+    /// \brief The \ref lemon::MaxFractionalMatchingDefaultTraits
+    /// "traits class" of the algorithm.
     typedef TR Traits;
     /// The type of the graph the algorithm runs on.
     typedef typename TR::Graph Graph;

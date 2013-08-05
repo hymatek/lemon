@@ -152,7 +152,7 @@ namespace lemon {
     ///The type of the paths.
     typedef PredMapPath<Digraph, PredMap> Path;
 
-    ///The \ref DfsDefaultTraits "traits class" of the algorithm.
+    ///The \ref lemon::DfsDefaultTraits "traits class" of the algorithm.
     typedef TR Traits;
 
   private:

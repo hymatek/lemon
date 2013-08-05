@@ -137,7 +137,7 @@ namespace lemon {
     /// The heap type used for internal Dijkstra computations.
     typedef typename TR::Heap Heap;
 
-    /// The \ref SuurballeDefaultTraits "traits class" of the algorithm.
+    /// The \ref lemon::SuurballeDefaultTraits "traits class" of the algorithm.
     typedef TR Traits;
 
   private:
