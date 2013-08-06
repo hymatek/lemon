@@ -101,7 +101,7 @@ namespace lemon {
   /// more sources should be given to the algorithm and it will calculate
   /// the minimum cost subgraph that is the union of arborescences with the
   /// given sources and spans all the nodes which are reachable from the
-  /// sources. The time complexity of the algorithm is O(n<sup>2</sup>+e).
+  /// sources. The time complexity of the algorithm is O(n<sup>2</sup>+m).
   ///
   /// The algorithm also provides an optimal dual solution, therefore
   /// the optimality of the solution can be checked.

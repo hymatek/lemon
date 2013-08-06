@@ -102,7 +102,7 @@ namespace lemon {
   /// This method is based on \ref KarpMmc "Karp"'s original algorithm, but
   /// applies an early termination scheme. It makes the algorithm
   /// significantly faster for some problem instances, but slower for others.
-  /// The algorithm runs in time O(ne) and uses space O(n<sup>2</sup>+e).
+  /// The algorithm runs in time O(nm) and uses space O(n<sup>2</sup>+m).
   ///
   /// \tparam GR The type of the digraph the algorithm runs on.
   /// \tparam CM The type of the cost map. The default

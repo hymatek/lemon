@@ -46,7 +46,7 @@ namespace lemon {
   /// of nodes can easily be obtained.
   ///
   /// The algorithm calculates \e n-1 distinct minimum cuts (currently with
-  /// the \ref Preflow algorithm), thus it has \f$O(n^3\sqrt{e})\f$ overall
+  /// the \ref Preflow algorithm), thus it has \f$O(n^3\sqrt{m})\f$ overall
   /// time complexity. It calculates a rooted Gomory-Hu tree.
   /// The structure of the tree and the edge weights can be
   /// obtained using \c predNode(), \c predValue() and \c rootDist().

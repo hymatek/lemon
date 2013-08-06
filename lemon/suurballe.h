@@ -682,7 +682,7 @@ namespace lemon {
     ///
     /// This function returns the total length of the found paths, i.e.
     /// the total cost of the found flow.
-    /// The complexity of the function is O(e).
+    /// The complexity of the function is O(m).
     ///
     /// \pre \ref run() or \ref findFlow() must be called before using
     /// this function.
