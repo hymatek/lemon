@@ -38,6 +38,12 @@
 #endif
 
 #ifdef __GNUC__
+#define GCC_VERSION (__GNUC__ * 10000                   \
+                     + __GNUC_MINOR__ * 100             \
+                     + __GNUC_PATCHLEVEL__)
+#endif
+
+#if GCC_VERSION >= 40800
 // Needed by the [DI]GRAPH_TYPEDEFS marcos for gcc 4.8
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
