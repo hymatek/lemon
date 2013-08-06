@@ -1007,7 +1007,7 @@ namespace lemon {
 
   public:
 
-    ///\e \ 
+    ///Unsupported file format exception
     class UnsupportedFormatError : public Exception
     {
       std::string _format;
