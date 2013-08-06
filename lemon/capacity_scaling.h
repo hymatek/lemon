@@ -69,7 +69,7 @@ namespace lemon {
   /// \ref min_cost_flow "minimum cost flow" \cite amo93networkflows,
   /// \cite edmondskarp72theoretical. It is an efficient dual
   /// solution method, which runs in polynomial time
-  /// \f$O(e\log U (n+e)\log n)\f$, where <i>U</i> denotes the maximum
+  /// \f$O(m\log U (n+m)\log n)\f$, where <i>U</i> denotes the maximum
   /// of node supply and arc capacity values.
   ///
   /// This algorithm is typically slower than \ref CostScaling and
@@ -646,7 +646,7 @@ namespace lemon {
     /// \brief Return the total cost of the found flow.
     ///
     /// This function returns the total cost of the found flow.
-    /// Its complexity is O(e).
+    /// Its complexity is O(m).
     ///
     /// \note The return type of the function can be specified as a
     /// template parameter. For example,

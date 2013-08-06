@@ -97,7 +97,7 @@ namespace lemon {
   /// can be viewed as the generalization of the \ref Preflow
   /// "preflow push-relabel" algorithm for the maximum flow problem.
   /// It is a polynomial algorithm, its running time complexity is
-  /// \f$O(n^2e\log(nK))\f$, where <i>K</i> denotes the maximum arc cost.
+  /// \f$O(n^2m\log(nK))\f$, where <i>K</i> denotes the maximum arc cost.
   ///
   /// In general, \ref NetworkSimplex and \ref CostScaling are the fastest
   /// implementations available in LEMON for solving this problem.
@@ -670,7 +670,7 @@ namespace lemon {
     /// \brief Return the total cost of the found flow.
     ///
     /// This function returns the total cost of the found flow.
-    /// Its complexity is O(e).
+    /// Its complexity is O(m).
     ///
     /// \note The return type of the function can be specified as a
     /// template parameter. For example,

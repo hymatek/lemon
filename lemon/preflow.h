@@ -107,7 +107,7 @@ namespace lemon {
   /// The preflow algorithms are the fastest known maximum
   /// flow algorithms. The current implementation uses a mixture of the
   /// \e "highest label" and the \e "bound decrease" heuristics.
-  /// The worst case time complexity of the algorithm is \f$O(n^2\sqrt{e})\f$.
+  /// The worst case time complexity of the algorithm is \f$O(n^2\sqrt{m})\f$.
   ///
   /// The algorithm consists of two phases. After the first phase
   /// the maximum flow value and the minimum cut is obtained. The

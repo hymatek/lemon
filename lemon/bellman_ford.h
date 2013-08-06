@@ -149,7 +149,7 @@ namespace lemon {
   /// \ingroup shortest_path
   /// This class provides an efficient implementation of the Bellman-Ford
   /// algorithm. The maximum time complexity of the algorithm is
-  /// <tt>O(ne)</tt>.
+  /// <tt>O(nm)</tt>.
   ///
   /// The Bellman-Ford algorithm solves the single-source shortest path
   /// problem when the arcs can have negative lengths, but the digraph

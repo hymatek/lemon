@@ -497,7 +497,7 @@ In practice, the \ref HowardMmc "Howard" algorithm turned out to be by far the
 most efficient one, though the best known theoretical bound on its running
 time is exponential.
 Both \ref KarpMmc "Karp" and \ref HartmannOrlinMmc "Hartmann-Orlin" algorithms
-run in time O(ne) and use space O(n<sup>2</sup>+e).
+run in time O(nm) and use space O(n<sup>2</sup>+m).
 */
 
 /**
