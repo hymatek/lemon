@@ -51,7 +51,7 @@ namespace lemon {
   /// \cite goldberg89cyclecanceling.
   /// The most efficent one is the \ref CANCEL_AND_TIGHTEN
   /// "Cancel-and-Tighten" algorithm, thus it is the default method.
-  /// It runs in strongly polynomial time O(n<sup>2</sup>m<sup>2</sup>log(n)),
+  /// It runs in strongly polynomial time \f$O(n^2 m^2 \log n)\f$,
   /// but in practice, it is typically orders of magnitude slower than
   /// the scaling algorithms and \ref NetworkSimplex.
   /// (For more information, see \ref min_cost_flow_algs "the module page".)
@@ -133,13 +133,13 @@ namespace lemon {
       /// well-known strongly polynomial method
       /// \cite goldberg89cyclecanceling. It improves along a
       /// \ref min_mean_cycle "minimum mean cycle" in each iteration.
-      /// Its running time complexity is O(n<sup>2</sup>m<sup>3</sup>log(n)).
+      /// Its running time complexity is \f$O(n^2 m^3 \log n)\f$.
       MINIMUM_MEAN_CYCLE_CANCELING,
       /// The "Cancel-and-Tighten" algorithm, which can be viewed as an
       /// improved version of the previous method
       /// \cite goldberg89cyclecanceling.
       /// It is faster both in theory and in practice, its running time
-      /// complexity is O(n<sup>2</sup>m<sup>2</sup>log(n)).
+      /// complexity is \f$O(n^2 m^2 \log n)\f$.
       CANCEL_AND_TIGHTEN
     };
 
