@@ -65,7 +65,7 @@ void checkNagamochiIbarakiCompile()
   CutMap cut;
   Value v;
   bool b;
-  ignore_unused_variable_warning(v,b);
+  ::lemon::ignore_unused_variable_warning(v,b);
 
   NagamochiIbaraki<Graph, CapMap> ni_test(g, cap);
   const NagamochiIbaraki<Graph, CapMap>& const_ni_test = ni_test;

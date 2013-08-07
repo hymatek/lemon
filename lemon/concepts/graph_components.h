@@ -456,7 +456,7 @@ namespace lemon {
             bn = bpgraph.asBlueNodeUnsafe(bnan);
             rn = bpgraph.asRedNode(rnan);
             bn = bpgraph.asBlueNode(bnan);
-            ignore_unused_variable_warning(b);
+            ::lemon::ignore_unused_variable_warning(b);
           }
         }
 
@@ -653,8 +653,8 @@ namespace lemon {
           int bid = bpgraph.id(blue);
           rid = bpgraph.maxRedId();
           bid = bpgraph.maxBlueId();
-          ignore_unused_variable_warning(rid);
-          ignore_unused_variable_warning(bid);
+          ::lemon::ignore_unused_variable_warning(rid);
+          ::lemon::ignore_unused_variable_warning(bid);
         }
 
         const _BpGraph& bpgraph;
@@ -1387,8 +1387,8 @@ namespace lemon {
             = bpgraph.notifier(typename _BpGraph::RedNode());
           typename _BpGraph::BlueNodeNotifier& bnn
             = bpgraph.notifier(typename _BpGraph::BlueNode());
-          ignore_unused_variable_warning(rnn);
-          ignore_unused_variable_warning(bnn);
+          ::lemon::ignore_unused_variable_warning(rnn);
+          ::lemon::ignore_unused_variable_warning(bnn);
         }
 
         const _BpGraph& bpgraph;

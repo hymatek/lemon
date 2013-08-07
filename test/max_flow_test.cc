@@ -121,7 +121,7 @@ struct MaxFlowClassConcept
       b = const_max_flow.minCut(n);
       const_max_flow.minCutMap(cut);
 
-      ignore_unused_variable_warning(fm);
+      ::lemon::ignore_unused_variable_warning(fm);
     }
 
   };
@@ -156,7 +156,7 @@ void checkPreflowCompile()
   preflow_test.startSecondPhase();
   preflow_test.runMinCut();
 
-  ignore_unused_variable_warning(b);
+  ::lemon::ignore_unused_variable_warning(b);
 }
 
 // Checks the specific parts of EdmondsKarp's interface
@@ -179,7 +179,7 @@ void checkEdmondsKarpCompile()
   b = ek_test.augment();
   ek_test.start();
 
-  ignore_unused_variable_warning(b);
+  ::lemon::ignore_unused_variable_warning(b);
 }
 
 
@@ -339,7 +339,7 @@ struct GeneralStartFunctions {
   }
 
   static void startSecondPhase(MF& mf) {
-    ignore_unused_variable_warning(mf);
+    ::lemon::ignore_unused_variable_warning(mf);
   }
 
 };
