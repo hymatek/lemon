@@ -260,27 +260,27 @@ namespace lemon {
           Prio prio;
           item=Item();
           prio=Prio();
-          ignore_unused_variable_warning(item);
-          ignore_unused_variable_warning(prio);
+          ::lemon::ignore_unused_variable_warning(item);
+          ::lemon::ignore_unused_variable_warning(prio);
 
           OwnItem own_item;
           OwnPrio own_prio;
           OwnState own_state;
           own_item=Item();
           own_prio=Prio();
-          ignore_unused_variable_warning(own_item);
-          ignore_unused_variable_warning(own_prio);
-          ignore_unused_variable_warning(own_state);
+          ::lemon::ignore_unused_variable_warning(own_item);
+          ::lemon::ignore_unused_variable_warning(own_prio);
+          ::lemon::ignore_unused_variable_warning(own_state);
 
           _Heap heap1(map);
           _Heap heap2 = heap1;
-          ignore_unused_variable_warning(heap1);
-          ignore_unused_variable_warning(heap2);
+          ::lemon::ignore_unused_variable_warning(heap1);
+          ::lemon::ignore_unused_variable_warning(heap2);
 
           int s = heap.size();
-          ignore_unused_variable_warning(s);
+          ::lemon::ignore_unused_variable_warning(s);
           bool e = heap.empty();
-          ignore_unused_variable_warning(e);
+          ::lemon::ignore_unused_variable_warning(e);
 
           prio = heap.prio();
           item = heap.top();

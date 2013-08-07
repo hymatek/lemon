@@ -91,7 +91,7 @@ void checkMinCostArborescenceCompile()
   Arc e;
   VType c;
   bool b;
-  ignore_unused_variable_warning(c,b);
+  ::lemon::ignore_unused_variable_warning(c,b);
   int i;
   CostMap cost;
   ArbMap arb;
@@ -127,8 +127,8 @@ void checkMinCostArborescenceCompile()
   i = const_mcarb_test.dualSize(i);
   c = const_mcarb_test.dualValue(i);
 
-  ignore_unused_variable_warning(am);
-  ignore_unused_variable_warning(pm);
+  ::lemon::ignore_unused_variable_warning(am);
+  ::lemon::ignore_unused_variable_warning(pm);
 }
 
 int main() {

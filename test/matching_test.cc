@@ -145,7 +145,7 @@ void checkMaxMatchingCompile()
 
   MaxMatching<Graph>::Status stat =
     const_mat_test.status(n);
-  ignore_unused_variable_warning(stat);
+  ::lemon::ignore_unused_variable_warning(stat);
   const MaxMatching<Graph>::StatusMap& smap =
     const_mat_test.statusMap();
   stat = smap[n];
