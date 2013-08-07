@@ -68,7 +68,7 @@ void checkGomoryHuCompile()
   CutMap cut;
   Value v;
   int d;
-  ignore_unused_variable_warning(v,d);
+  ::lemon::ignore_unused_variable_warning(v,d);
 
   GomoryHu<Graph, CapMap> gh_test(g, cap);
   const GomoryHu<Graph, CapMap>&

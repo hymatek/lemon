@@ -396,7 +396,7 @@ namespace lemon {
 
         /// Sets the iterator to the first arc of the given graph.
         ///
-        explicit ArcIt(const Graph &g) { ignore_unused_variable_warning(g); }
+        explicit ArcIt(const Graph &g) { ::lemon::ignore_unused_variable_warning(g); }
         /// Sets the iterator to the given arc.
 
         /// Sets the iterator to the given arc of the given graph.
@@ -442,8 +442,8 @@ namespace lemon {
         /// Sets the iterator to the first outgoing arc of the given node.
         ///
         OutArcIt(const Graph& n, const Node& g) {
-          ignore_unused_variable_warning(n);
-          ignore_unused_variable_warning(g);
+          ::lemon::ignore_unused_variable_warning(n);
+          ::lemon::ignore_unused_variable_warning(g);
         }
         /// Sets the iterator to the given arc.
 
@@ -490,8 +490,8 @@ namespace lemon {
         /// Sets the iterator to the first incoming arc of the given node.
         ///
         InArcIt(const Graph& g, const Node& n) {
-          ignore_unused_variable_warning(n);
-          ignore_unused_variable_warning(g);
+          ::lemon::ignore_unused_variable_warning(n);
+          ::lemon::ignore_unused_variable_warning(g);
         }
         /// Sets the iterator to the given arc.
 

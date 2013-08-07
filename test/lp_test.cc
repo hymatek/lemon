@@ -198,7 +198,12 @@ void lpTest(LpSolver& lp)
       LP::Constr c = v >= -3;
       c = c <= 4;
       LP::Constr c2;
+#if ( __GNUC__ == 4 ) && ( __GNUC_MINOR__ == 3 )
+      c2 = ( -3 <= v ) <= 4;
+#else
       c2 = -3 <= v <= 4;
+#endif
+
     }
 
     e[x[3]]=2;
@@ -240,8 +245,7 @@ void lpTest(LpSolver& lp)
 
   {
     LP::DualExpr e,f,g;
-    LP::Row p1 = INVALID, p2 = INVALID, p3 = INVALID,
-      p4 = INVALID, p5 = INVALID;
+    LP::Row p1 = INVALID, p2 = INVALID;
 
     e[p1]=2;
     e[p1]+=2;

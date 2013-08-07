@@ -67,7 +67,7 @@ void checkDfsCompile()
   Arc e;
   int l, i;
   bool b;
-  ignore_unused_variable_warning(l,i,b);
+  ::lemon::ignore_unused_variable_warning(l,i,b);
 
   DType::DistMap d(G);
   DType::PredMap p(G);
@@ -153,7 +153,7 @@ void checkDfsFunctionCompile()
 
   Digraph g;
   bool b;
-  ignore_unused_variable_warning(b);
+  ::lemon::ignore_unused_variable_warning(b);
 
   dfs(g).run(Node());
   b=dfs(g).run(Node(),Node());

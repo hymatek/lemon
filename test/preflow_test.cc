@@ -86,7 +86,7 @@ void checkPreflowCompile()
   CutMap cut;
   VType v;
   bool b;
-  ignore_unused_variable_warning(v,b);
+  ::lemon::ignore_unused_variable_warning(v,b);
 
   typedef Preflow<Digraph, CapMap>
             ::SetFlowMap<FlowMap>
@@ -120,7 +120,7 @@ void checkPreflowCompile()
   b = const_preflow_test.minCut(n);
   const_preflow_test.minCutMap(cut);
 
-  ignore_unused_variable_warning(fm);
+  ::lemon::ignore_unused_variable_warning(fm);
 }
 
 int cutValue (const SmartDigraph& g,
