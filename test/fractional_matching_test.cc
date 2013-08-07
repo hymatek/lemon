@@ -342,7 +342,7 @@ void checkWeightedFractionalMatching(const SmartGraph& graph,
       check(indeg == 1, "Invalid matching");
       pv += weight[mwfm.matching(n)];
       SmartGraph::Node o = graph.target(mwfm.matching(n));
-      ignore_unused_variable_warning(o);
+      ::lemon::ignore_unused_variable_warning(o);
     } else {
       check(mwfm.nodeValue(n) == 0, "Invalid matching");
       check(indeg == 0, "Invalid matching");
@@ -407,7 +407,7 @@ void checkWeightedPerfectFractionalMatching(const SmartGraph& graph,
     check(indeg == 1, "Invalid perfect matching");
     pv += weight[mwpfm.matching(n)];
     SmartGraph::Node o = graph.target(mwpfm.matching(n));
-    ignore_unused_variable_warning(o);
+    ::lemon::ignore_unused_variable_warning(o);
   }
 
   for (SmartGraph::EdgeIt e(graph); e != INVALID; ++e) {
