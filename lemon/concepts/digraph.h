@@ -324,7 +324,7 @@ namespace lemon {
 
         /// This constructor sets the iterator to the first arc of \c g.
         ///@param g the digraph
-        ArcIt(const Digraph& g) { ignore_unused_variable_warning(g); }
+        ArcIt(const Digraph& g) { ::lemon::ignore_unused_variable_warning(g); }
         /// Arc -> ArcIt conversion
 
         /// Sets the iterator to the value of the trivial iterator \c e.

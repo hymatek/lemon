@@ -35,7 +35,7 @@ void g()
   for(int i=0;i<1000;i++)
     {
       TimeStamp x(T);
-      ignore_unused_variable_warning(x);
+      ::lemon::ignore_unused_variable_warning(x);
     }
 }
 

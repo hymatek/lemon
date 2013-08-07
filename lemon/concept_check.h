@@ -58,7 +58,7 @@ namespace lemon {
   {
 #if !defined(NDEBUG)
     void (Concept::*x)() = & Concept::constraints;
-    ignore_unused_variable_warning(x);
+    ::lemon::ignore_unused_variable_warning(x);
 #endif
   }
 
@@ -68,7 +68,7 @@ namespace lemon {
 #if !defined(NDEBUG)
     typedef typename Concept::template Constraints<Type> ConceptCheck;
     void (ConceptCheck::*x)() = & ConceptCheck::constraints;
-    ignore_unused_variable_warning(x);
+    ::lemon::ignore_unused_variable_warning(x);
 #endif
   }
 

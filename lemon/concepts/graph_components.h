@@ -108,7 +108,7 @@ namespace lemon {
           i1 = i2 = i3;
 
           bool b;
-          ignore_unused_variable_warning(b);
+          ::lemon::ignore_unused_variable_warning(b);
 
           b = (ia == ib) && (ia != ib);
           b = (ia == INVALID) && (ib != INVALID);
@@ -289,7 +289,7 @@ namespace lemon {
             e = graph.oppositeArc(e);
             ue = e;
             bool d = graph.direction(e);
-            ignore_unused_variable_warning(d);
+            ::lemon::ignore_unused_variable_warning(d);
           }
         }
 
@@ -368,9 +368,9 @@ namespace lemon {
           arc = digraph.arcFromId(eid);
 
           nid = digraph.maxNodeId();
-          ignore_unused_variable_warning(nid);
+          ::lemon::ignore_unused_variable_warning(nid);
           eid = digraph.maxArcId();
-          ignore_unused_variable_warning(eid);
+          ::lemon::ignore_unused_variable_warning(eid);
         }
 
         const _Digraph& digraph;
@@ -423,7 +423,7 @@ namespace lemon {
           ueid = graph.id(edge);
           edge = graph.edgeFromId(ueid);
           ueid = graph.maxEdgeId();
-          ignore_unused_variable_warning(ueid);
+          ::lemon::ignore_unused_variable_warning(ueid);
         }
 
         const _Graph& graph;
@@ -496,8 +496,8 @@ namespace lemon {
           _GraphItemIt it2;
           _GraphItemIt it3 = it1;
           _GraphItemIt it4 = INVALID;
-          ignore_unused_variable_warning(it3);
-          ignore_unused_variable_warning(it4);
+          ::lemon::ignore_unused_variable_warning(it3);
+          ::lemon::ignore_unused_variable_warning(it4);
 
           it2 = ++it1;
           ++it2 = it1;
@@ -587,8 +587,8 @@ namespace lemon {
           _GraphIncIt it2;
           _GraphIncIt it3 = it1;
           _GraphIncIt it4 = INVALID;
-          ignore_unused_variable_warning(it3);
-          ignore_unused_variable_warning(it4);
+          ::lemon::ignore_unused_variable_warning(it3);
+          ::lemon::ignore_unused_variable_warning(it4);
 
           it2 = ++it1;
           ++it2 = it1;
@@ -770,7 +770,7 @@ namespace lemon {
             n = digraph.runningNode(iait);
             n = digraph.baseNode(oait);
             n = digraph.runningNode(oait);
-            ignore_unused_variable_warning(n);
+            ::lemon::ignore_unused_variable_warning(n);
           }
         }
 
@@ -953,8 +953,8 @@ namespace lemon {
           typename _Digraph::ArcNotifier& en
             = digraph.notifier(typename _Digraph::Arc());
 
-          ignore_unused_variable_warning(nn);
-          ignore_unused_variable_warning(en);
+          ::lemon::ignore_unused_variable_warning(nn);
+          ::lemon::ignore_unused_variable_warning(en);
         }
 
         const _Digraph& digraph;
@@ -996,7 +996,7 @@ namespace lemon {
           checkConcept<AlterableDigraphComponent<Base>, _Graph>();
           typename _Graph::EdgeNotifier& uen
             = graph.notifier(typename _Graph::Edge());
-          ignore_unused_variable_warning(uen);
+          ::lemon::ignore_unused_variable_warning(uen);
         }
 
         const _Graph& graph;
@@ -1070,9 +1070,9 @@ namespace lemon {
           // ReadMap<Key, Value> cmap;
           // m3 = cmap;
 
-          ignore_unused_variable_warning(m1);
-          ignore_unused_variable_warning(m2);
-          // ignore_unused_variable_warning(m3);
+          ::lemon::ignore_unused_variable_warning(m1);
+          ::lemon::ignore_unused_variable_warning(m2);
+          // ::lemon::ignore_unused_variable_warning(m3);
         }
 
         const _Map &m;

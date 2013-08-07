@@ -60,7 +60,7 @@ void checkDigraphBuild() {
   Arc a2 = G.addArc(n2, n1),
       a3 = G.addArc(n2, n3),
       a4 = G.addArc(n2, n3);
-  ignore_unused_variable_warning(a2,a3,a4);
+  ::lemon::ignore_unused_variable_warning(a2,a3,a4);
 
   checkGraphNodeList(G, 3);
   checkGraphArcList(G, 4);
@@ -89,7 +89,7 @@ void checkDigraphSplit() {
   Node n1 = G.addNode(), n2 = G.addNode(), n3 = G.addNode();
   Arc a1 = G.addArc(n1, n2), a2 = G.addArc(n2, n1),
       a3 = G.addArc(n2, n3), a4 = G.addArc(n2, n3);
-  ignore_unused_variable_warning(a1,a2,a3,a4);
+  ::lemon::ignore_unused_variable_warning(a1,a2,a3,a4);
 
   Node n4 = G.split(n2);
 
@@ -123,7 +123,7 @@ void checkDigraphAlter() {
   Arc a1 = G.addArc(n1, n2), a2 = G.addArc(n4, n1),
       a3 = G.addArc(n4, n3), a4 = G.addArc(n4, n3),
       a5 = G.addArc(n2, n4);
-  ignore_unused_variable_warning(a1,a2,a3,a5);
+  ::lemon::ignore_unused_variable_warning(a1,a2,a3,a5);
 
   checkGraphNodeList(G, 4);
   checkGraphArcList(G, 5);
@@ -203,7 +203,7 @@ void checkDigraphErase() {
   Arc a1 = G.addArc(n1, n2), a2 = G.addArc(n4, n1),
       a3 = G.addArc(n4, n3), a4 = G.addArc(n3, n1),
       a5 = G.addArc(n2, n4);
-  ignore_unused_variable_warning(a2,a3,a4,a5);
+  ::lemon::ignore_unused_variable_warning(a2,a3,a4,a5);
 
   // Check arc deletion
   G.erase(a1);
@@ -251,7 +251,7 @@ void checkDigraphSnapshot() {
   Node n1 = G.addNode(), n2 = G.addNode(), n3 = G.addNode();
   Arc a1 = G.addArc(n1, n2), a2 = G.addArc(n2, n1),
       a3 = G.addArc(n2, n3), a4 = G.addArc(n2, n3);
-  ignore_unused_variable_warning(a1,a2,a3,a4);
+  ::lemon::ignore_unused_variable_warning(a1,a2,a3,a4);
 
   typename Digraph::Snapshot snapshot(G);
 
@@ -340,7 +340,7 @@ void checkDigraphValidity() {
   Arc
     e1 = g.addArc(n1, n2),
     e2 = g.addArc(n2, n3);
-  ignore_unused_variable_warning(e2);
+  ::lemon::ignore_unused_variable_warning(e2);
 
   check(g.valid(n1), "Wrong validity check");
   check(g.valid(e1), "Wrong validity check");

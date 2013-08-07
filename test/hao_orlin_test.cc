@@ -66,7 +66,7 @@ void checkHaoOrlinCompile()
   CapMap cap;
   CutMap cut;
   Value v;
-  ignore_unused_variable_warning(v);
+  ::lemon::ignore_unused_variable_warning(v);
 
   HaoOrlin<Digraph, CapMap> ho_test(g, cap);
   const HaoOrlin<Digraph, CapMap>&

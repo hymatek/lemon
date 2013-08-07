@@ -68,7 +68,7 @@ int main()
     Digraph::NodeMap<int> order(d);
     Graph g(d);
     Digraph::Node n = d.addNode();
-    ignore_unused_variable_warning(n);
+    ::lemon::ignore_unused_variable_warning(n);
 
     check(stronglyConnected(d), "This digraph is strongly connected");
     check(countStronglyConnectedComponents(d) == 1,
@@ -246,7 +246,7 @@ int main()
     Digraph::Node shoe = d.addNode();
     Digraph::Node watch = d.addNode();
     Digraph::Node pants = d.addNode();
-    ignore_unused_variable_warning(watch);
+    ::lemon::ignore_unused_variable_warning(watch);
 
     d.addArc(socks, shoe);
     d.addArc(pants, shoe);

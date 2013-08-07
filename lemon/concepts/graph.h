@@ -382,7 +382,7 @@ namespace lemon {
 
         /// This constructor sets the iterator to the first arc of \c g.
         ///@param g the graph
-        ArcIt(const Graph &g) { ignore_unused_variable_warning(g); }
+        ArcIt(const Graph &g) { ::lemon::ignore_unused_variable_warning(g); }
         /// Arc -> ArcIt conversion
 
         /// Sets the iterator to the value of the trivial iterator \c e.
@@ -431,8 +431,8 @@ namespace lemon {
         ///@param n the node
         ///@param g the graph
         OutArcIt(const Graph& n, const Node& g) {
-          ignore_unused_variable_warning(n);
-          ignore_unused_variable_warning(g);
+          ::lemon::ignore_unused_variable_warning(n);
+          ::lemon::ignore_unused_variable_warning(g);
         }
         /// Arc -> OutArcIt conversion
 
@@ -483,8 +483,8 @@ namespace lemon {
         ///@param n the node
         ///@param g the graph
         InArcIt(const Graph& g, const Node& n) {
-          ignore_unused_variable_warning(n);
-          ignore_unused_variable_warning(g);
+          ::lemon::ignore_unused_variable_warning(n);
+          ::lemon::ignore_unused_variable_warning(g);
         }
         /// Arc -> InArcIt conversion
 
