@@ -744,8 +744,9 @@ namespace lemon {
   ///
   /// \brief Check whether an undirected graph is bi-node-connected.
   ///
-  /// This function checks whether the given undirected graph is 
-  /// bi-node-connected, i.e. any two edges are on same circle.
+  /// This function checks whether the given undirected graph is
+  /// bi-node-connected, i.e. a connected graph without articulation
+  /// node.
   ///
   /// \return \c true if the graph bi-node-connected.
   /// \note By definition, the empty graph is bi-node-connected.
@@ -753,6 +754,22 @@ namespace lemon {
   /// \see countBiNodeConnectedComponents(), biNodeConnectedComponents()
   template <typename Graph>
   bool biNodeConnected(const Graph& graph) {
+    bool hasNonIsolated = false, hasIsolated = false;
+    for (typename Graph::NodeIt n(graph); n != INVALID; ++n) {
+      if (typename Graph::OutArcIt(graph, n) == INVALID) {
+        if (hasIsolated || hasNonIsolated) {
+          return false;
+        } else {
+          hasIsolated = true;
+        }
+      } else {
+        if (hasIsolated) {
+          return false;
+        } else {
+          hasNonIsolated = true;
+        }
+      }
+    }
     return countBiNodeConnectedComponents(graph) <= 1;
   }
 
