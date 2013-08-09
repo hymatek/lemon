@@ -749,7 +749,13 @@ namespace lemon {
   /// node.
   ///
   /// \return \c true if the graph bi-node-connected.
-  /// \note By definition, the empty graph is bi-node-connected.
+  ///
+  /// \note By definition,
+  /// \li a graph consisting of zero or one node is bi-node-connected,
+  /// \li a graph consisting of two isolated nodes
+  /// is \e not bi-node-connected and
+  /// \li a graph consisting of two nodes connected by an edge
+  /// is bi-node-connected.
   ///
   /// \see countBiNodeConnectedComponents(), biNodeConnectedComponents()
   template <typename Graph>
