@@ -1,8 +1,8 @@
-/* -*- C++ -*-
+/* -*- mode: C++; indent-tabs-mode: nil; -*-
  *
- * This file is a part of LEMON, a generic C++ optimization library
+ * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -21,7 +21,7 @@
 
 
 /// \ingroup search
-/// \file 
+/// \file
 /// \brief Maximum cardinality search in undirected digraphs.
 
 #include <lemon/bin_heap.h>
@@ -41,7 +41,7 @@ namespace lemon {
   /// \param CapacityMap Type of capacity map.
   template <typename GR, typename CAP>
   struct MaxCardinalitySearchDefaultTraits {
-    /// The digraph type the algorithm runs on. 
+    /// The digraph type the algorithm runs on.
     typedef GR Digraph;
 
     template <typename CM>
@@ -50,7 +50,7 @@ namespace lemon {
       typedef CM CapacityMap;
 
       static CapacityMap *createCapacityMap(const Digraph& g) {
-	return new CapacityMap(g);
+        return new CapacityMap(g);
       }
     };
 
@@ -60,7 +60,7 @@ namespace lemon {
       typedef ConstMap<CM, Const<int, 1> > CapacityMap;
 
       static CapacityMap *createCapacityMap(const Digraph&) {
-	return new CapacityMap;
+        return new CapacityMap;
       }
     };
 
@@ -90,17 +90,17 @@ namespace lemon {
 
     /// \brief Instantiates a HeapCrossRef.
     ///
-    /// This function instantiates a \ref HeapCrossRef. 
-    /// \param digraph is the digraph, to which we would like to define the 
+    /// This function instantiates a \ref HeapCrossRef.
+    /// \param digraph is the digraph, to which we would like to define the
     /// HeapCrossRef.
     static HeapCrossRef *createHeapCrossRef(const Digraph &digraph) {
       return new HeapCrossRef(digraph);
     }
-    
+
     template <typename CapacityMap>
     struct HeapSelector {
       template <typename Value, typename Ref>
-      struct Selector { 
+      struct Selector {
         typedef BinHeap<Value, Ref, std::greater<Value> > Heap;
       };
     };
@@ -128,7 +128,7 @@ namespace lemon {
 
     /// \brief Instantiates a Heap.
     ///
-    /// This function instantiates a \ref Heap. 
+    /// This function instantiates a \ref Heap.
     /// \param crossref The cross reference of the heap.
     static Heap *createHeap(HeapCrossRef& crossref) {
       return new Heap(crossref);
@@ -143,7 +143,7 @@ namespace lemon {
 
     /// \brief Instantiates a ProcessedMap.
     ///
-    /// This function instantiates a \ref ProcessedMap. 
+    /// This function instantiates a \ref ProcessedMap.
     /// \param digraph is the digraph, to which
     /// we would like to define the \ref ProcessedMap
 #ifdef DOXYGEN
@@ -156,15 +156,15 @@ namespace lemon {
     }
 
     /// \brief The type of the map that stores the cardinalities of the nodes.
-    /// 
+    ///
     /// The type of the map that stores the cardinalities of the nodes.
     /// It must meet the \ref concepts::WriteMap "WriteMap" concept.
     typedef typename Digraph::template NodeMap<Value> CardinalityMap;
 
     /// \brief Instantiates a CardinalityMap.
     ///
-    /// This function instantiates a \ref CardinalityMap. 
-    /// \param digraph is the digraph, to which we would like to define the \ref 
+    /// This function instantiates a \ref CardinalityMap.
+    /// \param digraph is the digraph, to which we would like to define the \ref
     /// CardinalityMap
     static CardinalityMap *createCardinalityMap(const Digraph &digraph) {
       return new CardinalityMap(digraph);
@@ -172,13 +172,13 @@ namespace lemon {
 
 
   };
-  
+
   /// \ingroup search
   ///
   /// \brief Maximum Cardinality Search algorithm class.
   ///
-  /// This class provides an efficient implementation of Maximum Cardinality 
-  /// Search algorithm. The maximum cardinality search first chooses any 
+  /// This class provides an efficient implementation of Maximum Cardinality
+  /// Search algorithm. The maximum cardinality search first chooses any
   /// node of the digraph. Then every time it chooses one unprocessed node
   /// with maximum cardinality, i.e the sum of capacities on out arcs to the nodes
   /// which were previusly processed.
@@ -186,38 +186,38 @@ namespace lemon {
   /// again any unprocessed node of the digraph.
 
   /// The arc capacities are passed to the algorithm using a
-  /// \ref concepts::ReadMap "ReadMap", so it is easy to change it to any 
+  /// \ref concepts::ReadMap "ReadMap", so it is easy to change it to any
   /// kind of capacity.
   ///
-  /// The type of the capacity is determined by the \ref 
+  /// The type of the capacity is determined by the \ref
   /// concepts::ReadMap::Value "Value" of the capacity map.
   ///
   /// It is also possible to change the underlying priority heap.
   ///
   ///
   /// \param GR The digraph type the algorithm runs on. The value of
-  /// Digraph is not used directly by the search algorithm, it 
+  /// Digraph is not used directly by the search algorithm, it
   /// is only passed to \ref MaxCardinalitySearchDefaultTraits.
-  /// \param CAP This read-only ArcMap determines the capacities of 
+  /// \param CAP This read-only ArcMap determines the capacities of
   /// the arcs. It is read once for each arc, so the map may involve in
   /// relatively time consuming process to compute the arc capacity if
   /// it is necessary. The default map type is \ref
   /// ConstMap "ConstMap<concepts::Digraph::Arc, Const<int,1> >". The value
-  /// of CapacityMap is not used directly by search algorithm, it is only 
-  /// passed to \ref MaxCardinalitySearchDefaultTraits.  
-  /// \param TR Traits class to set various data types used by the 
-  /// algorithm.  The default traits class is 
-  /// \ref MaxCardinalitySearchDefaultTraits 
-  /// "MaxCardinalitySearchDefaultTraits<GR, CAP>".  
-  /// See \ref MaxCardinalitySearchDefaultTraits 
+  /// of CapacityMap is not used directly by search algorithm, it is only
+  /// passed to \ref MaxCardinalitySearchDefaultTraits.
+  /// \param TR Traits class to set various data types used by the
+  /// algorithm.  The default traits class is
+  /// \ref MaxCardinalitySearchDefaultTraits
+  /// "MaxCardinalitySearchDefaultTraits<GR, CAP>".
+  /// See \ref MaxCardinalitySearchDefaultTraits
   /// for the documentation of a MaxCardinalitySearch traits class.
 
 #ifdef DOXYGEN
   template <typename GR, typename CAP, typename TR>
 #else
-  template <typename GR, typename CAP = 
-	    ConstMap<typename GR::Arc, Const<int,1> >,
-	    typename TR = 
+  template <typename GR, typename CAP =
+            ConstMap<typename GR::Arc, Const<int,1> >,
+            typename TR =
             MaxCardinalitySearchDefaultTraits<GR, CAP> >
 #endif
   class MaxCardinalitySearch {
@@ -226,7 +226,7 @@ namespace lemon {
     typedef TR Traits;
     ///The type of the underlying digraph.
     typedef typename Traits::Digraph Digraph;
-    
+
     ///The type of the capacity of the arcs.
     typedef typename Traits::CapacityMap::Value Value;
     ///The type of the map that stores the arc capacities.
@@ -266,7 +266,7 @@ namespace lemon {
   public :
 
     typedef MaxCardinalitySearch Create;
- 
+
     ///\name Named template parameters
 
     ///@{
@@ -275,89 +275,89 @@ namespace lemon {
     struct DefCapacityMapTraits : public Traits {
       typedef T CapacityMap;
       static CapacityMap *createCapacityMap(const Digraph &) {
-       	LEMON_ASSERT(false,"Uninitialized parameter.");
-	return 0;
+               LEMON_ASSERT(false,"Uninitialized parameter.");
+        return 0;
       }
     };
-    /// \brief \ref named-templ-param "Named parameter" for setting 
+    /// \brief \ref named-templ-param "Named parameter" for setting
     /// CapacityMap type
     ///
     /// \ref named-templ-param "Named parameter" for setting CapacityMap type
     /// for the algorithm.
     template <class T>
-    struct SetCapacityMap 
-      : public MaxCardinalitySearch<Digraph, CapacityMap, 
-                                    DefCapacityMapTraits<T> > { 
-      typedef MaxCardinalitySearch<Digraph, CapacityMap, 
+    struct SetCapacityMap
+      : public MaxCardinalitySearch<Digraph, CapacityMap,
+                                    DefCapacityMapTraits<T> > {
+      typedef MaxCardinalitySearch<Digraph, CapacityMap,
                                    DefCapacityMapTraits<T> > Create;
     };
 
     template <class T>
     struct DefCardinalityMapTraits : public Traits {
       typedef T CardinalityMap;
-      static CardinalityMap *createCardinalityMap(const Digraph &) 
+      static CardinalityMap *createCardinalityMap(const Digraph &)
       {
-	LEMON_ASSERT(false,"Uninitialized parameter.");
-	return 0;
+        LEMON_ASSERT(false,"Uninitialized parameter.");
+        return 0;
       }
     };
-    /// \brief \ref named-templ-param "Named parameter" for setting 
+    /// \brief \ref named-templ-param "Named parameter" for setting
     /// CardinalityMap type
     ///
-    /// \ref named-templ-param "Named parameter" for setting CardinalityMap 
+    /// \ref named-templ-param "Named parameter" for setting CardinalityMap
     /// type for the algorithm.
     template <class T>
-    struct SetCardinalityMap 
-      : public MaxCardinalitySearch<Digraph, CapacityMap, 
-                                    DefCardinalityMapTraits<T> > { 
-      typedef MaxCardinalitySearch<Digraph, CapacityMap, 
+    struct SetCardinalityMap
+      : public MaxCardinalitySearch<Digraph, CapacityMap,
+                                    DefCardinalityMapTraits<T> > {
+      typedef MaxCardinalitySearch<Digraph, CapacityMap,
                                    DefCardinalityMapTraits<T> > Create;
     };
-    
+
     template <class T>
     struct DefProcessedMapTraits : public Traits {
       typedef T ProcessedMap;
       static ProcessedMap *createProcessedMap(const Digraph &) {
-       	LEMON_ASSERT(false,"Uninitialized parameter.");
-	return 0;
+               LEMON_ASSERT(false,"Uninitialized parameter.");
+        return 0;
       }
     };
-    /// \brief \ref named-templ-param "Named parameter" for setting 
+    /// \brief \ref named-templ-param "Named parameter" for setting
     /// ProcessedMap type
     ///
     /// \ref named-templ-param "Named parameter" for setting ProcessedMap type
     /// for the algorithm.
     template <class T>
-    struct SetProcessedMap 
-      : public MaxCardinalitySearch<Digraph, CapacityMap, 
-                                    DefProcessedMapTraits<T> > { 
-      typedef MaxCardinalitySearch<Digraph, CapacityMap, 
+    struct SetProcessedMap
+      : public MaxCardinalitySearch<Digraph, CapacityMap,
+                                    DefProcessedMapTraits<T> > {
+      typedef MaxCardinalitySearch<Digraph, CapacityMap,
                                    DefProcessedMapTraits<T> > Create;
     };
-    
+
     template <class H, class CR>
     struct DefHeapTraits : public Traits {
       typedef CR HeapCrossRef;
       typedef H Heap;
       static HeapCrossRef *createHeapCrossRef(const Digraph &) {
-     	LEMON_ASSERT(false,"Uninitialized parameter.");
-	return 0;
+             LEMON_ASSERT(false,"Uninitialized parameter.");
+        return 0;
       }
       static Heap *createHeap(HeapCrossRef &) {
-       	LEMON_ASSERT(false,"Uninitialized parameter.");
-	return 0;
+               LEMON_ASSERT(false,"Uninitialized parameter.");
+        return 0;
       }
     };
-    /// \brief \ref named-templ-param "Named parameter" for setting heap 
+    /// \brief \ref named-templ-param "Named parameter" for setting heap
     /// and cross reference type
     ///
-    /// \ref named-templ-param "Named parameter" for setting heap and cross 
+    /// \ref named-templ-param "Named parameter" for setting heap and cross
     /// reference type for the algorithm.
     template <class H, class CR = typename Digraph::template NodeMap<int> >
     struct SetHeap
-      : public MaxCardinalitySearch<Digraph, CapacityMap, 
-                                    DefHeapTraits<H, CR> > { 
-      typedef MaxCardinalitySearch< Digraph, CapacityMap, 
+      : public MaxCardinalitySearch<Digraph, CapacityMap,
+                                    DefHeapTraits<H, CR> > {
+      typedef MaxCardinalitySearch< Digraph, CapacityMap,
                                     DefHeapTraits<H, CR> > Create;
     };
 
@@ -366,29 +366,29 @@ namespace lemon {
       typedef CR HeapCrossRef;
       typedef H Heap;
       static HeapCrossRef *createHeapCrossRef(const Digraph &digraph) {
-	return new HeapCrossRef(digraph);
+        return new HeapCrossRef(digraph);
       }
       static Heap *createHeap(HeapCrossRef &crossref) {
-	return new Heap(crossref);
+        return new Heap(crossref);
       }
     };
 
-    /// \brief \ref named-templ-param "Named parameter" for setting heap and 
+    /// \brief \ref named-templ-param "Named parameter" for setting heap and
     /// cross reference type with automatic allocation
     ///
-    /// \ref named-templ-param "Named parameter" for setting heap and cross 
-    /// reference type. It can allocate the heap and the cross reference 
-    /// object if the cross reference's constructor waits for the digraph as 
+    /// \ref named-templ-param "Named parameter" for setting heap and cross
+    /// reference type. It can allocate the heap and the cross reference
+    /// object if the cross reference's constructor waits for the digraph as
     /// parameter and the heap's constructor waits for the cross reference.
     template <class H, class CR = typename Digraph::template NodeMap<int> >
     struct SetStandardHeap
-      : public MaxCardinalitySearch<Digraph, CapacityMap, 
-                                    DefStandardHeapTraits<H, CR> > { 
-      typedef MaxCardinalitySearch<Digraph, CapacityMap, 
-                                   DefStandardHeapTraits<H, CR> > 
+      : public MaxCardinalitySearch<Digraph, CapacityMap,
+                                    DefStandardHeapTraits<H, CR> > {
+      typedef MaxCardinalitySearch<Digraph, CapacityMap,
+                                   DefStandardHeapTraits<H, CR> >
       Create;
     };
-    
+
     ///@}
 
 
@@ -396,14 +396,14 @@ namespace lemon {
 
     MaxCardinalitySearch() {}
 
-  public:      
-    
+  public:
+
     /// \brief Constructor.
     ///
     ///\param digraph the digraph the algorithm will run on.
     ///\param capacity the capacity map used by the algorithm.
     MaxCardinalitySearch(const Digraph& digraph,
-			 const CapacityMap& capacity) :
+                         const CapacityMap& capacity) :
       _graph(&digraph),
       _capacity(&capacity), local_capacity(false),
       _cardinality(0), local_cardinality(false),
@@ -441,8 +441,8 @@ namespace lemon {
     /// \return <tt> (*this) </tt>
     MaxCardinalitySearch &capacityMap(const CapacityMap &m) {
       if (local_capacity) {
-	delete _capacity;
-	local_capacity=false;
+        delete _capacity;
+        local_capacity=false;
       }
       _capacity=&m;
       return *this;
@@ -456,7 +456,7 @@ namespace lemon {
       return *_capacity;
     }
 
-    /// \brief Sets the map storing the cardinalities calculated by the 
+    /// \brief Sets the map storing the cardinalities calculated by the
     /// algorithm.
     ///
     /// Sets the map storing the cardinalities calculated by the algorithm.
@@ -466,8 +466,8 @@ namespace lemon {
     /// \return <tt> (*this) </tt>
     MaxCardinalitySearch &cardinalityMap(CardinalityMap &m) {
       if(local_cardinality) {
-	delete _cardinality;
-	local_cardinality=false;
+        delete _cardinality;
+        local_cardinality=false;
       }
       _cardinality = &m;
       return *this;
@@ -480,11 +480,11 @@ namespace lemon {
     /// it will allocate one. The destuctor deallocates this
     /// automatically allocated map, of course.
     /// \return <tt> (*this) </tt>
-    MaxCardinalitySearch &processedMap(ProcessedMap &m) 
+    MaxCardinalitySearch &processedMap(ProcessedMap &m)
     {
       if(local_processed) {
-	delete _processed;
-	local_processed=false;
+        delete _processed;
+        local_processed=false;
       }
       _processed = &m;
       return *this;
@@ -507,13 +507,13 @@ namespace lemon {
     /// \return <tt> (*this) </tt>
     MaxCardinalitySearch &heap(Heap& hp, HeapCrossRef &cr) {
       if(local_heap_cross_ref) {
-	delete _heap_cross_ref;
-	local_heap_cross_ref = false;
+        delete _heap_cross_ref;
+        local_heap_cross_ref = false;
       }
       _heap_cross_ref = &cr;
       if(local_heap) {
-	delete _heap;
-	local_heap = false;
+        delete _heap;
+        local_heap = false;
       }
       _heap = &hp;
       return *this;
@@ -544,27 +544,27 @@ namespace lemon {
 
     void create_maps() {
       if(!_capacity) {
-	local_capacity = true;
-	_capacity = Traits::createCapacityMap(*_graph);
+        local_capacity = true;
+        _capacity = Traits::createCapacityMap(*_graph);
       }
       if(!_cardinality) {
-	local_cardinality = true;
-	_cardinality = Traits::createCardinalityMap(*_graph);
+        local_cardinality = true;
+        _cardinality = Traits::createCardinalityMap(*_graph);
       }
       if(!_processed) {
-	local_processed = true;
-	_processed = Traits::createProcessedMap(*_graph);
+        local_processed = true;
+        _processed = Traits::createProcessedMap(*_graph);
       }
       if (!_heap_cross_ref) {
-	local_heap_cross_ref = true;
-	_heap_cross_ref = Traits::createHeapCrossRef(*_graph);
+        local_heap_cross_ref = true;
+        _heap_cross_ref = Traits::createHeapCrossRef(*_graph);
       }
       if (!_heap) {
-	local_heap = true;
-	_heap = Traits::createHeap(*_heap_cross_ref);
+        local_heap = true;
+        _heap = Traits::createHeap(*_heap_cross_ref);
       }
     }
-    
+
     void finalizeNodeData(Node node, Value capacity) {
       _processed->set(node, true);
       _cardinality->set(node, capacity);
@@ -589,22 +589,22 @@ namespace lemon {
       create_maps();
       _heap->clear();
       for (NodeIt it(*_graph) ; it != INVALID ; ++it) {
-	_processed->set(it, false);
-	_heap_cross_ref->set(it, Heap::PRE_HEAP);
+        _processed->set(it, false);
+        _heap_cross_ref->set(it, Heap::PRE_HEAP);
       }
     }
-    
+
     /// \brief Adds a new source node.
-    /// 
+    ///
     /// Adds a new source node to the priority heap.
     ///
     /// It checks if the node has not yet been added to the heap.
     void addSource(Node source, Value capacity = 0) {
       if(_heap->state(source) == Heap::PRE_HEAP) {
-	_heap->push(source, capacity);
-      } 
+        _heap->push(source, capacity);
+      }
     }
-    
+
     /// \brief Processes the next node in the priority heap
     ///
     /// Processes the next node in the priority heap.
@@ -613,22 +613,22 @@ namespace lemon {
     ///
     /// \warning The priority heap must not be empty!
     Node processNextNode() {
-      Node node = _heap->top(); 
+      Node node = _heap->top();
       finalizeNodeData(node, _heap->prio());
       _heap->pop();
-      
+
       for (InArcIt it(*_graph, node); it != INVALID; ++it) {
-	Node source = _graph->source(it);
-	switch (_heap->state(source)) {
-	case Heap::PRE_HEAP:
-	  _heap->push(source, (*_capacity)[it]);
-	  break;
-	case Heap::IN_HEAP:
-	  _heap->decrease(source, (*_heap)[source] + (*_capacity)[it]);
-	  break;
-	case Heap::POST_HEAP:
-	  break;
-	}
+        Node source = _graph->source(it);
+        switch (_heap->state(source)) {
+        case Heap::PRE_HEAP:
+          _heap->push(source, (*_capacity)[it]);
+          break;
+        case Heap::IN_HEAP:
+          _heap->decrease(source, (*_heap)[source] + (*_capacity)[it]);
+          break;
+        case Heap::POST_HEAP:
+          break;
+        }
       }
       return node;
     }
@@ -637,24 +637,24 @@ namespace lemon {
     ///
     /// Next node to be processed.
     ///
-    /// \return The next node to be processed or INVALID if the 
+    /// \return The next node to be processed or INVALID if the
     /// priority heap is empty.
-    Node nextNode() { 
+    Node nextNode() {
       return !_heap->empty() ? _heap->top() : INVALID;
     }
- 
+
     /// \brief Returns \c false if there are nodes
     /// to be processed in the priority heap
     ///
     /// Returns \c false if there are nodes
     /// to be processed in the priority heap
     bool emptyQueue() { return _heap->empty(); }
-    /// \brief Returns the number of the nodes to be processed 
+    /// \brief Returns the number of the nodes to be processed
     /// in the priority heap
     ///
     /// Returns the number of the nodes to be processed in the priority heap
     int emptySize() { return _heap->size(); }
-    
+
     /// \brief Executes the algorithm.
     ///
     /// Executes the algorithm.
@@ -662,12 +662,12 @@ namespace lemon {
     ///\pre init() must be called and at least one node should be added
     /// with addSource() before using this function.
     ///
-    /// This method runs the Maximum Cardinality Search algorithm from the 
+    /// This method runs the Maximum Cardinality Search algorithm from the
     /// source node(s).
     void start() {
       while ( !_heap->empty() ) processNextNode();
     }
-    
+
     /// \brief Executes the algorithm until \c dest is reached.
     ///
     /// Executes the algorithm until \c dest is reached.
@@ -675,13 +675,13 @@ namespace lemon {
     /// \pre init() must be called and at least one node should be added
     /// with addSource() before using this function.
     ///
-    /// This method runs the %MaxCardinalitySearch algorithm from the source 
+    /// This method runs the %MaxCardinalitySearch algorithm from the source
     /// nodes.
     void start(Node dest) {
       while ( !_heap->empty() && _heap->top()!=dest ) processNextNode();
       if ( !_heap->empty() ) finalizeNodeData(_heap->top(), _heap->prio());
     }
-    
+
     /// \brief Executes the algorithm until a condition is met.
     ///
     /// Executes the algorithm until a condition is met.
@@ -696,10 +696,10 @@ namespace lemon {
       while ( !_heap->empty() && !nm[_heap->top()] ) processNextNode();
       if ( !_heap->empty() ) finalizeNodeData(_heap->top(),_heap->prio());
     }
-    
+
     /// \brief Runs the maximum cardinality search algorithm from node \c s.
     ///
-    /// This method runs the %MaxCardinalitySearch algorithm from a root 
+    /// This method runs the %MaxCardinalitySearch algorithm from a root
     /// node \c s.
     ///
     ///\note d.run(s) is just a shortcut of the following code.
@@ -714,10 +714,10 @@ namespace lemon {
       start();
     }
 
-    /// \brief Runs the maximum cardinality search algorithm for the 
+    /// \brief Runs the maximum cardinality search algorithm for the
     /// whole digraph.
     ///
-    /// This method runs the %MaxCardinalitySearch algorithm from all 
+    /// This method runs the %MaxCardinalitySearch algorithm from all
     /// unprocessed node of the digraph.
     ///
     ///\note d.run(s) is just a shortcut of the following code.
@@ -739,16 +739,16 @@ namespace lemon {
         }
       }
     }
-    
+
     ///@}
 
     /// \name Query Functions
-    /// The results of the maximum cardinality search algorithm can be 
+    /// The results of the maximum cardinality search algorithm can be
     /// obtained using these functions.
     /// \n
-    /// Before the use of these functions, either run() or start() must be 
+    /// Before the use of these functions, either run() or start() must be
     /// called.
-    
+
     ///@{
 
     /// \brief The cardinality of a node.
@@ -767,10 +767,10 @@ namespace lemon {
 
     /// \brief Returns a reference to the NodeMap of cardinalities.
     ///
-    /// Returns a reference to the NodeMap of cardinalities. \pre \ref run() 
+    /// Returns a reference to the NodeMap of cardinalities. \pre \ref run()
     /// must be called before using this function.
     const CardinalityMap &cardinalityMap() const { return *_cardinality;}
- 
+
     /// \brief Checks if a node is reachable from the root.
     ///
     /// Returns \c true if \c v is reachable from the root.
@@ -784,7 +784,7 @@ namespace lemon {
     /// path to \c v has already found.
     /// \pre \ref run() must be called before using this function.
     bool processed(Node v) { return (*_heap_cross_ref)[v] == Heap::POST_HEAP; }
-    
+
     ///@}
   };
 

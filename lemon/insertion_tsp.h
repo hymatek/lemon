@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -360,7 +360,7 @@ namespace lemon {
             for (unsigned int i=0; i<_notused.size(); ++i) {
               Node u = _notused[i];
               Cost min_cost = costDiff(_tour.back(), _tour.front(), u);
-              int min_pos = 0;              
+              int min_pos = 0;
               for (unsigned int j=1; j<_tour.size(); ++j) {
                 Cost curr_cost = costDiff(_tour[j-1], _tour[j], u);
                 if (curr_cost < min_cost) {
@@ -390,7 +390,7 @@ namespace lemon {
             Node sn = _notused[min_node];
             _notused[min_node] = _notused.back();
             _notused.pop_back();
-            
+
             // Insert the selected node into the tour
             const int ipos = _ins_pos[sn];
             _tour.insert(_tour.begin() + ipos, sn);
@@ -405,7 +405,7 @@ namespace lemon {
               int ipos_next = ipos == int(_tour.size())-1 ? 0 : ipos+1;
               Cost nc1 = costDiff(_tour[ipos_prev], _tour[ipos], u);
               Cost nc2 = costDiff(_tour[ipos], _tour[ipos_next], u);
-              
+
               if (nc1 <= curr_cost || nc2 <= curr_cost) {
                 // A new position is better than the old one
                 if (nc1 <= nc2) {
@@ -420,7 +420,7 @@ namespace lemon {
                 if (curr_pos == ipos) {
                   // The minimum should be found again
                   curr_cost = costDiff(_tour.back(), _tour.front(), u);
-                  curr_pos = 0;              
+                  curr_pos = 0;
                   for (unsigned int j=1; j<_tour.size(); ++j) {
                     Cost tmp_cost = costDiff(_tour[j-1], _tour[j], u);
                     if (tmp_cost < curr_cost) {
@@ -433,7 +433,7 @@ namespace lemon {
                   ++curr_pos;
                 }
               }
-              
+
               _ins_cost[u] = curr_cost;
               _ins_pos[u] = curr_pos;
             }

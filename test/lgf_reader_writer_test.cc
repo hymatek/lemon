@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -385,7 +385,7 @@ void checkGraphReaderWriter() {
   writer.edgeMap("edge_map2", edge_map, WriterConverter());
   writer.arcMap("arc_map1", arc_map);
   writer.arcMap("arc_map2", arc_map, WriterConverter());
-  writer.node("node", n2); 
+  writer.node("node", n2);
   writer.edge("edge", e1);
   writer.arc("arc", graph.direct(e1, false));
   writer.attribute("attr1", attr);
@@ -492,7 +492,7 @@ void checkBpGraphReaderWriter() {
   writer.arcMap("arc_map1", arc_map);
   writer.arcMap("arc_map2", arc_map, WriterConverter());
   writer.node("node", n);
-  writer.redNode("red_node", rn1); 
+  writer.redNode("red_node", rn1);
   writer.blueNode("blue_node", bn2);
   writer.edge("edge", e1);
   writer.arc("arc", graph.direct(e1, false));

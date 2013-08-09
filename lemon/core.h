@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -254,7 +254,7 @@ namespace lemon {
   }
 
   namespace _graph_utils_bits {
-    
+
     template <typename Graph, typename Enable = void>
     struct CountRedNodesSelector {
       static int count(const Graph &g) {
@@ -264,13 +264,13 @@ namespace lemon {
 
     template <typename Graph>
     struct CountRedNodesSelector<
-      Graph, typename 
-      enable_if<typename Graph::NodeNumTag, void>::type> 
+      Graph, typename
+      enable_if<typename Graph::NodeNumTag, void>::type>
     {
       static int count(const Graph &g) {
         return g.redNum();
       }
-    };    
+    };
   }
 
   /// \brief Function to count the red nodes in the graph.
@@ -279,7 +279,7 @@ namespace lemon {
   /// The complexity of the function is O(n) but for some
   /// graph structures it is specialized to run in O(1).
   ///
-  /// If the graph contains a \e redNum() member function and a 
+  /// If the graph contains a \e redNum() member function and a
   /// \e NodeNumTag tag then this function calls directly the member
   /// function to query the cardinality of the node set.
   template <typename Graph>
@@ -288,7 +288,7 @@ namespace lemon {
   }
 
   namespace _graph_utils_bits {
-    
+
     template <typename Graph, typename Enable = void>
     struct CountBlueNodesSelector {
       static int count(const Graph &g) {
@@ -298,13 +298,13 @@ namespace lemon {
 
     template <typename Graph>
     struct CountBlueNodesSelector<
-      Graph, typename 
-      enable_if<typename Graph::NodeNumTag, void>::type> 
+      Graph, typename
+      enable_if<typename Graph::NodeNumTag, void>::type>
     {
       static int count(const Graph &g) {
         return g.blueNum();
       }
-    };    
+    };
   }
 
   /// \brief Function to count the blue nodes in the graph.
@@ -313,7 +313,7 @@ namespace lemon {
   /// The complexity of the function is O(n) but for some
   /// graph structures it is specialized to run in O(1).
   ///
-  /// If the graph contains a \e blueNum() member function and a 
+  /// If the graph contains a \e blueNum() member function and a
   /// \e NodeNumTag tag then this function calls directly the member
   /// function to query the cardinality of the node set.
   template <typename Graph>
@@ -1865,7 +1865,7 @@ namespace lemon {
 
     /// The Digraph type
     typedef GR Digraph;
-    
+
   protected:
 
     class AutoNodeMap : public ItemSetTraits<GR, Node>::template Map<Arc>::Type

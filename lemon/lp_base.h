@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -1028,13 +1028,13 @@ namespace lemon {
         else return "lemon::UnsupportedFormatError";
       }
     };
-    
+
   protected:
     virtual void _write(std::string, std::string format) const
     {
       throw UnsupportedFormatError(format);
     }
-    
+
   public:
 
     /// Virtual destructor

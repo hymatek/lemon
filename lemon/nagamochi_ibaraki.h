@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -303,8 +303,8 @@ namespace lemon {
   protected:
     //This is here to avoid a gcc-3.3 compilation error.
     //It should never be called.
-    NagamochiIbaraki() {} 
-    
+    NagamochiIbaraki() {}
+
   public:
 
     typedef NagamochiIbaraki Create;
@@ -414,18 +414,18 @@ namespace lemon {
       for (typename Graph::NodeIt n(_graph); n != INVALID; ++n) {
         for (typename Graph::OutArcIt a(_graph, n); a != INVALID; ++a) {
           typename Graph::Node m = _graph.target(a);
-          
+
           if (!(n < m)) continue;
 
           (*_nodes)[n].sum += (*_capacity)[a];
           (*_nodes)[m].sum += (*_capacity)[a];
-          
+
           int c = (*_nodes)[m].curr_arc;
           if (c != -1 && _arcs[c ^ 1].target == n) {
             _edges[c >> 1].capacity += (*_capacity)[a];
           } else {
             _edges[index].capacity = (*_capacity)[a];
-            
+
             _arcs[index << 1].prev = -1;
             if ((*_nodes)[n].first_arc != -1) {
               _arcs[(*_nodes)[n].first_arc].prev = (index << 1);
@@ -435,7 +435,7 @@ namespace lemon {
             _arcs[index << 1].target = m;
 
             (*_nodes)[m].curr_arc = (index << 1);
-            
+
             _arcs[(index << 1) | 1].prev = -1;
             if ((*_nodes)[m].first_arc != -1) {
               _arcs[(*_nodes)[m].first_arc].prev = ((index << 1) | 1);
@@ -443,7 +443,7 @@ namespace lemon {
             _arcs[(index << 1) | 1].next = (*_nodes)[m].first_arc;
             (*_nodes)[m].first_arc = ((index << 1) | 1);
             _arcs[(index << 1) | 1].target = n;
-            
+
             ++index;
           }
         }
@@ -452,7 +452,7 @@ namespace lemon {
       typename Graph::Node cut_node = INVALID;
       _min_cut = std::numeric_limits<Value>::max();
 
-      for (typename Graph::Node n = _first_node; 
+      for (typename Graph::Node n = _first_node;
            n != INVALID; n = (*_nodes)[n].next) {
         if ((*_nodes)[n].sum < _min_cut) {
           cut_node = n;
@@ -477,7 +477,7 @@ namespace lemon {
       if (_first_node == INVALID) return true;
 
       _heap->clear();
-      for (typename Graph::Node n = _first_node; 
+      for (typename Graph::Node n = _first_node;
            n != INVALID; n = (*_nodes)[n].next) {
         (*_heap_cross_ref)[n] = Heap::PRE_HEAP;
       }
@@ -497,7 +497,7 @@ namespace lemon {
         _heap->pop();
         for (int a = (*_nodes)[n].first_arc; a != -1; a = _arcs[a].next) {
           switch (_heap->state(_arcs[a].target)) {
-          case Heap::PRE_HEAP: 
+          case Heap::PRE_HEAP:
             {
               Value nv = _edges[a >> 1].capacity;
               _heap->push(_arcs[a].target, nv);
@@ -563,7 +563,7 @@ namespace lemon {
           if (!(_edges[a >> 1].cut < pmc)) {
             if (!merged) {
               for (int b = (*_nodes)[n].first_arc; b != -1; b = _arcs[b].next) {
-                (*_nodes)[_arcs[b].target].curr_arc = b;          
+                (*_nodes)[_arcs[b].target].curr_arc = b;
               }
               merged = true;
             }
@@ -573,7 +573,7 @@ namespace lemon {
               nb = _arcs[b].next;
               if ((b ^ a) == 1) continue;
               typename Graph::Node o = _arcs[b].target;
-              int c = (*_nodes)[o].curr_arc; 
+              int c = (*_nodes)[o].curr_arc;
               if (c != -1 && _arcs[c ^ 1].target == n) {
                 _edges[c >> 1].capacity += _edges[b >> 1].capacity;
                 (*_nodes)[n].sum += _edges[b >> 1].capacity;
@@ -606,7 +606,7 @@ namespace lemon {
               _arcs[_arcs[a].prev].next = _arcs[a].next;
             } else {
               (*_nodes)[n].first_arc = _arcs[a].next;
-            }            
+            }
             if (_arcs[a].next != -1) {
               _arcs[_arcs[a].next].prev = _arcs[a].prev;
             }
@@ -614,7 +614,7 @@ namespace lemon {
             (*_nodes)[n].sum -= _edges[a >> 1].capacity;
             (*_next_rep)[(*_nodes)[n].last_rep] = m;
             (*_nodes)[n].last_rep = (*_nodes)[m].last_rep;
-            
+
             if ((*_nodes)[m].prev != INVALID) {
               (*_nodes)[(*_nodes)[m].prev].next = (*_nodes)[m].next;
             } else{

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -52,7 +52,7 @@ bool isTheSame(T &a, T&b)
 
 template<class T>
 T listsort(typename T::iterator b, typename T::iterator e)
-{ 
+{
   if(b==e) return T();
   typename T::iterator bn=b;
   if(++bn==e) {

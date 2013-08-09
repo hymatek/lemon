@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -554,10 +554,10 @@ namespace lemon {
           (*_excess)[v] += rem;
         }
       }
-      for (NodeIt n(_graph); n != INVALID; ++n) 
+      for (NodeIt n(_graph); n != INVALID; ++n)
         if(n!=_source && n!=_target && _tolerance.positive((*_excess)[n]))
           _level->activate(n);
-          
+
       return true;
     }
 
@@ -585,7 +585,7 @@ namespace lemon {
           if (n == INVALID) goto first_phase_done;
           level = _level->highestActiveLevel();
           --num;
-          
+
           Value excess = (*_excess)[n];
           int new_level = _level->maxLevel();
 

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -222,7 +222,7 @@ bool checkFlow(const SmartDigraph& g,
 void initFlowTest()
 {
   DIGRAPH_TYPEDEFS(SmartDigraph);
-  
+
   SmartDigraph g;
   SmartDigraph::ArcMap<int> cap(g),iflow(g);
   Node s=g.addNode(); Node t=g.addNode();
@@ -382,7 +382,7 @@ int main() {
   checkMaxFlowAlg<PType1, PreflowStartFunctions<PType1> >();
   checkMaxFlowAlg<PType2, PreflowStartFunctions<PType2> >();
   initFlowTest();
-  
+
   // Check EdmondsKarp
   typedef EdmondsKarp<SmartDigraph, SmartDigraph::ArcMap<int> > EKType1;
   typedef EdmondsKarp<SmartDigraph, SmartDigraph::ArcMap<float> > EKType2;
@@ -390,6 +390,6 @@ int main() {
   checkMaxFlowAlg<EKType2, GeneralStartFunctions<EKType2> >();
 
   initFlowTest();
-  
+
   return 0;
 }

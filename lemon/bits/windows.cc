@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -140,7 +140,7 @@ namespace lemon {
       _repr = 0; //Just to avoid 'unused variable' warning with clang
 #endif
     }
-    
+
     WinLock::~WinLock() {
 #ifdef WIN32
       CRITICAL_SECTION *lock = static_cast<CRITICAL_SECTION*>(_repr);

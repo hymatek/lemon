@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -54,7 +54,7 @@ char test_lgf[] =
   "5 6    13\n"
   "5 7    14\n"
   "6 7    15\n";
-      
+
 
 // Check with general graphs
 template <typename Param>
@@ -62,7 +62,7 @@ void checkMaxCliqueGeneral(Param rule) {
   typedef ListGraph GR;
   typedef GrossoLocatelliPullanMc<GR> McAlg;
   typedef McAlg::CliqueNodeIt CliqueIt;
-  
+
   // Basic tests
   {
     GR g;
@@ -81,7 +81,7 @@ void checkMaxCliqueGeneral(Param rule) {
     CliqueIt it1(mc);
     check(static_cast<GR::Node>(it1) == u && ++it1 == INVALID,
           "Wrong CliqueNodeIt");
-    
+
     GR::Node v = g.addNode();
     check(mc.run(rule) == McAlg::ITERATION_LIMIT, "Wrong termination cause");
     check(mc.cliqueSize() == 1, "Wrong clique size");
@@ -109,7 +109,7 @@ void checkMaxCliqueGeneral(Param rule) {
     graphReader(g, input)
       .nodeMap("max_clique", max_clique)
       .run();
-    
+
     McAlg mc(g);
     mc.iterationLimit(50);
     check(mc.run(rule) == McAlg::ITERATION_LIMIT, "Wrong termination cause");
@@ -133,7 +133,7 @@ void checkMaxCliqueFullGraph(Param rule) {
   typedef FullGraph GR;
   typedef GrossoLocatelliPullanMc<FullGraph> McAlg;
   typedef McAlg::CliqueNodeIt CliqueIt;
-  
+
   for (int size = 0; size <= 40; size = size * 3 + 1) {
     GR g(size);
     GR::NodeMap<bool> map(g);
@@ -156,7 +156,7 @@ void checkMaxCliqueGridGraph(Param rule) {
   GridGraph g(5, 7);
   GridGraph::NodeMap<char> map(g);
   GrossoLocatelliPullanMc<GridGraph> mc(g);
-  
+
   mc.iterationLimit(100);
   check(mc.run(rule) == mc.ITERATION_LIMIT, "Wrong termination cause");
   check(mc.cliqueSize() == 2, "Wrong clique size");
@@ -179,10 +179,10 @@ int main() {
   checkMaxCliqueFullGraph(GrossoLocatelliPullanMc<FullGraph>::RANDOM);
   checkMaxCliqueFullGraph(GrossoLocatelliPullanMc<FullGraph>::DEGREE_BASED);
   checkMaxCliqueFullGraph(GrossoLocatelliPullanMc<FullGraph>::PENALTY_BASED);
-                       
+
   checkMaxCliqueGridGraph(GrossoLocatelliPullanMc<GridGraph>::RANDOM);
   checkMaxCliqueGridGraph(GrossoLocatelliPullanMc<GridGraph>::DEGREE_BASED);
   checkMaxCliqueGridGraph(GrossoLocatelliPullanMc<GridGraph>::PENALTY_BASED);
-                       
+
   return 0;
 }

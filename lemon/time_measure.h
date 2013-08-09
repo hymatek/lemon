@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -98,7 +98,7 @@ namespace lemon {
     ///The output format is global for all timestamp instances.
     static Format format() { return _format; }
 
-    
+
     ///Read the current time values of the process
     void stamp()
     {
@@ -522,14 +522,14 @@ namespace lemon {
     ///\param active Sets whether the report should actually be printed
     ///       on destruction.
     TimeReport(std::string title,std::ostream &os=std::cerr,bool run=true,
-	       bool active=true)
+               bool active=true)
       : Timer(run), _title(title), _os(os), _active(active) {}
     ///Destructor that prints the ellapsed time
     ~TimeReport()
     {
       if(_active) _os << _title << *this << std::endl;
     }
-    
+
     ///Retrieve the activity status
 
     ///\e

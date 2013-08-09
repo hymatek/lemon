@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -148,7 +148,7 @@ namespace lemon {
 
 #ifdef DOXYGEN
     /// Write the problem or the solution to a file in the given format
-    
+
     /// This function writes the problem or the solution
     /// to a file in the given format.
     /// Trying to write in an unsupported format will trigger

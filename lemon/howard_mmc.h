@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -155,10 +155,10 @@ namespace lemon {
     /// termination. The \ref findCycleMean() function returns one of
     /// these values.
     enum TerminationCause {
-      
+
       /// No directed cycle can be found in the digraph.
       NO_CYCLE = 0,
-    
+
       /// Optimal solution (minimum cycle mean) is found.
       OPTIMAL = 1,
 
@@ -356,11 +356,11 @@ namespace lemon {
     /// minimal.
     ///
     /// \param limit  The maximum allowed number of iterations during
-    /// the search process. Its default value implies that the algorithm 
+    /// the search process. Its default value implies that the algorithm
     /// runs until it finds the exact optimal solution.
     ///
     /// \return The termination cause of the search process.
-    /// For more information, see \ref TerminationCause. 
+    /// For more information, see \ref TerminationCause.
     TerminationCause findCycleMean(int limit = std::numeric_limits<int>::max()) {
       // Initialize and find strongly connected components
       init();
@@ -389,7 +389,7 @@ namespace lemon {
           _best_size = _curr_size;
           _best_node = _curr_node;
         }
-        
+
         if (iter_limit_reached) break;
       }
 

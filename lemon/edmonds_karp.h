@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -36,7 +36,7 @@ namespace lemon {
   template <typename GR, typename CAP>
   struct EdmondsKarpDefaultTraits {
 
-    /// \brief The digraph type the algorithm runs on. 
+    /// \brief The digraph type the algorithm runs on.
     typedef GR Digraph;
 
     /// \brief The type of the map that stores the arc capacities.
@@ -60,7 +60,7 @@ namespace lemon {
 
     /// \brief Instantiates a FlowMap.
     ///
-    /// This function instantiates a \ref FlowMap. 
+    /// This function instantiates a \ref FlowMap.
     /// \param digraph The digraph for which we would like to define
     /// the flow map.
     static FlowMap* createFlowMap(const Digraph& digraph) {
@@ -95,7 +95,7 @@ namespace lemon {
   ///
   /// \tparam GR The type of the digraph the algorithm runs on.
   /// \tparam CAP The type of the capacity map. The default map
-  /// type is \ref concepts::Digraph::ArcMap "GR::ArcMap<int>". 
+  /// type is \ref concepts::Digraph::ArcMap "GR::ArcMap<int>".
   /// \tparam TR The traits class that defines various types used by the
   /// algorithm. By default, it is \ref EdmondsKarpDefaultTraits
   /// "EdmondsKarpDefaultTraits<GR, CAP>".
@@ -104,9 +104,9 @@ namespace lemon {
 
 #ifdef DOXYGEN
   template <typename GR, typename CAP, typename TR>
-#else 
+#else
   template <typename GR,
-	    typename CAP = typename GR::template ArcMap<int>,
+            typename CAP = typename GR::template ArcMap<int>,
             typename TR = EdmondsKarpDefaultTraits<GR, CAP> >
 #endif
   class EdmondsKarp {
@@ -120,7 +120,7 @@ namespace lemon {
     /// The type of the capacity map.
     typedef typename Traits::CapacityMap CapacityMap;
     /// The type of the flow values.
-    typedef typename Traits::Value Value; 
+    typedef typename Traits::Value Value;
 
     /// The type of the flow map.
     typedef typename Traits::FlowMap FlowMap;
@@ -131,7 +131,7 @@ namespace lemon {
 
     TEMPLATE_DIGRAPH_TYPEDEFS(Digraph);
     typedef typename Digraph::template NodeMap<Arc> PredMap;
-    
+
     const Digraph& _graph;
     const CapacityMap* _capacity;
 
@@ -142,30 +142,30 @@ namespace lemon {
 
     PredMap* _pred;
     std::vector<Node> _queue;
-    
+
     Tolerance _tolerance;
     Value _flow_value;
 
     void createStructures() {
       if (!_flow) {
-	_flow = Traits::createFlowMap(_graph);
-	_local_flow = true;
+        _flow = Traits::createFlowMap(_graph);
+        _local_flow = true;
       }
       if (!_pred) {
-	_pred = new PredMap(_graph);
+        _pred = new PredMap(_graph);
       }
       _queue.resize(countNodes(_graph));
     }
 
     void destroyStructures() {
       if (_local_flow) {
-	delete _flow;
+        delete _flow;
       }
       if (_pred) {
-	delete _pred;
+        delete _pred;
       }
     }
-    
+
   public:
 
     typedef EdmondsKarp Create;
@@ -178,7 +178,7 @@ namespace lemon {
     struct SetFlowMapTraits : public Traits {
       typedef T FlowMap;
       static FlowMap *createFlowMap(const Digraph&) {
-	LEMON_ASSERT(false, "FlowMap is not initialized");
+        LEMON_ASSERT(false, "FlowMap is not initialized");
         return 0;
       }
     };
@@ -189,7 +189,7 @@ namespace lemon {
     /// \ref named-templ-param "Named parameter" for setting FlowMap
     /// type
     template <typename T>
-    struct SetFlowMap 
+    struct SetFlowMap
       : public EdmondsKarp<Digraph, CapacityMap, SetFlowMapTraits<T> > {
       typedef EdmondsKarp<Digraph, CapacityMap, SetFlowMapTraits<T> > Create;
     };
@@ -197,22 +197,22 @@ namespace lemon {
     /// @}
 
   protected:
-    
+
     EdmondsKarp() {}
 
   public:
 
     /// \brief The constructor of the class.
     ///
-    /// The constructor of the class. 
-    /// \param digraph The digraph the algorithm runs on. 
-    /// \param capacity The capacity of the arcs. 
+    /// The constructor of the class.
+    /// \param digraph The digraph the algorithm runs on.
+    /// \param capacity The capacity of the arcs.
     /// \param source The source node.
     /// \param target The target node.
     EdmondsKarp(const Digraph& digraph, const CapacityMap& capacity,
-		Node source, Node target)
+                Node source, Node target)
       : _graph(digraph), _capacity(&capacity), _source(source), _target(target),
-	_flow(0), _local_flow(false), _pred(0), _tolerance(), _flow_value()
+        _flow(0), _local_flow(false), _pred(0), _tolerance(), _flow_value()
     {
       LEMON_ASSERT(_source != _target,
                    "Flow source and target are the same nodes.");
@@ -244,8 +244,8 @@ namespace lemon {
     /// \return <tt>(*this)</tt>
     EdmondsKarp& flowMap(FlowMap& map) {
       if (_local_flow) {
-	delete _flow;
-	_local_flow = false;
+        delete _flow;
+        _local_flow = false;
       }
       _flow = &map;
       return *this;
@@ -276,7 +276,7 @@ namespace lemon {
     EdmondsKarp& tolerance(const Tolerance& tolerance) {
       _tolerance = tolerance;
       return *this;
-    } 
+    }
 
     /// \brief Returns a const reference to the tolerance.
     ///
@@ -284,14 +284,14 @@ namespace lemon {
     /// the algorithm.
     const Tolerance& tolerance() const {
       return _tolerance;
-    } 
+    }
 
     /// \name Execution control
     /// The simplest way to execute the algorithm is to use \ref run().\n
     /// If you need better control on the initial solution or the execution,
     /// you have to call one of the \ref init() functions first, then
     /// \ref start() or multiple times the \ref augment() function.
-    
+
     ///@{
 
     /// \brief Initializes the algorithm.
@@ -305,7 +305,7 @@ namespace lemon {
       }
       _flow_value = 0;
     }
-    
+
     /// \brief Initializes the algorithm using the given flow map.
     ///
     /// Initializes the internal data structures and sets the initial
@@ -317,7 +317,7 @@ namespace lemon {
     void init(const FlowMap& flowMap) {
       createStructures();
       for (ArcIt e(_graph); e != INVALID; ++e) {
-	_flow->set(e, flowMap[e]);
+        _flow->set(e, flowMap[e]);
       }
       _flow_value = 0;
       for (OutArcIt jt(_graph, _source); jt != INVALID; ++jt) {
@@ -334,14 +334,14 @@ namespace lemon {
     /// flow to the given \c flowMap. The \c flowMap should
     /// contain a feasible flow, i.e. at each node excluding the source
     /// and the target, the incoming flow should be equal to the
-    /// outgoing flow. 
+    /// outgoing flow.
     /// \return \c false when the given \c flowMap does not contain a
     /// feasible flow.
     template <typename FlowMap>
     bool checkedInit(const FlowMap& flowMap) {
       createStructures();
       for (ArcIt e(_graph); e != INVALID; ++e) {
-	_flow->set(e, flowMap[e]);
+        _flow->set(e, flowMap[e]);
       }
       for (NodeIt it(_graph); it != INVALID; ++it) {
         if (it == _source || it == _target) continue;
@@ -372,7 +372,7 @@ namespace lemon {
     }
 
     /// \brief Augments the solution along a shortest path.
-    /// 
+    ///
     /// Augments the solution along a shortest path. This function searches a
     /// shortest path between the source and the target
     /// in the residual digraph by the Bfs algoritm.
@@ -383,81 +383,81 @@ namespace lemon {
     /// current flow is a feasible and optimal solution.
     bool augment() {
       for (NodeIt n(_graph); n != INVALID; ++n) {
-	_pred->set(n, INVALID);
+        _pred->set(n, INVALID);
       }
-      
+
       int first = 0, last = 1;
-      
+
       _queue[0] = _source;
       _pred->set(_source, OutArcIt(_graph, _source));
 
       while (first != last && (*_pred)[_target] == INVALID) {
-	Node n = _queue[first++];
-	
-	for (OutArcIt e(_graph, n); e != INVALID; ++e) {
-	  Value rem = (*_capacity)[e] - (*_flow)[e];
-	  Node t = _graph.target(e);
-	  if (_tolerance.positive(rem) && (*_pred)[t] == INVALID) {
-	    _pred->set(t, e);
-	    _queue[last++] = t;
-	  }
-	}
-	for (InArcIt e(_graph, n); e != INVALID; ++e) {
-	  Value rem = (*_flow)[e];
-	  Node t = _graph.source(e);
-	  if (_tolerance.positive(rem) && (*_pred)[t] == INVALID) {
-	    _pred->set(t, e);
-	    _queue[last++] = t;
-	  }
-	}
+        Node n = _queue[first++];
+
+        for (OutArcIt e(_graph, n); e != INVALID; ++e) {
+          Value rem = (*_capacity)[e] - (*_flow)[e];
+          Node t = _graph.target(e);
+          if (_tolerance.positive(rem) && (*_pred)[t] == INVALID) {
+            _pred->set(t, e);
+            _queue[last++] = t;
+          }
+        }
+        for (InArcIt e(_graph, n); e != INVALID; ++e) {
+          Value rem = (*_flow)[e];
+          Node t = _graph.source(e);
+          if (_tolerance.positive(rem) && (*_pred)[t] == INVALID) {
+            _pred->set(t, e);
+            _queue[last++] = t;
+          }
+        }
       }
 
       if ((*_pred)[_target] != INVALID) {
-	Node n = _target;
-	Arc e = (*_pred)[n];
+        Node n = _target;
+        Arc e = (*_pred)[n];
 
-	Value prem = (*_capacity)[e] - (*_flow)[e];
-	n = _graph.source(e);
-	while (n != _source) {
-	  e = (*_pred)[n];
-	  if (_graph.target(e) == n) {
-	    Value rem = (*_capacity)[e] - (*_flow)[e];
-	    if (rem < prem) prem = rem;
-	    n = _graph.source(e);
-	  } else {
-	    Value rem = (*_flow)[e];
-	    if (rem < prem) prem = rem;
-	    n = _graph.target(e);   
-	  } 
-	}
+        Value prem = (*_capacity)[e] - (*_flow)[e];
+        n = _graph.source(e);
+        while (n != _source) {
+          e = (*_pred)[n];
+          if (_graph.target(e) == n) {
+            Value rem = (*_capacity)[e] - (*_flow)[e];
+            if (rem < prem) prem = rem;
+            n = _graph.source(e);
+          } else {
+            Value rem = (*_flow)[e];
+            if (rem < prem) prem = rem;
+            n = _graph.target(e);
+          }
+        }
 
-	n = _target;
-	e = (*_pred)[n];
+        n = _target;
+        e = (*_pred)[n];
 
-	_flow->set(e, (*_flow)[e] + prem);
-	n = _graph.source(e);
-	while (n != _source) {
-	  e = (*_pred)[n];
-	  if (_graph.target(e) == n) {
-	    _flow->set(e, (*_flow)[e] + prem);
-	    n = _graph.source(e);
-	  } else {
-	    _flow->set(e, (*_flow)[e] - prem);
-	    n = _graph.target(e);   
-	  } 
-	}
+        _flow->set(e, (*_flow)[e] + prem);
+        n = _graph.source(e);
+        while (n != _source) {
+          e = (*_pred)[n];
+          if (_graph.target(e) == n) {
+            _flow->set(e, (*_flow)[e] + prem);
+            n = _graph.source(e);
+          } else {
+            _flow->set(e, (*_flow)[e] - prem);
+            n = _graph.target(e);
+          }
+        }
 
-	_flow_value += prem;	
-	return true;
+        _flow_value += prem;
+        return true;
       } else {
-	return false;
+        return false;
       }
     }
 
     /// \brief Executes the algorithm
     ///
     /// Executes the algorithm by performing augmenting phases until the
-    /// optimal solution is reached. 
+    /// optimal solution is reached.
     /// \pre One of the \ref init() functions must be called before
     /// using this function.
     void start() {
@@ -465,10 +465,10 @@ namespace lemon {
     }
 
     /// \brief Runs the algorithm.
-    /// 
+    ///
     /// Runs the Edmonds-Karp algorithm.
     /// \note ek.run() is just a shortcut of the following code.
-    ///\code 
+    ///\code
     /// ek.init();
     /// ek.start();
     ///\endcode
@@ -483,7 +483,7 @@ namespace lemon {
     /// The result of the Edmonds-Karp algorithm can be obtained using these
     /// functions.\n
     /// Either \ref run() or \ref start() should be called before using them.
-    
+
     ///@{
 
     /// \brief Returns the value of the maximum flow.
@@ -542,10 +542,10 @@ namespace lemon {
     template <typename CutMap>
     void minCutMap(CutMap& cutMap) const {
       for (NodeIt n(_graph); n != INVALID; ++n) {
-	cutMap.set(n, (*_pred)[n] != INVALID);
+        cutMap.set(n, (*_pred)[n] != INVALID);
       }
       cutMap.set(_source, true);
-    }    
+    }
 
     /// @}
 

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -120,11 +120,11 @@ namespace lemon {
     // Internal matrix representation of the graph
     BoolMatrix _gr;
     int _n;
-    
+
     // Search options
     bool _delta_based_restart;
     int _restart_delta_limit;
- 
+
     // Search limits
     int _iteration_limit;
     int _step_limit;
@@ -442,12 +442,12 @@ namespace lemon {
 
     /// \name Execution Control
     /// The \ref run() function can be used to execute the algorithm.\n
-    /// The functions \ref iterationLimit(int), \ref stepLimit(int), and 
+    /// The functions \ref iterationLimit(int), \ref stepLimit(int), and
     /// \ref sizeLimit(int) can be used to specify various limits for the
     /// search process.
-    
+
     /// @{
-    
+
     /// \brief Sets the maximum number of iterations.
     ///
     /// This function sets the maximum number of iterations.
@@ -459,7 +459,7 @@ namespace lemon {
     /// algorithm. For larger values, the algorithm runs slower, but it more
     /// likely finds larger cliques. For smaller values, the algorithm is
     /// faster but probably gives worse results.
-    /// 
+    ///
     /// The default value is \c 1000.
     /// \c -1 means that number of iterations is not limited.
     ///
@@ -474,7 +474,7 @@ namespace lemon {
       _iteration_limit = limit;
       return *this;
     }
-    
+
     /// \brief Sets the maximum number of search steps.
     ///
     /// This function sets the maximum number of elementary search steps.
@@ -486,7 +486,7 @@ namespace lemon {
     /// algorithm. For larger values, the algorithm runs slower, but it more
     /// likely finds larger cliques. For smaller values, the algorithm is
     /// faster but probably gives worse results.
-    /// 
+    ///
     /// The default value is \c -1, which means that number of steps
     /// is not limited explicitly. However, the number of iterations is
     /// limited and each iteration performs a finite number of search steps.
@@ -502,17 +502,17 @@ namespace lemon {
       _step_limit = limit;
       return *this;
     }
-    
+
     /// \brief Sets the desired clique size.
     ///
     /// This function sets the desired clique size that serves as a search
     /// limit. If a clique of this size (or a larger one) is found, then the
     /// algorithm terminates.
-    /// 
+    ///
     /// This function is especially useful if you know an exact upper bound
-    /// for the size of the cliques in the graph or if any clique above 
+    /// for the size of the cliques in the graph or if any clique above
     /// a certain size limit is sufficient for your application.
-    /// 
+    ///
     /// The default value is \c -1, which means that the size limit is set to
     /// the number of nodes in the graph.
     ///
@@ -524,7 +524,7 @@ namespace lemon {
       _size_limit = limit;
       return *this;
     }
-    
+
     /// \brief The maximum number of iterations.
     ///
     /// This function gives back the maximum number of iterations.
@@ -534,7 +534,7 @@ namespace lemon {
     int iterationLimit() const {
       return _iteration_limit;
     }
-    
+
     /// \brief The maximum number of search steps.
     ///
     /// This function gives back the maximum number of search steps.
@@ -544,7 +544,7 @@ namespace lemon {
     int stepLimit() const {
       return _step_limit;
     }
-    
+
     /// \brief The desired clique size.
     ///
     /// This function gives back the desired clique size that serves as a
@@ -583,7 +583,7 @@ namespace lemon {
 
     /// \name Query Functions
     /// The results of the algorithm can be obtained using these functions.\n
-    /// The run() function must be called before using them. 
+    /// The run() function must be called before using them.
 
     /// @{
 
@@ -676,13 +676,13 @@ namespace lemon {
     /// @}
 
   private:
-  
+
     // Initialize search options and limits
     void initOptions() {
       // Search options
       _delta_based_restart = true;
       _restart_delta_limit = 4;
-     
+
       // Search limits
       _iteration_limit = 1000;
       _step_limit = -1;             // this is disabled by default

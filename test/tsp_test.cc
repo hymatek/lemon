@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -41,7 +41,7 @@ using namespace lemon;
 //   check(checkMetricCost(g, constMap<Edge>(0)), "Wrong checkMetricCost()");
 //   check(checkMetricCost(g, constMap<Edge>(1)), "Wrong checkMetricCost()");
 //   check(!checkMetricCost(g, constMap<Edge>(-1)), "Wrong checkMetricCost()");
-//   
+//
 //   FullGraph::EdgeMap<float> cost(g);
 //   for (NodeIt u(g); u != INVALID; ++u) {
 //     for (NodeIt v(g); v != INVALID; ++v) {
@@ -64,7 +64,7 @@ using namespace lemon;
 template <typename Container>
 bool checkTour(const FullGraph &gr, const Container &p) {
   FullGraph::NodeMap<bool> used(gr, false);
-  
+
   int node_cnt = 0;
   for (typename Container::const_iterator it = p.begin(); it != p.end(); ++it) {
     FullGraph::Node node = *it;
@@ -72,14 +72,14 @@ bool checkTour(const FullGraph &gr, const Container &p) {
     used[node] = true;
     ++node_cnt;
   }
-  
+
   return (node_cnt == gr.nodeNum());
 }
 
 // Checks tour validity
 bool checkTourPath(const FullGraph &gr, const Path<FullGraph> &p) {
   FullGraph::NodeMap<bool> used(gr, false);
-  
+
   if (!checkPath(gr, p)) return false;
   if (gr.nodeNum() <= 1 && p.length() != 0) return false;
   if (gr.nodeNum() > 1 && p.length() != gr.nodeNum()) return false;
@@ -181,7 +181,7 @@ void tspTestRandom(const std::string &alg_name) {
         cost[g.edge(u, v)] = (pos[u] - pos[v]).normSquare();
       }
     }
-    
+
     check(alg.run() > 0, alg_name + ": Wrong total cost");
 
     std::vector<Node> vec;
@@ -195,14 +195,14 @@ void tspTestRandom(const std::string &alg_name) {
     check(checkTourPath(g, path), alg_name + ": Wrong tour");
     check(checkCost(g, path, cost, alg.tourCost()),
       alg_name + ": Wrong tour cost");
-    
+
     check(!Tolerance<double>().less(alg.tourCost(), opt2.run(alg.tourNodes())),
       "2-opt improvement: Wrong total cost");
     check(checkTour(g, opt2.tourNodes()),
       "2-opt improvement: Wrong node sequence");
     check(checkCost(g, opt2.tourNodes(), cost, opt2.tourCost()),
       "2-opt improvement: Wrong tour cost");
-    
+
     check(!Tolerance<double>().less(alg.tourCost(), opt2.run(path)),
       "2-opt improvement: Wrong total cost");
     check(checkTour(g, opt2.tourNodes()),
@@ -212,7 +212,7 @@ void tspTestRandom(const std::string &alg_name) {
   }
 }
 
-// Algorithm class for Nearest Insertion 
+// Algorithm class for Nearest Insertion
 template <typename CM>
 class NearestInsertionTsp : public InsertionTsp<CM> {
 public:
@@ -223,7 +223,7 @@ public:
   }
 };
 
-// Algorithm class for Farthest Insertion 
+// Algorithm class for Farthest Insertion
 template <typename CM>
 class FarthestInsertionTsp : public InsertionTsp<CM> {
 public:
@@ -234,7 +234,7 @@ public:
   }
 };
 
-// Algorithm class for Cheapest Insertion 
+// Algorithm class for Cheapest Insertion
 template <typename CM>
 class CheapestInsertionTsp : public InsertionTsp<CM> {
 public:
@@ -245,7 +245,7 @@ public:
   }
 };
 
-// Algorithm class for Random Insertion 
+// Algorithm class for Random Insertion
 template <typename CM>
 class RandomInsertionTsp : public InsertionTsp<CM> {
 public:

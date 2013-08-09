@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -30,7 +30,7 @@
 #include <lemon/euler.h>
 
 namespace lemon {
-  
+
   /// \ingroup tsp
   ///
   /// \brief Christofides algorithm for symmetric TSP.
@@ -108,11 +108,11 @@ namespace lemon {
           _path.push_back(_gr(1));
           return _sum = 2 * _cost[_gr.edge(_gr(0), _gr(1))];
         }
-        
+
         // Compute min. cost spanning tree
         std::vector<Edge> tree;
         kruskal(_gr, _cost, std::back_inserter(tree));
-        
+
         FullGraph::NodeMap<int> deg(_gr, 0);
         for (int i = 0; i != int(tree.size()); ++i) {
           Edge e = tree[i];
@@ -125,7 +125,7 @@ namespace lemon {
         for (NodeIt u(_gr); u != INVALID; ++u) {
           if (deg[u] % 2 == 1) odd_nodes.push_back(u);
         }
-  
+
         SmartGraph sgr;
         SmartGraph::EdgeMap<Cost> scost(sgr);
         for (int i = 0; i != int(odd_nodes.size()); ++i) {
@@ -139,20 +139,20 @@ namespace lemon {
             scost[e] = -_cost[_gr.edge(odd_nodes[i], odd_nodes[j])];
           }
         }
-        
+
         // Compute min. cost perfect matching
         MaxWeightedPerfectMatching<SmartGraph, SmartGraph::EdgeMap<Cost> >
           mwpm(sgr, scost);
         mwpm.run();
-        
+
         for (SmartGraph::EdgeIt e(sgr); e != INVALID; ++e) {
           if (mwpm.matching(e)) {
             tree.push_back( _gr.edge(odd_nodes[sgr.id(sgr.u(e))],
                                      odd_nodes[sgr.id(sgr.v(e))]) );
           }
         }
-        
-        // Join the spanning tree and the matching        
+
+        // Join the spanning tree and the matching
         sgr.clear();
         for (int i = 0; i != _gr.nodeNum(); ++i) {
           sgr.addNode();
@@ -182,10 +182,10 @@ namespace lemon {
       }
 
       /// @}
-      
+
       /// \name Query Functions
       /// @{
-      
+
       /// \brief The total cost of the found tour.
       ///
       /// This function returns the total cost of the found tour.
@@ -194,7 +194,7 @@ namespace lemon {
       Cost tourCost() const {
         return _sum;
       }
-      
+
       /// \brief Returns a const reference to the node sequence of the
       /// found tour.
       ///
@@ -227,7 +227,7 @@ namespace lemon {
       void tourNodes(Iterator out) const {
         std::copy(_path.begin(), _path.end(), out);
       }
-      
+
       /// \brief Gives back the found tour as a path.
       ///
       /// This function copies the found tour as a list of arcs/edges into
@@ -244,9 +244,9 @@ namespace lemon {
           path.addBack(_gr.arc(_path.back(), _path.front()));
         }
       }
-      
+
       /// @}
-      
+
   };
 
 }; // namespace lemon

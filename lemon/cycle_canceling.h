@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -783,7 +783,7 @@ namespace lemon {
 
       return OPTIMAL;
     }
-    
+
     // Check if the upper bound is greater or equal to the lower bound
     // on each arc.
     bool checkBoundMaps() {
@@ -960,7 +960,7 @@ namespace lemon {
       hw_mmc.cycle(cycle);
       buildResidualNetwork();
       while (true) {
-        
+
         typename HwMmc::TerminationCause hw_tc =
             hw_mmc.findCycleMean(hw_iter_limit);
         if (hw_tc == HwMmc::ITERATION_LIMIT) {
@@ -976,7 +976,7 @@ namespace lemon {
           if (!(hw_tc == HwMmc::OPTIMAL && hw_mmc.cycleCost() < 0)) break;
           hw_mmc.findCycle();
         }
-        
+
         // Compute delta value
         Value delta = INF;
         for (SPathArcIt a(cycle); a != INVALID; ++a) {

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -843,7 +843,7 @@ namespace lemon {
     // Alterable extension
 
     typedef AlterationNotifier<BpGraphExtender, Node> NodeNotifier;
-    typedef AlterationNotifier<BpGraphExtender, RedNode> RedNodeNotifier; 
+    typedef AlterationNotifier<BpGraphExtender, RedNode> RedNodeNotifier;
     typedef AlterationNotifier<BpGraphExtender, BlueNode> BlueNodeNotifier;
     typedef AlterationNotifier<BpGraphExtender, Arc> ArcNotifier;
     typedef AlterationNotifier<BpGraphExtender, Edge> EdgeNotifier;

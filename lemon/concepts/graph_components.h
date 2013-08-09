@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -391,12 +391,12 @@ namespace lemon {
       bool blue(const Node&) const { return true; }
 
       /// \brief Gives back the red end node of the edge.
-      /// 
+      ///
       /// Gives back the red end node of the edge.
       RedNode redNode(const Edge&) const { return RedNode(); }
 
       /// \brief Gives back the blue end node of the edge.
-      /// 
+      ///
       /// Gives back the blue end node of the edge.
       BlueNode blueNode(const Edge&) const { return BlueNode(); }
 
@@ -1150,7 +1150,7 @@ namespace lemon {
       typedef typename Base::BlueNode BlueNode;
       typedef typename Base::Arc Arc;
       typedef typename Base::Edge Edge;
-      
+
       typedef IterableBpGraphComponent BpGraph;
 
       using IterableGraphComponent<BAS>::first;
@@ -1210,7 +1210,7 @@ namespace lemon {
 
           typename _BpGraph::RedNode rn(INVALID);
           bpgraph.first(rn);
-          bpgraph.next(rn); 
+          bpgraph.next(rn);
           typename _BpGraph::BlueNode bn(INVALID);
           bpgraph.first(bn);
           bpgraph.next(bn);

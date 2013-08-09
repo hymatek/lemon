@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2012
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -33,16 +33,16 @@ namespace lemon {
     class Lock {
     public:
       Lock() {
-	pthread_mutex_init(&_lock, 0);
+        pthread_mutex_init(&_lock, 0);
       }
       ~Lock() {
-	pthread_mutex_destroy(&_lock);
+        pthread_mutex_destroy(&_lock);
       }
       void lock() {
-	pthread_mutex_lock(&_lock);
+        pthread_mutex_lock(&_lock);
       }
       void unlock() {
-	pthread_mutex_unlock(&_lock);
+        pthread_mutex_unlock(&_lock);
       }
 
     private:
@@ -57,7 +57,7 @@ namespace lemon {
       ~Lock() {}
       void lock() {}
       void unlock() {}
-    };    
+    };
 #endif
   }
 }

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -68,17 +68,17 @@ int main() {
   ListDigraph graph;
   std::istringstream lgfs(lgf);
   DigraphReader<ListDigraph>(graph, lgfs).run();
-  
+
   AllArcLookUp<ListDigraph> lookup(graph);
-	
+
   int numArcs = countArcs(graph);
-	
+
   int arcCnt = 0;
   for(ListDigraph::NodeIt n1(graph); n1 != INVALID; ++n1)
     for(ListDigraph::NodeIt n2(graph); n2 != INVALID; ++n2)
       for(ListDigraph::Arc a = lookup(n1, n2); a != INVALID;
-	  a = lookup(n1, n2, a))
-	++arcCnt;
+          a = lookup(n1, n2, a))
+        ++arcCnt;
   check(arcCnt==numArcs, "Wrong total number of arcs");
 
   return 0;

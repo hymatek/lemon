@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -67,7 +67,7 @@ void checkMaxCardSearchCompile() {
   CardMap card;
   ProcMap proc;
   HeapCrossRef crossref(g);
-  
+
   typedef MaxCardinalitySearch<Digraph,CapMap>
     ::SetCapacityMap<CapMap>
     ::SetCardinalityMap<CardMap>
@@ -81,7 +81,7 @@ void checkMaxCardSearchCompile() {
   const MaxCardType::Heap& heap_const = const_maxcard.heap();
   MaxCardType::Heap& heap = const_cast<MaxCardType::Heap&>(heap_const);
   maxcard.heap(heap,crossref);
-  
+
   maxcard.capacityMap(cap).cardinalityMap(card).processedMap(proc);
 
   maxcard.init();

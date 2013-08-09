@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -874,7 +874,7 @@ namespace lemon {
     int id(const BlueNode& v) const { return v._id - _red_num; }
     static int id(Arc e) { return e._id; }
     static int id(Edge e) { return e._id; }
-    
+
     static Node nodeFromId(int id) { return Node(id);}
     static Arc arcFromId(int id) { return Arc(id);}
     static Edge edgeFromId(int id) { return Edge(id);}
@@ -904,13 +904,13 @@ namespace lemon {
     int index(BlueNode n) const {
       return n._id - _red_num;
     }
-        
+
     void clear() {
       _red_num = 0; _blue_num = 0;
       _node_num = 0; _edge_num = 0;
     }
 
-    Edge edge(const Node& u, const Node& v) const { 
+    Edge edge(const Node& u, const Node& v) const {
       if (u._id < _red_num) {
         if (v._id < _red_num) {
           return Edge(-1);
@@ -926,7 +926,7 @@ namespace lemon {
       }
     }
 
-    Arc arc(const Node& u, const Node& v) const { 
+    Arc arc(const Node& u, const Node& v) const {
       if (u._id < _red_num) {
         if (v._id < _red_num) {
           return Arc(-1);

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -804,12 +804,12 @@ namespace lemon {
       BlueNode asBlueNode(const Node&) const { return BlueNode(); }
 
       /// \brief Gives back the red end node of the edge.
-      /// 
+      ///
       /// Gives back the red end node of the edge.
       RedNode redNode(const Edge&) const { return RedNode(); }
 
       /// \brief Gives back the blue end node of the edge.
-      /// 
+      ///
       /// Gives back the blue end node of the edge.
       BlueNode blueNode(const Edge&) const { return BlueNode(); }
 

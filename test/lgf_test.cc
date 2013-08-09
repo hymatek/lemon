@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2011
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -63,10 +63,10 @@ char test_lgf_bad2[] =
   "0 1\n";
 
 
-int main() 
+int main()
 {
   {
-    ListDigraph d; 
+    ListDigraph d;
     ListDigraph::Node s,t;
     ListDigraph::ArcMap<int> label(d);
     std::istringstream input(test_lgf);
@@ -93,7 +93,7 @@ int main()
   }
 
   {
-    ListDigraph d; 
+    ListDigraph d;
     std::istringstream input(test_lgf_nomap);
     digraphReader(d, input).
       run();
@@ -110,14 +110,14 @@ int main()
   }
 
   {
-    ListDigraph d; 
+    ListDigraph d;
     std::istringstream input(test_lgf_bad1);
     bool ok=false;
     try {
       digraphReader(d, input).
         run();
     }
-    catch (FormatError&) 
+    catch (FormatError&)
       {
         ok = true;
       }
@@ -139,7 +139,7 @@ int main()
   }
 
   {
-    ListDigraph d; 
+    ListDigraph d;
     std::istringstream input(test_lgf_bad2);
     bool ok=false;
     try {

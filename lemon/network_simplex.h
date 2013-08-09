@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -1234,7 +1234,7 @@ namespace lemon {
 
       return true;
     }
-    
+
     // Check if the upper bound is greater or equal to the lower bound
     // on each arc.
     bool checkBoundMaps() {

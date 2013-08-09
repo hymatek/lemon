@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -1765,7 +1765,7 @@ namespace lemon {
 
     void next(BlueNode& node) const {
       node.id = nodes[node.id].partition_next;
-    }    
+    }
 
     void first(Arc& e) const {
       int n = first_node;

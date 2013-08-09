@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -113,7 +113,7 @@ void checkBpGraphErase() {
 
   BpGraph G;
   RedNode
-    n1 = G.addRedNode(), n4 = G.addRedNode(); 
+    n1 = G.addRedNode(), n4 = G.addRedNode();
   BlueNode
     n2 = G.addBlueNode(), n3 = G.addBlueNode();
   Edge
@@ -161,7 +161,7 @@ void checkBpGraphAlter() {
 
   BpGraph G;
   RedNode
-    n1 = G.addRedNode(), n4 = G.addRedNode(); 
+    n1 = G.addRedNode(), n4 = G.addRedNode();
   BlueNode
     n2 = G.addBlueNode(), n3 = G.addBlueNode();
   Edge
@@ -216,7 +216,7 @@ void checkBpGraphSnapshot() {
   BlueNode
     n2 = G.addBlueNode(),
     n3 = G.addBlueNode();
-  Edge 
+  Edge
     e1 = G.addEdge(n1, n2),
     e2 = G.addEdge(n1, n3);
 
