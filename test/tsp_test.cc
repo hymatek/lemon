@@ -66,12 +66,13 @@ bool checkTour(const FullGraph &gr, const Container &p) {
   FullGraph::NodeMap<bool> used(gr, false);
 
   int node_cnt = 0;
-  for (typename Container::const_iterator it = p.begin(); it != p.end(); ++it) {
-    FullGraph::Node node = *it;
-    if (used[node]) return false;
-    used[node] = true;
-    ++node_cnt;
-  }
+  for (typename Container::const_iterator it = p.begin(); it != p.end(); ++it)
+    {
+      FullGraph::Node node = *it;
+      if (used[node]) return false;
+      used[node] = true;
+      ++node_cnt;
+    }
 
   return (node_cnt == gr.nodeNum());
 }
@@ -264,8 +265,10 @@ int main() {
   tspTestSmall<NearestNeighborTsp<ConstMap<Edge, int> > >("Nearest Neighbor");
   tspTestSmall<GreedyTsp<ConstMap<Edge, int> > >("Greedy");
   tspTestSmall<NearestInsertionTsp<ConstMap<Edge, int> > >("Nearest Insertion");
-  tspTestSmall<FarthestInsertionTsp<ConstMap<Edge, int> > >("Farthest Insertion");
-  tspTestSmall<CheapestInsertionTsp<ConstMap<Edge, int> > >("Cheapest Insertion");
+  tspTestSmall<FarthestInsertionTsp<ConstMap<Edge, int> > >
+    ("Farthest Insertion");
+  tspTestSmall<CheapestInsertionTsp<ConstMap<Edge, int> > >
+    ("Cheapest Insertion");
   tspTestSmall<RandomInsertionTsp<ConstMap<Edge, int> > >("Random Insertion");
   tspTestSmall<ChristofidesTsp<ConstMap<Edge, int> > >("Christofides");
   tspTestSmall<Opt2Tsp<ConstMap<Edge, int> > >("2-opt");

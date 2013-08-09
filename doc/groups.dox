@@ -422,7 +422,8 @@ typically more efficient on large graphs (e.g. hundreds of thousands of
 nodes or above), especially if they are sparse.
 However, other algorithms could be faster in special cases.
 For example, if the total supply and/or capacities are rather small,
-\ref CapacityScaling is usually the fastest algorithm (without effective scaling).
+\ref CapacityScaling is usually the fastest algorithm
+(without effective scaling).
 
 These classes are intended to be used with integer-valued input data
 (capacities, supply values, and costs), except for \ref CapacityScaling,

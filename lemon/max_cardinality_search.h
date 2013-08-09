@@ -164,8 +164,8 @@ namespace lemon {
     /// \brief Instantiates a CardinalityMap.
     ///
     /// This function instantiates a \ref CardinalityMap.
-    /// \param digraph is the digraph, to which we would like to define the \ref
-    /// CardinalityMap
+    /// \param digraph is the digraph, to which we would like to
+    /// define the \ref CardinalityMap
     static CardinalityMap *createCardinalityMap(const Digraph &digraph) {
       return new CardinalityMap(digraph);
     }
@@ -180,7 +180,8 @@ namespace lemon {
   /// This class provides an efficient implementation of Maximum Cardinality
   /// Search algorithm. The maximum cardinality search first chooses any
   /// node of the digraph. Then every time it chooses one unprocessed node
-  /// with maximum cardinality, i.e the sum of capacities on out arcs to the nodes
+  /// with maximum cardinality, i.e the sum of capacities on out arcs
+  /// to the nodes
   /// which were previusly processed.
   /// If there is a cut in the digraph the algorithm should choose
   /// again any unprocessed node of the digraph.

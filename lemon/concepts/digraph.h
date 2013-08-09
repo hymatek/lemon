@@ -312,7 +312,9 @@ namespace lemon {
 
         /// Sets the iterator to the first arc of the given digraph.
         ///
-        explicit ArcIt(const Digraph& g) { ::lemon::ignore_unused_variable_warning(g); }
+        explicit ArcIt(const Digraph& g) {
+          ::lemon::ignore_unused_variable_warning(g);
+        }
         /// Sets the iterator to the given arc.
 
         /// Sets the iterator to the given arc of the given digraph.

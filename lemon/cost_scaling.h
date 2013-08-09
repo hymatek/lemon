@@ -91,7 +91,8 @@ namespace lemon {
   ///
   /// \ref CostScaling implements a cost scaling algorithm that performs
   /// push/augment and relabel operations for finding a \ref min_cost_flow
-  /// "minimum cost flow" \cite amo93networkflows, \cite goldberg90approximation,
+  /// "minimum cost flow" \cite amo93networkflows,
+  /// \cite goldberg90approximation,
   /// \cite goldberg97efficient, \cite bunnagel98efficient.
   /// It is a highly efficient primal-dual solution method, which
   /// can be viewed as the generalization of the \ref Preflow
@@ -213,7 +214,8 @@ namespace lemon {
     typedef std::vector<Cost> CostVector;
     typedef std::vector<LargeCost> LargeCostVector;
     typedef std::vector<char> BoolVector;
-    // Note: vector<char> is used instead of vector<bool> for efficiency reasons
+    // Note: vector<char> is used instead of vector<bool>
+    // for efficiency reasons
 
   private:
 

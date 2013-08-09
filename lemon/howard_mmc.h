@@ -361,7 +361,8 @@ namespace lemon {
     ///
     /// \return The termination cause of the search process.
     /// For more information, see \ref TerminationCause.
-    TerminationCause findCycleMean(int limit = std::numeric_limits<int>::max()) {
+    TerminationCause findCycleMean(int limit =
+                                   std::numeric_limits<int>::max()) {
       // Initialize and find strongly connected components
       init();
       findComponents();
