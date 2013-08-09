@@ -99,6 +99,23 @@ int main()
   }
 
   {
+    ListGraph g;
+    ListGraph::NodeMap<bool> map(g);
+
+    ListGraph::Node n1 = g.addNode();
+    ListGraph::Node n2 = g.addNode();
+
+    ListGraph::Edge e1 = g.addEdge(n1, n2);
+    ::lemon::ignore_unused_variable_warning(e1);
+    check(biNodeConnected(g), "Graph is bi-node-connected");
+
+    ListGraph::Node n3 = g.addNode();
+    ::lemon::ignore_unused_variable_warning(n3);
+    check(!biNodeConnected(g), "Graph is not bi-node-connected");
+  }
+
+
+  {
     Digraph d;
     Digraph::NodeMap<int> order(d);
     Graph g(d);
