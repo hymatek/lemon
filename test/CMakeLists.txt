@@ -14,6 +14,7 @@ SET(VALGRIND_FLAGS "" CACHE STRING "Valgrind flags used by the tests.")
 SET(TESTS
   adaptors_test
   arc_look_up_test
+  bellman_ford_test
   bfs_test
   circulation_test
   connectivity_test
@@ -25,6 +26,7 @@ SET(TESTS
   edge_set_test
   error_test
   euler_test
+  fractional_matching_test
   gomory_hu_test
   graph_copy_test
   graph_test
@@ -37,7 +39,9 @@ SET(TESTS
   matching_test
   min_cost_arborescence_test
   min_cost_flow_test
+  min_mean_cycle_test
   path_test
+  planarity_test
   preflow_test
   radix_sort_test
   random_test

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -142,7 +142,7 @@ struct DefaultGraphToEpsTraits
   ///Constructor
   ///\param gr  Reference to the graph to be printed.
   ///\param ost Reference to the output stream.
-  ///By default it is <tt>std::cout</tt>.
+  ///By default, it is <tt>std::cout</tt>.
   ///\param pros If it is \c true, then the \c ostream referenced by \c os
   ///will be explicitly deallocated by the destructor.
   DefaultGraphToEpsTraits(const GR &gr, std::ostream& ost = std::cout,
@@ -512,7 +512,7 @@ public:
 
   ///Turn on/off pre-scaling
 
-  ///By default graphToEps() rescales the whole image in order to avoid
+  ///By default, graphToEps() rescales the whole image in order to avoid
   ///very big or very small bounding boxes.
   ///
   ///This (p)rescaling can be turned off with this function.
@@ -1114,7 +1114,7 @@ const double GraphToEps<T>::A4BORDER = 15;
 ///Generates an EPS file from a graph.
 ///\param g Reference to the graph to be printed.
 ///\param os Reference to the output stream.
-///By default it is <tt>std::cout</tt>.
+///By default, it is <tt>std::cout</tt>.
 ///
 ///This function also has a lot of
 ///\ref named-templ-func-param "named parameters",
@@ -1126,7 +1126,7 @@ const double GraphToEps<T>::A4BORDER = 15;
 ///              .arcWidthScale(.4).run();
 ///\endcode
 ///
-///For more detailed examples see the \ref graph_to_eps_demo.cc demo file.
+///For more detailed examples, see the \ref graph_to_eps_demo.cc demo file.
 ///
 ///\warning Don't forget to put the \ref GraphToEps::run() "run()"
 ///to the end of the parameter list.

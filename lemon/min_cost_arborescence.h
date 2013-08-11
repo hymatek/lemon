@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2008
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -112,23 +112,24 @@ namespace lemon {
   /// relatively time consuming process to compute the arc costs if
   /// it is necessary. The default map type is \ref
   /// concepts::Digraph::ArcMap "Digraph::ArcMap<int>".
-  /// \param TR Traits class to set various data types used
-  /// by the algorithm. The default traits class is
-  /// \ref MinCostArborescenceDefaultTraits
+  /// \tparam TR The traits class that defines various types used by the
+  /// algorithm. By default, it is \ref MinCostArborescenceDefaultTraits
   /// "MinCostArborescenceDefaultTraits<GR, CM>".
+  /// In most cases, this parameter should not be set directly,
+  /// consider to use the named template parameters instead.
 #ifndef DOXYGEN
   template <typename GR,
             typename CM = typename GR::template ArcMap<int>,
             typename TR =
               MinCostArborescenceDefaultTraits<GR, CM> >
 #else
-  template <typename GR, typename CM, typedef TR>
+  template <typename GR, typename CM, typename TR>
 #endif
   class MinCostArborescence {
   public:
 
-    /// \brief The \ref MinCostArborescenceDefaultTraits "traits class" 
-    /// of the algorithm. 
+    /// \brief The \ref MinCostArborescenceDefaultTraits "traits class"
+    /// of the algorithm.
     typedef TR Traits;
     /// The type of the underlying digraph.
     typedef typename Traits::Digraph Digraph;
@@ -435,7 +436,7 @@ namespace lemon {
     ///
     /// \ref named-templ-param "Named parameter" for setting
     /// \c PredMap type.
-    /// It must meet the \ref concepts::WriteMap "WriteMap" concept, 
+    /// It must meet the \ref concepts::WriteMap "WriteMap" concept,
     /// and its value type must be the \c Arc type of the digraph.
     template <class T>
     struct SetPredMap
@@ -488,8 +489,8 @@ namespace lemon {
     /// \name Execution Control
     /// The simplest way to execute the algorithm is to use
     /// one of the member functions called \c run(...). \n
-    /// If you need more control on the execution,
-    /// first you must call \ref init(), then you can add several
+    /// If you need better control on the execution,
+    /// you have to call \ref init() first, then you can add several
     /// source nodes with \ref addSource().
     /// Finally \ref start() will perform the arborescence
     /// computation.

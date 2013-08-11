@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -82,12 +82,17 @@ void checkCirculationCompile()
             ::Create CirculationType;
   CirculationType circ_test(g, lcap, ucap, supply);
   const CirculationType& const_circ_test = circ_test;
-   
+
   circ_test
     .lowerMap(lcap)
     .upperMap(ucap)
     .supplyMap(supply)
     .flowMap(flow);
+
+  const CirculationType::Elevator& elev = const_circ_test.elevator();
+  circ_test.elevator(const_cast<CirculationType::Elevator&>(elev));
+  CirculationType::Tolerance tol = const_circ_test.tolerance();
+  circ_test.tolerance(tol);
 
   circ_test.init();
   circ_test.greedyInit();
@@ -98,7 +103,7 @@ void checkCirculationCompile()
   const FlowMap& fm = const_circ_test.flowMap();
   b = const_circ_test.barrier(n);
   const_circ_test.barrierMap(bar);
-  
+
   ::lemon::ignore_unused_variable_warning(fm);
 }
 

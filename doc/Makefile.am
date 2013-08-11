@@ -11,6 +11,7 @@ EXTRA_DIST += \
 	doc/min_cost_flow.dox \
 	doc/named-param.dox \
 	doc/namespaces.dox \
+	doc/references.bib \
 	doc/template.h \
 	doc/html \
 	doc/CMakeLists.txt
@@ -28,7 +29,9 @@ DOC_EPS_IMAGES27 = \
 	bipartite_partitions.eps \
 	connected_components.eps \
 	edge_biconnected_components.eps \
+	matching.eps \
 	node_biconnected_components.eps \
+	planar.eps \
 	strongly_connected_components.eps
 
 DOC_EPS_IMAGES = \
@@ -67,7 +70,19 @@ $(DOC_EPS_IMAGES27:%.eps=doc/gen-images/%.png): doc/gen-images/%.png: doc/images
 	  exit 1; \
 	fi
 
-html-local: $(DOC_PNG_IMAGES)
+references.dox: doc/references.bib
+	if test ${python_found} = yes; then \
+	  cd doc; \
+	  python @abs_top_srcdir@/scripts/bib2dox.py @abs_top_builddir@/$< >$@; \
+	  cd ..; \
+	else \
+	  echo; \
+	  echo "Python not found."; \
+	  echo; \
+	  exit 1; \
+	fi
+
+html-local: $(DOC_PNG_IMAGES) references.dox
 	if test ${doxygen_found} = yes; then \
 	  cd doc; \
 	  doxygen Doxyfile; \

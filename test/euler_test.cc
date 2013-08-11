@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -85,11 +85,11 @@ int main()
 {
   typedef ListDigraph Digraph;
   typedef Undirector<Digraph> Graph;
-  
+
   {
     Digraph d;
     Graph g(d);
-    
+
     checkDiEulerIt(d);
     checkDiEulerIt(g);
     checkEulerIt(g);
@@ -129,7 +129,7 @@ int main()
     Digraph::Node n1 = d.addNode();
     Digraph::Node n2 = d.addNode();
     Digraph::Node n3 = d.addNode();
-    
+
     d.addArc(n1, n2);
     d.addArc(n2, n1);
     d.addArc(n2, n3);
@@ -154,7 +154,7 @@ int main()
     Digraph::Node n4 = d.addNode();
     Digraph::Node n5 = d.addNode();
     Digraph::Node n6 = d.addNode();
-    
+
     d.addArc(n1, n2);
     d.addArc(n2, n4);
     d.addArc(n1, n3);
@@ -213,7 +213,7 @@ int main()
     Digraph::Node n1 = d.addNode();
     Digraph::Node n2 = d.addNode();
     Digraph::Node n3 = d.addNode();
-    
+
     d.addArc(n1, n2);
     d.addArc(n2, n3);
 

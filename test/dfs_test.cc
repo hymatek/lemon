@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -88,7 +88,7 @@ void checkDfsCompile()
     e = const_dfs_test.nextArc();
     b = const_dfs_test.emptyQueue();
     i = const_dfs_test.queueSize();
-    
+
     dfs_test.start();
     dfs_test.start(t);
     dfs_test.start(am);
@@ -114,7 +114,7 @@ void checkDfsCompile()
     concepts::ReadWriteMap<Node,int> dist_map;
     concepts::ReadWriteMap<Node,bool> reached_map;
     concepts::WriteMap<Node,bool> processed_map;
-    
+
     dfs_test
       .predMap(pred_map)
       .distMap(dist_map)
@@ -131,7 +131,7 @@ void checkDfsCompile()
     e = dfs_test.nextArc();
     b = dfs_test.emptyQueue();
     i = dfs_test.queueSize();
-    
+
     dfs_test.start();
     dfs_test.start(t);
     dfs_test.start(am);

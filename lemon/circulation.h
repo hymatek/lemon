@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -59,8 +59,8 @@ namespace lemon {
 
     /// \brief The type of supply map.
     ///
-    /// The type of the map that stores the signed supply values of the 
-    /// nodes. 
+    /// The type of the map that stores the signed supply values of the
+    /// nodes.
     /// It must conform to the \ref concepts::ReadMap "ReadMap" concept.
     typedef SM SupplyMap;
 
@@ -72,7 +72,11 @@ namespace lemon {
     /// The type of the map that stores the flow values.
     /// It must conform to the \ref concepts::ReadWriteMap "ReadWriteMap"
     /// concept.
+#ifdef DOXYGEN
+    typedef GR::ArcMap<Value> FlowMap;
+#else
     typedef typename Digraph::template ArcMap<Value> FlowMap;
+#endif
 
     /// \brief Instantiates a FlowMap.
     ///
@@ -87,9 +91,12 @@ namespace lemon {
     ///
     /// The elevator type used by the algorithm.
     ///
-    /// \sa Elevator
-    /// \sa LinkedElevator
+    /// \sa Elevator, LinkedElevator
+#ifdef DOXYGEN
+    typedef lemon::Elevator<GR, GR::Node> Elevator;
+#else
     typedef lemon::Elevator<Digraph, typename Digraph::Node> Elevator;
+#endif
 
     /// \brief Instantiates an Elevator.
     ///
@@ -134,7 +141,7 @@ namespace lemon {
      \f[ \sum_{uv\in A} f(uv) - \sum_{vu\in A} f(vu)
      \geq sup(u) \quad \forall u\in V, \f]
      \f[ lower(uv) \leq f(uv) \leq upper(uv) \quad \forall uv\in A. \f]
-     
+
      The sum of the supply values, i.e. \f$\sum_{u\in V} sup(u)\f$ must be
      zero or negative in order to have a feasible solution (since the sum
      of the expressions on the left-hand side of the inequalities is zero).
@@ -144,7 +151,7 @@ namespace lemon {
      If \f$\sum_{u\in V} sup(u)\f$ is zero, then all the supply/demand
      constraints have to be satisfied with equality, i.e. all demands
      have to be satisfied and all supplies have to be used.
-     
+
      If you need the opposite inequalities in the supply/demand constraints
      (i.e. the total demand is less than the total supply and all the demands
      have to be satisfied while there could be supplies that are not used),
@@ -166,6 +173,11 @@ namespace lemon {
      The default map type is \c LM.
      \tparam SM The type of the supply map. The default map type is
      \ref concepts::Digraph::NodeMap "GR::NodeMap<UM::Value>".
+     \tparam TR The traits class that defines various types used by the
+     algorithm. By default, it is \ref CirculationDefaultTraits
+     "CirculationDefaultTraits<GR, LM, UM, SM>".
+     In most cases, this parameter should not be set directly,
+     consider to use the named template parameters instead.
   */
 #ifdef DOXYGEN
 template< typename GR,
@@ -299,7 +311,7 @@ template< typename GR,
     /// The Elevator should have standard constructor interface to be
     /// able to automatically created by the algorithm (i.e. the
     /// digraph and the maximum level should be passed to it).
-    /// However an external elevator object could also be passed to the
+    /// However, an external elevator object could also be passed to the
     /// algorithm with the \ref elevator(Elevator&) "elevator()" function
     /// before calling \ref run() or \ref init().
     /// \sa SetElevator
@@ -325,7 +337,7 @@ template< typename GR,
     ///
     /// \param graph The digraph the algorithm runs on.
     /// \param lower The lower bounds for the flow values on the arcs.
-    /// \param upper The upper bounds (capacities) for the flow values 
+    /// \param upper The upper bounds (capacities) for the flow values
     /// on the arcs.
     /// \param supply The signed supply values of the nodes.
     Circulation(const Digraph &graph, const LowerMap &lower,
@@ -450,9 +462,10 @@ template< typename GR,
       return *_level;
     }
 
-    /// \brief Sets the tolerance used by algorithm.
+    /// \brief Sets the tolerance used by the algorithm.
     ///
-    /// Sets the tolerance used by algorithm.
+    /// Sets the tolerance object used by the algorithm.
+    /// \return <tt>(*this)</tt>
     Circulation& tolerance(const Tolerance& tolerance) {
       _tol = tolerance;
       return *this;
@@ -460,15 +473,16 @@ template< typename GR,
 
     /// \brief Returns a const reference to the tolerance.
     ///
-    /// Returns a const reference to the tolerance.
+    /// Returns a const reference to the tolerance object used by
+    /// the algorithm.
     const Tolerance& tolerance() const {
       return _tol;
     }
 
     /// \name Execution Control
     /// The simplest way to execute the algorithm is to call \ref run().\n
-    /// If you need more control on the initial solution or the execution,
-    /// first you have to call one of the \ref init() functions, then
+    /// If you need better control on the initial solution or the execution,
+    /// you have to call one of the \ref init() functions first, then
     /// the \ref start() function.
 
     ///@{

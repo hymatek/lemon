@@ -427,7 +427,7 @@ namespace lemon {
   ///   run();
   ///\endcode
   ///
-  /// By default the reader uses the first section in the file of the
+  /// By default, the reader uses the first section in the file of the
   /// proper type. If a section has an optional name, then it can be
   /// selected for reading by giving an optional name parameter to the
   /// \c nodes(), \c arcs() or \c attributes() functions.
@@ -562,7 +562,7 @@ namespace lemon {
     template <typename TDGR>
     friend DigraphReader<TDGR> digraphReader(TDGR& digraph, std::istream& is);
     template <typename TDGR>
-    friend DigraphReader<TDGR> digraphReader(TDGR& digraph, 
+    friend DigraphReader<TDGR> digraphReader(TDGR& digraph,
                                              const std::string& fn);
     template <typename TDGR>
     friend DigraphReader<TDGR> digraphReader(TDGR& digraph, const char *fn);
@@ -1194,14 +1194,14 @@ namespace lemon {
     /// @}
 
   };
-  
+
   /// \ingroup lemon_io
   ///
   /// \brief Return a \ref DigraphReader class
   ///
   /// This function just returns a \ref DigraphReader class.
   ///
-  /// With this function a digraph can be read from an 
+  /// With this function a digraph can be read from an
   /// \ref lgf-format "LGF" file or input stream with several maps and
   /// attributes. For example, there is network flow problem on a
   /// digraph, i.e. a digraph with a \e capacity map on the arcs and
@@ -1256,7 +1256,7 @@ namespace lemon {
 
   template <typename GR>
   class GraphReader;
- 
+
   template <typename TGR>
   GraphReader<TGR> graphReader(TGR& graph, std::istream& is = std::cin);
   template <typename TGR>
@@ -1393,7 +1393,7 @@ namespace lemon {
     template <typename TGR>
     friend GraphReader<TGR> graphReader(TGR& graph, std::istream& is);
     template <typename TGR>
-    friend GraphReader<TGR> graphReader(TGR& graph, const std::string& fn); 
+    friend GraphReader<TGR> graphReader(TGR& graph, const std::string& fn);
     template <typename TGR>
     friend GraphReader<TGR> graphReader(TGR& graph, const char *fn);
 
@@ -2077,9 +2077,9 @@ namespace lemon {
   ///
   /// \brief Return a \ref GraphReader class
   ///
-  /// This function just returns a \ref GraphReader class. 
+  /// This function just returns a \ref GraphReader class.
   ///
-  /// With this function a graph can be read from an 
+  /// With this function a graph can be read from an
   /// \ref lgf-format "LGF" file or input stream with several maps and
   /// attributes. For example, there is weighted matching problem on a
   /// graph, i.e. a graph with a \e weight map on the edges. This
@@ -2235,7 +2235,7 @@ namespace lemon {
     /// and the comment lines are filtered out, and the leading
     /// whitespaces are trimmed from each processed string.
     ///
-    /// For example let's see a section, which contain several
+    /// For example, let's see a section, which contain several
     /// integers, which should be inserted into a vector.
     ///\code
     ///  @numbers

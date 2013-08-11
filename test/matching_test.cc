@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -134,7 +134,7 @@ void checkMaxMatchingCompile()
   mat_test.startSparse();
   mat_test.startDense();
   mat_test.run();
-  
+
   const_mat_test.matchingSize();
   const_mat_test.matching(e);
   const_mat_test.matching(n);
@@ -143,7 +143,7 @@ void checkMaxMatchingCompile()
   e = mmap[n];
   const_mat_test.mate(n);
 
-  MaxMatching<Graph>::Status stat = 
+  MaxMatching<Graph>::Status stat =
     const_mat_test.status(n);
   ::lemon::ignore_unused_variable_warning(stat);
   const MaxMatching<Graph>::StatusMap& smap =
@@ -171,7 +171,7 @@ void checkMaxWeightedMatchingCompile()
   mat_test.init();
   mat_test.start();
   mat_test.run();
-  
+
   const_mat_test.matchingWeight();
   const_mat_test.matchingSize();
   const_mat_test.matching(e);
@@ -180,7 +180,7 @@ void checkMaxWeightedMatchingCompile()
     const_mat_test.matchingMap();
   e = mmap[n];
   const_mat_test.mate(n);
-  
+
   int k = 0;
   const_mat_test.dualValue();
   const_mat_test.nodeValue(n);
@@ -208,7 +208,7 @@ void checkMaxWeightedPerfectMatchingCompile()
   mat_test.init();
   mat_test.start();
   mat_test.run();
-  
+
   const_mat_test.matchingWeight();
   const_mat_test.matching(e);
   const_mat_test.matching(n);
@@ -216,7 +216,7 @@ void checkMaxWeightedPerfectMatchingCompile()
     const_mat_test.matchingMap();
   e = mmap[n];
   const_mat_test.mate(n);
-  
+
   int k = 0;
   const_mat_test.dualValue();
   const_mat_test.nodeValue(n);
@@ -402,22 +402,46 @@ int main() {
     graphReader(graph, lgfs).
       edgeMap("weight", weight).run();
 
-    MaxMatching<SmartGraph> mm(graph);
-    mm.run();
-    checkMatching(graph, mm);
+    bool perfect;
+    {
+      MaxMatching<SmartGraph> mm(graph);
+      mm.run();
+      checkMatching(graph, mm);
+      perfect = 2 * mm.matchingSize() == countNodes(graph);
+    }
 
-    MaxWeightedMatching<SmartGraph> mwm(graph, weight);
-    mwm.run();
-    checkWeightedMatching(graph, weight, mwm);
+    {
+      MaxWeightedMatching<SmartGraph> mwm(graph, weight);
+      mwm.run();
+      checkWeightedMatching(graph, weight, mwm);
+    }
 
-    MaxWeightedPerfectMatching<SmartGraph> mwpm(graph, weight);
-    bool perfect = mwpm.run();
+    {
+      MaxWeightedMatching<SmartGraph> mwm(graph, weight);
+      mwm.init();
+      mwm.start();
+      checkWeightedMatching(graph, weight, mwm);
+    }
 
-    check(perfect == (mm.matchingSize() * 2 == countNodes(graph)),
-          "Perfect matching found");
+    {
+      MaxWeightedPerfectMatching<SmartGraph> mwpm(graph, weight);
+      bool result = mwpm.run();
 
-    if (perfect) {
-      checkWeightedPerfectMatching(graph, weight, mwpm);
+      check(result == perfect, "Perfect matching found");
+      if (perfect) {
+        checkWeightedPerfectMatching(graph, weight, mwpm);
+      }
+    }
+
+    {
+      MaxWeightedPerfectMatching<SmartGraph> mwpm(graph, weight);
+      mwpm.init();
+      bool result = mwpm.start();
+
+      check(result == perfect, "Perfect matching found");
+      if (perfect) {
+        checkWeightedPerfectMatching(graph, weight, mwpm);
+      }
     }
   }
 

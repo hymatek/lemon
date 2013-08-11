@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2010
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -23,6 +23,7 @@
 #include <lemon/path.h>
 #include <lemon/suurballe.h>
 #include <lemon/concepts/digraph.h>
+#include <lemon/concepts/heap.h>
 
 #include "test_tools.h"
 
@@ -80,8 +81,14 @@ void checkSuurballeCompile()
   typedef Digraph::Node Node;
   typedef Digraph::Arc Arc;
   typedef concepts::ReadMap<Arc, VType> LengthMap;
-  
-  typedef Suurballe<Digraph, LengthMap> SuurballeType;
+
+  typedef Suurballe<Digraph, LengthMap> ST;
+  typedef Suurballe<Digraph, LengthMap>
+    ::SetFlowMap<ST::FlowMap>
+    ::SetPotentialMap<ST::PotentialMap>
+    ::SetPath<SimplePath<Digraph> >
+    ::SetHeap<concepts::Heap<VType, Digraph::NodeMap<int> > >
+    ::Create SuurballeType;
 
   Digraph g;
   Node n;
@@ -101,10 +108,13 @@ void checkSuurballeCompile()
   k = suurb_test.run(n, n);
   k = suurb_test.run(n, n, k);
   suurb_test.init(n);
+  suurb_test.fullInit(n);
+  suurb_test.start(n);
+  suurb_test.start(n, k);
   k = suurb_test.findFlow(n);
   k = suurb_test.findFlow(n, k);
   suurb_test.findPaths();
-  
+
   int f;
   VType c;
   ::lemon::ignore_unused_variable_warning(f,c);
@@ -118,7 +128,7 @@ void checkSuurballeCompile()
     const_suurb_test.potentialMap();
   k = const_suurb_test.pathNum();
   Path<Digraph> p = const_suurb_test.path(k);
-  
+
   ::lemon::ignore_unused_variable_warning(fm);
   ::lemon::ignore_unused_variable_warning(pm);
 }
@@ -197,9 +207,11 @@ int main()
     node("target", t).
     run();
 
-  // Find 2 paths
+  // Check run()
   {
     Suurballe<ListDigraph> suurballe(digraph, length);
+
+    // Find 2 paths
     check(suurballe.run(s, t) == 2, "Wrong number of paths");
     check(checkFlow(digraph, suurballe.flowMap(), s, t, 2),
           "The flow is not feasible");
@@ -209,11 +221,8 @@ int main()
           "Wrong potentials");
     for (int i = 0; i < suurballe.pathNum(); ++i)
       check(checkPath(digraph, suurballe.path(i), s, t), "Wrong path");
-  }
 
-  // Find 3 paths
-  {
-    Suurballe<ListDigraph> suurballe(digraph, length);
+    // Find 3 paths
     check(suurballe.run(s, t, 3) == 3, "Wrong number of paths");
     check(checkFlow(digraph, suurballe.flowMap(), s, t, 3),
           "The flow is not feasible");
@@ -223,11 +232,8 @@ int main()
           "Wrong potentials");
     for (int i = 0; i < suurballe.pathNum(); ++i)
       check(checkPath(digraph, suurballe.path(i), s, t), "Wrong path");
-  }
 
-  // Find 5 paths (only 3 can be found)
-  {
-    Suurballe<ListDigraph> suurballe(digraph, length);
+    // Find 5 paths (only 3 can be found)
     check(suurballe.run(s, t, 5) == 3, "Wrong number of paths");
     check(checkFlow(digraph, suurballe.flowMap(), s, t, 3),
           "The flow is not feasible");
@@ -237,6 +243,24 @@ int main()
           "Wrong potentials");
     for (int i = 0; i < suurballe.pathNum(); ++i)
       check(checkPath(digraph, suurballe.path(i), s, t), "Wrong path");
+  }
+
+  // Check fullInit() + start()
+  {
+    Suurballe<ListDigraph> suurballe(digraph, length);
+    suurballe.fullInit(s);
+
+    // Find 2 paths
+    check(suurballe.start(t) == 2, "Wrong number of paths");
+    check(suurballe.totalLength() == 510, "The flow is not optimal");
+
+    // Find 3 paths
+    check(suurballe.start(t, 3) == 3, "Wrong number of paths");
+    check(suurballe.totalLength() == 1040, "The flow is not optimal");
+
+    // Find 5 paths (only 3 can be found)
+    check(suurballe.start(t, 5) == 3, "Wrong number of paths");
+    check(suurballe.totalLength() == 1040, "The flow is not optimal");
   }
 
   return 0;
