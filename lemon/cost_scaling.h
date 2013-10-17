@@ -370,7 +370,6 @@ namespace lemon {
       _have_lower = true;
       for (ArcIt a(_graph); a != INVALID; ++a) {
         _lower[_arc_idf[a]] = map[a];
-        _lower[_arc_idb[a]] = map[a];
       }
       return *this;
     }
@@ -902,11 +901,11 @@ namespace lemon {
       return OPTIMAL;
     }
     
-    // Check if the upper bound is greater or equal to the lower bound
-    // on each arc.
+    // Check if the upper bound is greater than or equal to the lower bound
+    // on each forward arc.
     bool checkBoundMaps() {
       for (int j = 0; j != _res_arc_num; ++j) {
-        if (_upper[j] < _lower[j]) return false;
+        if (_forward[j] && _upper[j] < _lower[j]) return false;
       }
       return true;
     }
@@ -989,7 +988,7 @@ namespace lemon {
       if (_have_lower) {
         int limit = _first_out[_root];
         for (int j = 0; j != limit; ++j) {
-          if (!_forward[j]) _res_cap[j] += _lower[j];
+          if (_forward[j]) _res_cap[_reverse[j]] += _lower[j];
         }
       }
     }

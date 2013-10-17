@@ -1235,7 +1235,7 @@ namespace lemon {
       return true;
     }
     
-    // Check if the upper bound is greater or equal to the lower bound
+    // Check if the upper bound is greater than or equal to the lower bound
     // on each arc.
     bool checkBoundMaps() {
       for (int j = 0; j != _arc_num; ++j) {
