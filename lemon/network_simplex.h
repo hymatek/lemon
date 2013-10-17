@@ -198,7 +198,7 @@ namespace lemon {
     int _search_arc_num;
 
     // Parameters of the problem
-    bool _have_lower;
+    bool _has_lower;
     SupplyType _stype;
     Value _sum_supply;
 
@@ -682,7 +682,7 @@ namespace lemon {
     /// \return <tt>(*this)</tt>
     template <typename LowerMap>
     NetworkSimplex& lowerMap(const LowerMap& map) {
-      _have_lower = true;
+      _has_lower = true;
       for (ArcIt a(_graph); a != INVALID; ++a) {
         _lower[_arc_id[a]] = map[a];
       }
@@ -879,7 +879,7 @@ namespace lemon {
         _upper[i] = INF;
         _cost[i] = 1;
       }
-      _have_lower = false;
+      _has_lower = false;
       _stype = GEQ;
       return *this;
     }
@@ -1072,7 +1072,7 @@ namespace lemon {
           "Upper bounds must be greater or equal to the lower bounds");
 
       // Remove non-zero lower bounds
-      if (_have_lower) {
+      if (_has_lower) {
         for (int i = 0; i != _arc_num; ++i) {
           Value c = _lower[i];
           if (c >= 0) {
@@ -1612,7 +1612,7 @@ namespace lemon {
       }
 
       // Transform the solution and the supply map to the original form
-      if (_have_lower) {
+      if (_has_lower) {
         for (int i = 0; i != _arc_num; ++i) {
           Value c = _lower[i];
           if (c != 0) {
