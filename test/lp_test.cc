@@ -39,6 +39,9 @@
 #include <lemon/clp.h>
 #endif
 
+#ifdef LEMON_HAVE_LP
+#include <lemon/lp.h>
+#endif
 using namespace lemon;
 
 int countCols(LpBase & lp) {
@@ -415,6 +418,15 @@ int main()
 {
   LpSkeleton lp_skel;
   lpTest(lp_skel);
+
+#ifdef LEMON_HAVE_LP
+  {
+    Lp lp,lp2;
+    lpTest(lp);
+    aTest(lp2);
+    cloneTest<Lp>();
+  }
+#endif
 
 #ifdef LEMON_HAVE_GLPK
   {

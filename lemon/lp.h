@@ -30,6 +30,8 @@
 #include <lemon/soplex.h>
 #elif LEMON_HAVE_CLP
 #include <lemon/clp.h>
+#elif LEMON_HAVE_CBC
+#include <lemon/cbc.h>
 #endif
 
 ///\file
@@ -79,7 +81,7 @@ namespace lemon {
   typedef ClpLp Lp;
 #endif
 #if LEMON_DEFAULT_MIP == GLPK
-  typedef GlpkLp Mip;
+  typedef GlpkMip Mip;
 #elif LEMON_DEFAULT_MIP == CPLEX
   typedef CplexMip Mip;
 #elif LEMON_DEFAULT_MIP == CBC

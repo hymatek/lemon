@@ -32,6 +32,10 @@
 #include <lemon/cbc.h>
 #endif
 
+#ifdef LEMON_HAVE_MIP
+#include <lemon/lp.h>
+#endif
+
 
 using namespace lemon;
 
@@ -127,6 +131,14 @@ void cloneTest()
 
 int main()
 {
+
+#ifdef LEMON_HAVE_MIP
+  {
+    Mip mip1;
+    aTest(mip1);
+    cloneTest<Mip>();
+  }
+#endif
 
 #ifdef LEMON_HAVE_GLPK
   {
