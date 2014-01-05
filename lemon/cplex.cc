@@ -87,8 +87,8 @@ namespace lemon {
     : LpBase() {
     int status;
     _prob = CPXcloneprob(cplexEnv(), cplex._prob, &status);
-    rows = cplex.rows;
-    cols = cplex.cols;
+    _rows = cplex._rows;
+    _cols = cplex._cols;
     messageLevel(MESSAGE_NOTHING);
   }
 
@@ -158,12 +158,12 @@ namespace lemon {
   }
 
   void CplexBase::_eraseColId(int i) {
-    cols.eraseIndex(i);
-    cols.shiftIndices(i);
+    _cols.eraseIndex(i);
+    _cols.shiftIndices(i);
   }
   void CplexBase::_eraseRowId(int i) {
-    rows.eraseIndex(i);
-    rows.shiftIndices(i);
+    _rows.eraseIndex(i);
+    _rows.shiftIndices(i);
   }
 
   void CplexBase::_getColName(int col, std::string &name) const {

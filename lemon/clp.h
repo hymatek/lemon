@@ -151,10 +151,10 @@ namespace lemon {
     SolveExitStatus solveBarrier();
 
     ///Returns the constraint identifier understood by CLP.
-    int clpRow(Row r) const { return rows(id(r)); }
+    int clpRow(Row r) const { return _rows(id(r)); }
 
     ///Returns the variable identifier understood by CLP.
-    int clpCol(Col c) const { return cols(id(c)); }
+    int clpCol(Col c) const { return _cols(id(c)); }
 
   };
 

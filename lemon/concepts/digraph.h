@@ -27,6 +27,7 @@
 #include <lemon/concepts/maps.h>
 #include <lemon/concept_check.h>
 #include <lemon/concepts/graph_components.h>
+#include <lemon/bits/stl_iterators.h>
 
 namespace lemon {
   namespace concepts {
@@ -147,6 +148,25 @@ namespace lemon {
         NodeIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the nodes of the digraph.
+      ///
+      /// This function can be used for iterating on
+      /// the nodes of the digraph. It returns a wrapped NodeIt, which looks
+      /// like an STL container (by having begin() and end())
+      /// which you can use in range-based for loops, STL algorithms, etc.
+      /// For example you can write:
+      ///\code
+      /// ListDigraph g;
+      /// for(auto v: g.nodes())
+      ///   doSomething(v);
+      ///
+      /// //Using an STL algorithm:
+      /// copy(g.nodes().begin(), g.nodes().end(), vect.begin());
+      ///\endcode
+      LemonRangeWrapper1<NodeIt, Digraph> nodes() const {
+        return LemonRangeWrapper1<NodeIt, Digraph>(*this);
+      }
+
 
       /// The arc type of the digraph
 
@@ -237,6 +257,27 @@ namespace lemon {
         OutArcIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the outgoing arcs of a certain node
+      /// of the digraph.
+      ///
+      /// This function can be used for iterating on the
+      /// outgoing arcs of a certain node of the digraph. It returns a wrapped
+      /// OutArcIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, STL algorithms, etc.
+      /// For example if g is a Digraph and u is a node, you can write:
+      ///\code
+      /// for(auto a: g.outArcs(u))
+      ///   doSomething(a);
+      ///
+      /// //Using an STL algorithm:
+      /// copy(g.outArcs(u).begin(), g.outArcs(u).end(), vect.begin());
+      ///\endcode
+      LemonRangeWrapper2<OutArcIt, Digraph, Node> outArcs(const Node& u) const {
+        return LemonRangeWrapper2<OutArcIt, Digraph, Node>(*this, u);
+      }
+
+
       /// Iterator class for the incoming arcs of a node.
 
       /// This iterator goes trough the \e incoming arcs of a certain node
@@ -282,6 +323,27 @@ namespace lemon {
         InArcIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the incoming arcs of a certain node
+      /// of the digraph.
+      ///
+      /// This function can be used for iterating on the
+      /// incoming arcs of a certain node of the digraph. It returns a wrapped
+      /// InArcIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, STL algorithms, etc.
+      /// For example if g is a Digraph and u is a node, you can write:
+      ///\code
+      /// for(auto a: g.inArcs(u))
+      ///   doSomething(a);
+      ///
+      /// //Using an STL algorithm:
+      /// copy(g.inArcs(u).begin(), g.inArcs(u).end(), vect.begin());
+      ///\endcode
+      LemonRangeWrapper2<InArcIt, Digraph, Node> inArcs(const Node& u) const {
+        return LemonRangeWrapper2<InArcIt, Digraph, Node>(*this, u);
+      }
+
+
       /// Iterator class for the arcs.
 
       /// This iterator goes through each arc of the digraph.
@@ -326,6 +388,27 @@ namespace lemon {
         ///
         ArcIt& operator++() { return *this; }
       };
+
+      /// \brief Gets the collection of the arcs of the digraph.
+      ///
+      /// This function can be used for iterating on the
+      /// arcs of the digraph. It returns a wrapped
+      /// ArcIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, STL algorithms, etc.
+      /// For example you can write:
+      ///\code
+      /// ListDigraph g;
+      /// for(auto a: g.arcs())
+      ///   doSomething(a);
+      ///
+      /// //Using an STL algorithm:
+      /// copy(g.arcs().begin(), g.arcs().end(), vect.begin());
+      ///\endcode
+      LemonRangeWrapper1<ArcIt, Digraph> arcs() const {
+        return LemonRangeWrapper1<ArcIt, Digraph>(*this);
+      }
+
 
       /// \brief The source node of the arc.
       ///

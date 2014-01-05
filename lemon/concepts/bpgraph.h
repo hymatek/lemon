@@ -27,6 +27,7 @@
 #include <lemon/concepts/maps.h>
 #include <lemon/concept_check.h>
 #include <lemon/core.h>
+#include <lemon/bits/stl_iterators.h>
 
 namespace lemon {
   namespace concepts {
@@ -221,6 +222,22 @@ namespace lemon {
         RedNodeIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the red nodes of the graph.
+      ///
+      /// This function can be used for iterating on
+      /// the red nodes of the graph. It returns a wrapped RedNodeIt,
+      /// which looks like an STL container (by having begin() and end())
+      /// which you can use in range-based for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph, you can write:
+      ///\code
+      /// for(auto v: g.redNodes())
+      ///   doSomething(v);
+      ///\endcode
+      LemonRangeWrapper1<RedNodeIt, BpGraph> redNodes() const {
+        return LemonRangeWrapper1<RedNodeIt, BpGraph>(*this);
+      }
+
+
       /// Iterator class for the blue nodes.
 
       /// This iterator goes through each blue node of the graph.
@@ -264,6 +281,22 @@ namespace lemon {
         BlueNodeIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the blue nodes of the graph.
+      ///
+      /// This function can be used for iterating on
+      /// the blue nodes of the graph. It returns a wrapped BlueNodeIt,
+      /// which looks like an STL container (by having begin() and end())
+      /// which you can use in range-based for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph, you can write:
+      ///\code
+      /// for(auto v: g.blueNodes())
+      ///   doSomething(v);
+      ///\endcode
+      LemonRangeWrapper1<BlueNodeIt, BpGraph> blueNodes() const {
+        return LemonRangeWrapper1<BlueNodeIt, BpGraph>(*this);
+      }
+
+
       /// Iterator class for the nodes.
 
       /// This iterator goes through each node of the graph.
@@ -306,6 +339,22 @@ namespace lemon {
         ///
         NodeIt& operator++() { return *this; }
       };
+
+      /// \brief Gets the collection of the nodes of the graph.
+      ///
+      /// This function can be used for iterating on
+      /// the nodes of the graph. It returns a wrapped NodeIt,
+      /// which looks like an STL container (by having begin() and end())
+      /// which you can use in range-based for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph, you can write:
+      ///\code
+      /// for(auto v: g.nodes())
+      ///   doSomething(v);
+      ///\endcode
+      LemonRangeWrapper1<NodeIt, BpGraph> nodes() const {
+        return LemonRangeWrapper1<NodeIt, BpGraph>(*this);
+      }
+
 
 
       /// The edge type of the graph
@@ -395,6 +444,23 @@ namespace lemon {
         EdgeIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the edges of the graph.
+      ///
+      /// This function can be used for iterating on the
+      /// edges of the graph. It returns a wrapped
+      /// EdgeIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph, you can write:
+      ///\code
+      /// for(auto e: g.edges())
+      ///   doSomething(e);
+      ///\endcode
+      LemonRangeWrapper1<EdgeIt, BpGraph> edges() const {
+        return LemonRangeWrapper1<EdgeIt, BpGraph>(*this);
+      }
+
+
       /// Iterator class for the incident edges of a node.
 
       /// This iterator goes trough the incident undirected edges
@@ -442,6 +508,25 @@ namespace lemon {
         /// of the corresponding node.
         IncEdgeIt& operator++() { return *this; }
       };
+
+      /// \brief Gets the collection of the incident edges
+      ///  of a certain node of the graph.
+      ///
+      /// This function can be used for iterating on the
+      /// incident undirected edges of a certain node of the graph.
+      /// It returns a wrapped
+      /// IncEdgeIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph and u is a Node, you can write:
+      ///\code
+      /// for(auto e: g.incEdges(u))
+      ///   doSomething(e);
+      ///\endcode
+      LemonRangeWrapper2<IncEdgeIt, BpGraph, Node> incEdges(const Node& u) const {
+        return LemonRangeWrapper2<IncEdgeIt, BpGraph, Node>(*this, u);
+      }
+
 
       /// The arc type of the graph
 
@@ -539,6 +624,23 @@ namespace lemon {
         ArcIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the directed arcs of the graph.
+      ///
+      /// This function can be used for iterating on the
+      /// arcs of the graph. It returns a wrapped
+      /// ArcIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph you can write:
+      ///\code
+      /// for(auto a: g.arcs())
+      ///   doSomething(a);
+      ///\endcode
+      LemonRangeWrapper1<ArcIt, BpGraph> arcs() const {
+        return LemonRangeWrapper1<ArcIt, BpGraph>(*this);
+      }
+
+
       /// Iterator class for the outgoing arcs of a node.
 
       /// This iterator goes trough the \e outgoing directed arcs of a
@@ -587,6 +689,24 @@ namespace lemon {
         OutArcIt& operator++() { return *this; }
       };
 
+      /// \brief Gets the collection of the outgoing directed arcs of a
+      /// certain node of the graph.
+      ///
+      /// This function can be used for iterating on the
+      /// outgoing arcs of a certain node of the graph. It returns a wrapped
+      /// OutArcIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph and u is a Node, you can write:
+      ///\code
+      /// for(auto a: g.outArcs(u))
+      ///   doSomething(a);
+      ///\endcode
+      LemonRangeWrapper2<OutArcIt, BpGraph, Node> outArcs(const Node& u) const {
+        return LemonRangeWrapper2<OutArcIt, BpGraph, Node>(*this, u);
+      }
+
+
       /// Iterator class for the incoming arcs of a node.
 
       /// This iterator goes trough the \e incoming directed arcs of a
@@ -634,6 +754,24 @@ namespace lemon {
         /// incoming arc of the corresponding node.
         InArcIt& operator++() { return *this; }
       };
+
+      /// \brief Gets the collection of the incoming directed arcs of a
+      /// certain node of the graph.
+      ///
+      /// This function can be used for iterating on the
+      /// incoming arcs of a certain node of the graph. It returns a wrapped
+      /// InArcIt, which looks like an STL container
+      /// (by having begin() and end()) which you can use in range-based
+      /// for loops, stl algorithms, etc.
+      /// For example if g is a BpGraph and u is a Node, you can write:
+      ///\code
+      /// for(auto a: g.inArcs(u))
+      ///   doSomething(a);
+      ///\endcode
+      LemonRangeWrapper2<InArcIt, BpGraph, Node> inArcs(const Node& u) const {
+        return LemonRangeWrapper2<InArcIt, BpGraph, Node>(*this, u);
+      }
+
 
       /// \brief Standard graph map type for the nodes.
       ///

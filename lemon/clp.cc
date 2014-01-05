@@ -29,8 +29,8 @@ namespace lemon {
 
   ClpLp::ClpLp(const ClpLp& other) {
     _prob = new ClpSimplex(*other._prob);
-    rows = other.rows;
-    cols = other.cols;
+    _rows = other._rows;
+    _cols = other._cols;
     _init_temporals();
     messageLevel(MESSAGE_NOTHING);
   }
@@ -103,13 +103,13 @@ namespace lemon {
   }
 
   void ClpLp::_eraseColId(int i) {
-    cols.eraseIndex(i);
-    cols.shiftIndices(i);
+    _cols.eraseIndex(i);
+    _cols.shiftIndices(i);
   }
 
   void ClpLp::_eraseRowId(int i) {
-    rows.eraseIndex(i);
-    rows.shiftIndices(i);
+    _rows.eraseIndex(i);
+    _rows.shiftIndices(i);
   }
 
   void ClpLp::_getColName(int c, std::string& name) const {
