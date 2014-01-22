@@ -132,7 +132,8 @@ void tspTestSmall(const std::string &alg_name) {
     unsigned nsize = n;
     int esize = n <= 1 ? 0 : n;
 
-    TSP alg(g, constMap<Edge, int>(1));
+    ConstMap<Edge, int> cost_map(1);
+    TSP alg(g, cost_map);
 
     check(alg.run() == esize, alg_name + ": Wrong total cost");
     check(alg.tourCost() == esize, alg_name + ": Wrong total cost");
