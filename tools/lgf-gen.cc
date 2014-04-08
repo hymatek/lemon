@@ -246,7 +246,7 @@ namespace _delaunay_bits {
 
   struct BeachIt;
 
-  typedef std::multimap<double, BeachIt> SpikeHeap;
+  typedef std::multimap<double, BeachIt*> SpikeHeap;
 
   typedef std::multimap<Part, SpikeHeap::iterator, YLess> Beach;
 
@@ -329,6 +329,7 @@ inline void delaunay() {
       Beach::iterator bit = beach.upper_bound(Part(site, site, site));
 
       if (bit->second != spikeheap.end()) {
+        delete bit->second->second;
         spikeheap.erase(bit->second);
       }
 
@@ -342,8 +343,8 @@ inline void delaunay() {
       if (prev != -1 &&
           circle_form(points[prev], points[curr], points[site])) {
         double x = circle_point(points[prev], points[curr], points[site]);
-        pit = spikeheap.insert(std::make_pair(x, BeachIt(beach.end())));
-        pit->second.it =
+        pit = spikeheap.insert(std::make_pair(x, new BeachIt(beach.end())));
+        pit->second->it =
           beach.insert(std::make_pair(Part(prev, curr, site), pit));
       } else {
         beach.insert(std::make_pair(Part(prev, curr, site), pit));
@@ -355,8 +356,8 @@ inline void delaunay() {
       if (next != -1 &&
           circle_form(points[site], points[curr],points[next])) {
         double x = circle_point(points[site], points[curr], points[next]);
-        nit = spikeheap.insert(std::make_pair(x, BeachIt(beach.end())));
-        nit->second.it =
+        nit = spikeheap.insert(std::make_pair(x, new BeachIt(beach.end())));
+        nit->second->it =
           beach.insert(std::make_pair(Part(site, curr, next), nit));
       } else {
         beach.insert(std::make_pair(Part(site, curr, next), nit));
@@ -366,7 +367,7 @@ inline void delaunay() {
     } else {
       sweep = spit->first;
 
-      Beach::iterator bit = spit->second.it;
+      Beach::iterator bit = spit->second->it;
 
       int prev = bit->first.prev;
       int curr = bit->first.curr;
@@ -399,10 +400,22 @@ inline void delaunay() {
       Beach::iterator nbit = bit; ++nbit;
       int nnt = nbit->first.next;
 
-      if (bit->second != spikeheap.end()) spikeheap.erase(bit->second);
-      if (pbit->second != spikeheap.end()) spikeheap.erase(pbit->second);
-      if (nbit->second != spikeheap.end()) spikeheap.erase(nbit->second);
-
+      if (bit->second != spikeheap.end())
+        {
+          delete bit->second->second;
+          spikeheap.erase(bit->second);
+        }
+      if (pbit->second != spikeheap.end())
+        {
+          delete pbit->second->second;
+          spikeheap.erase(pbit->second);
+        }
+      if (nbit->second != spikeheap.end())
+        {
+          delete nbit->second->second;
+          spikeheap.erase(nbit->second);
+        }
+      
       beach.erase(nbit);
       beach.erase(bit);
       beach.erase(pbit);
@@ -412,8 +425,8 @@ inline void delaunay() {
           circle_form(points[ppv], points[prev], points[next])) {
         double x = circle_point(points[ppv], points[prev], points[next]);
         if (x < sweep) x = sweep;
-        pit = spikeheap.insert(std::make_pair(x, BeachIt(beach.end())));
-        pit->second.it =
+        pit = spikeheap.insert(std::make_pair(x, new BeachIt(beach.end())));
+        pit->second->it =
           beach.insert(std::make_pair(Part(ppv, prev, next), pit));
       } else {
         beach.insert(std::make_pair(Part(ppv, prev, next), pit));
@@ -424,8 +437,8 @@ inline void delaunay() {
           circle_form(points[prev], points[next], points[nnt])) {
         double x = circle_point(points[prev], points[next], points[nnt]);
         if (x < sweep) x = sweep;
-        nit = spikeheap.insert(std::make_pair(x, BeachIt(beach.end())));
-        nit->second.it =
+        nit = spikeheap.insert(std::make_pair(x, new BeachIt(beach.end())));
+        nit->second->it =
           beach.insert(std::make_pair(Part(prev, next, nnt), nit));
       } else {
         beach.insert(std::make_pair(Part(prev, next, nnt), nit));
