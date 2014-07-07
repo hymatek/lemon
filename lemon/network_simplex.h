@@ -936,7 +936,7 @@ namespace lemon {
       for (NodeIt n(_graph); n != INVALID; ++n, ++i) {
         _node_id[n] = i;
       }
-      if (_arc_mixing) {
+      if (_arc_mixing && _node_num > 1) {
         // Store the arcs in a mixed order
         const int skip = std::max(_arc_num / _node_num, 3);
         int i = 0, j = 0;
