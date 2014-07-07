@@ -24,7 +24,6 @@
 
 using namespace lemon;
 
-const int lgfn = 4;
 const std::string lgf =
   "@nodes\n"
 "label\n"
