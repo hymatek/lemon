@@ -22,15 +22,19 @@
 #include<lemon/config.h>
 
 
-#ifdef LEMON_HAVE_GLPK
+#if LEMON_DEFAULT_LP == _LEMON_GLPK || LEMON_DEFAULT_MIP == _LEMON_GLPK
 #include <lemon/glpk.h>
-#elif LEMON_HAVE_CPLEX
+#endif
+#if LEMON_DEFAULT_LP == _LEMON_CPLEX || LEMON_DEFAULT_MIP == _LEMON_CPLEX 
 #include <lemon/cplex.h>
-#elif LEMON_HAVE_SOPLEX
+#endif
+#if LEMON_DEFAULT_LP == _LEMON_SOPLEX
 #include <lemon/soplex.h>
-#elif LEMON_HAVE_CLP
+#endif
+#if LEMON_DEFAULT_LP == _LEMON_CLP
 #include <lemon/clp.h>
-#elif LEMON_HAVE_CBC
+#endif
+#if LEMON_DEFAULT_MIP == _LEMON_CBC
 #include <lemon/cbc.h>
 #endif
 
