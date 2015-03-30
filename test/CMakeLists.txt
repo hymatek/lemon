@@ -54,6 +54,7 @@ SET(TESTS
   time_measure_test
   tsp_test
   unionfind_test
+  vf2_test
 )
 
 IF(LEMON_HAVE_LP)
