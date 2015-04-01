@@ -37,13 +37,7 @@
 #pragma warning( disable : 4250 4355 4503 4800 4996 )
 #endif
 
-#ifdef __GNUC__
-#define GCC_VERSION (__GNUC__ * 10000                   \
-                     + __GNUC_MINOR__ * 100             \
-                     + __GNUC_PATCHLEVEL__)
-#endif
-
-#if GCC_VERSION >= 40800
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
 // Needed by the [DI]GRAPH_TYPEDEFS marcos for gcc 4.8
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
