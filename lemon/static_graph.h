@@ -203,7 +203,7 @@ namespace lemon {
       built = true;
 
       node_num = n;
-      arc_num = std::distance(first, last);
+      arc_num = static_cast<int>(std::distance(first, last));
 
       node_first_out = new int[node_num + 1];
       node_first_in = new int[node_num];

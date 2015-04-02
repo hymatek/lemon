@@ -150,10 +150,13 @@ ELSE()
     SET(CMAKE_C_FLAGS_DEBUG CACHE STRING "-ggdb")
   ELSEIF(MSVC)
     # This part is unnecessary 'casue the same is set by the lemon/core.h.
-    # Still keep it as an example.
-    SET(CXX_WARNING "/wd4250 /wd4355 /wd4503 /wd4800 /wd4996")
+    # Still kept as an example.
+
+    # SET(CXX_WARNING "/wd4250 /wd4267 /wd4355 /wd4503 /wd4800 /wd4996")
+
     # Suppressed warnings:
     # C4250: 'class1' : inherits 'class2::member' via dominance
+    # C4267: conversion from 'size_t' to 'type', possible loss of data
     # C4355: 'this' : used in base member initializer list
     # C4503: 'function' : decorated name length exceeded, name was truncated
     # C4800: 'type' : forcing value to bool 'true' or 'false'
@@ -168,6 +171,7 @@ SET(LEMON_CXX_WARNING_FLAGS ${CXX_WARNING} CACHE STRING "LEMON warning flags.")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LEMON_CXX_WARNING_FLAGS}")
 
 IF(MSVC)
+  SET(CMAKE_CXX_FLAGS "/bigobj ${CMAKE_CXX_FLAGS}")
   SET( CMAKE_CXX_FLAGS_MAINTAINER "/WX ${CMAKE_CXX_FLAGS_DEBUG}" CACHE STRING
     "Flags used by the C++ compiler during maintainer builds."
     )
