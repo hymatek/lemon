@@ -199,7 +199,7 @@ namespace lemon {
 
         initState(init);
 
-        num = length > end - begin ? length : end - begin;
+        num = static_cast<int>(length > end - begin ? length : end - begin);
         while (num--) {
           curr[0] = (curr[0] ^ ((curr[1] ^ (curr[1] >> (bits - 2))) * mul1))
             + *it + cnt;
@@ -213,7 +213,7 @@ namespace lemon {
           --curr;
         }
 
-        num = length - 1; cnt = length - (curr - state) - 1;
+        num = length - 1; cnt = static_cast<int>(length - (curr - state) - 1);
         while (num--) {
           curr[0] = (curr[0] ^ ((curr[1] ^ (curr[1] >> (bits - 2))) * mul2))
             - cnt;
