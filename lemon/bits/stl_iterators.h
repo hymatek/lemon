@@ -55,12 +55,13 @@ namespace lemon {
   /// \c P is the type of the parameter of the constructor of \c LIT.
   template<class LIT, class P>
   class LemonRangeWrapper1 {
-    const P &_p;
     typedef LemonItWrapper<LIT> It;
+    It _begin;
+    
   public:
-    LemonRangeWrapper1(const P &p) : _p(p) {}
+    LemonRangeWrapper1(const P &p) : _begin(LIT(p)) {}
     It begin() const {
-      return It(LIT(_p));
+      return _begin;
     }
     It end() const {
       return It(lemon::INVALID);
@@ -80,13 +81,12 @@ namespace lemon {
   /// of the constructor of \c LIT.
   template<class LIT, class P1, class P2>
   class LemonRangeWrapper2 {
-    const P1 &_p1;
-    const P2 &_p2;
-    typedef LemonItWrapper<LIT> It;
-  public:
-    LemonRangeWrapper2(const P1 &p1, const P2 &p2) : _p1(p1), _p2(p2) {}
+    typedef LemonItWrapper<LIT> It; 
+    It _begin;
+ public:
+    LemonRangeWrapper2(const P1 &p1, const P2 &p2) : _begin(LIT(p1, p2)) {}
     It begin() const {
-      return It(LIT(_p1, _p2));
+      return _begin;
     }
     It end() const {
       return It(lemon::INVALID);
