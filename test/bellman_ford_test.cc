@@ -101,6 +101,10 @@ void checkBellmanFordCompile()
     pp = const_bf_test.negativeCycle();
 
     for (BF::ActiveIt it(const_bf_test); it != INVALID; ++it) {}
+    for (auto n: const_bf_test.activeNodes()) { ::lemon::ignore_unused_variable_warning(n); }
+    for (Digraph::Node n: const_bf_test.activeNodes()) {
+      ::lemon::ignore_unused_variable_warning(n);
+    }
   }
   {
     BF::SetPredMap<concepts::ReadWriteMap<Node,Arc> >

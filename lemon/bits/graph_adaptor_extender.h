@@ -85,7 +85,7 @@ namespace lemon {
 
     };
 
-    LemonRangeWrapper1<NodeIt, Adaptor> nodes() {
+    LemonRangeWrapper1<NodeIt, Adaptor> nodes() const {
       return LemonRangeWrapper1<NodeIt, Adaptor>(*this);
     }
 
@@ -111,7 +111,7 @@ namespace lemon {
 
     };
 
-    LemonRangeWrapper1<ArcIt, Adaptor> arcs() {
+    LemonRangeWrapper1<ArcIt, Adaptor> arcs() const {
       return LemonRangeWrapper1<ArcIt, Adaptor>(*this);
     }
 
@@ -269,7 +269,7 @@ namespace lemon {
 
     };
 
-    LemonRangeWrapper1<NodeIt, Adaptor> nodes() {
+    LemonRangeWrapper1<NodeIt, Adaptor> nodes() const {
       return LemonRangeWrapper1<NodeIt, Adaptor>(*this);
     }
 
@@ -296,7 +296,7 @@ namespace lemon {
 
     };
 
-    LemonRangeWrapper1<ArcIt, Adaptor> arcs() {
+    LemonRangeWrapper1<ArcIt, Adaptor> arcs() const {
       return LemonRangeWrapper1<ArcIt, Adaptor>(*this);
     }
 
@@ -378,7 +378,7 @@ namespace lemon {
 
     };
 
-    LemonRangeWrapper1<EdgeIt, Adaptor> edges() {
+    LemonRangeWrapper1<EdgeIt, Adaptor> edges() const {
       return LemonRangeWrapper1<EdgeIt, Adaptor>(*this);
     }
 

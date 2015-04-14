@@ -730,6 +730,30 @@ int main()
     }
     check(n == 3, "Wrong number");
     check(map1.falseNum() == 3, "Wrong number");
+
+#ifdef LEMON_CXX11
+    {
+      int c = 0;
+      for(auto v: map1.items(false)) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == map1.falseNum(), "Wrong number");
+    }
+    {
+      int c = 0;
+      for(auto v: map1.items(true)) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == map1.trueNum(), "Wrong number");
+    }
+    {
+      int c = 0;
+      for(auto v: map1.falseKeys()) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == map1.falseNum(), "Wrong number");
+    }
+    {
+      int c = 0;
+      for(auto v: map1.trueKeys()) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == map1.trueNum(), "Wrong number");
+    }
+#endif
+
   }
 
   // Iterable int map
@@ -780,6 +804,15 @@ int main()
       ++n;
     }
     check(n == num, "Wrong number");
+#ifdef LEMON_CXX11
+    {
+      int c = 0;
+      for(auto v: map1.items(0)) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == (num + 1) / 2, "Wrong number");
+      for(auto v: map1.items(1)) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == num, "Wrong number");
+    }
+#endif
 
   }
 
@@ -838,6 +871,16 @@ int main()
       ++n;
     }
     check(n == num, "Wrong number");
+
+#ifdef LEMON_CXX11
+    {
+      int c = 0;
+      for(auto v: map1.items(0.0)) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == (num + 1) / 2, "Wrong number");
+      for(auto v: map1.items(1.0)) { c++; ::lemon::ignore_unused_variable_warning(v); }
+      check(c == num, "Wrong number");
+    }
+#endif
 
   }
 

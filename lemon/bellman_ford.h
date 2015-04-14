@@ -701,8 +701,8 @@ namespace lemon {
     /// like an STL container (by having begin() and end())
     /// which you can use in range-based for loops, STL algorithms, etc.
     LemonRangeWrapper1<ActiveIt, BellmanFord>
-        activeNodes(const BellmanFord& algorithm) const {
-      return LemonRangeWrapper1<ActiveIt, BellmanFord>(algorithm);
+    activeNodes() const {
+      return LemonRangeWrapper1<ActiveIt, BellmanFord>(*this);
     }
 
 
