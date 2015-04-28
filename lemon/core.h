@@ -19,13 +19,12 @@
 #ifndef LEMON_CORE_H
 #define LEMON_CORE_H
 
-#include <vector>
-#include <algorithm>
-
-#include <lemon/config.h>
-#include <lemon/bits/enable_if.h>
-#include <lemon/bits/traits.h>
-#include <lemon/assert.h>
+///\file
+///\brief LEMON core utilities.
+///
+///This header file contains core utilities for LEMON.
+///It is automatically included by all graph types, therefore it usually
+///do not have to be included directly.
 
 // Disable the following warnings when compiling with MSVC:
 // C4250: 'class1' : inherits 'class2::member' via dominance
@@ -43,12 +42,15 @@
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
-///\file
-///\brief LEMON core utilities.
-///
-///This header file contains core utilities for LEMON.
-///It is automatically included by all graph types, therefore it usually
-///do not have to be included directly.
+#include <vector>
+#include <algorithm>
+
+#include <lemon/config.h>
+#include <lemon/bits/enable_if.h>
+#include <lemon/bits/traits.h>
+#include <lemon/assert.h>
+
+
 
 namespace lemon {
 

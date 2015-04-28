@@ -21,6 +21,10 @@
 
 #include<lemon/bits/windows.h>
 
+#if defined(LEMON_WIN32) && defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+
 #ifdef LEMON_WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
