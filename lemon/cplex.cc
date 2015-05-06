@@ -37,37 +37,54 @@ namespace lemon {
     }
   }
 
+  void CplexEnv::incCnt()
+  {
+    _cnt_lock->lock();
+    ++(*_cnt);
+    _cnt_lock->unlock();
+  }
+
+  void CplexEnv::decCnt()
+  {
+    _cnt_lock->lock();
+    --(*_cnt);
+    if (*_cnt == 0) {
+      delete _cnt;
+      _cnt_lock->unlock();
+      delete _cnt_lock;
+      CPXcloseCPLEX(&_env);
+    }
+    else _cnt_lock->unlock();
+  }
+  
   CplexEnv::CplexEnv() {
     int status;
+    _env = CPXopenCPLEX(&status);
+    if (_env == 0)
+      throw LicenseError(status);
     _cnt = new int;
     (*_cnt) = 1;
-    _env = CPXopenCPLEX(&status);
-    if (_env == 0) {
-      delete _cnt;
-      _cnt = 0;
-      throw LicenseError(status);
-    }
+    _cnt_lock = new bits::Lock;
   }
 
   CplexEnv::CplexEnv(const CplexEnv& other) {
     _env = other._env;
     _cnt = other._cnt;
-    ++(*_cnt);
+    _cnt_lock = other._cnt_lock;
+    incCnt();
   }
 
   CplexEnv& CplexEnv::operator=(const CplexEnv& other) {
+    decCnt();
     _env = other._env;
     _cnt = other._cnt;
-    ++(*_cnt);
+    _cnt_lock = other._cnt_lock;
+    incCnt();
     return *this;
   }
 
   CplexEnv::~CplexEnv() {
-    --(*_cnt);
-    if (*_cnt == 0) {
-      delete _cnt;
-      CPXcloseCPLEX(&_env);
-    }
+    decCnt();
   }
 
   CplexBase::CplexBase() : LpBase() {
