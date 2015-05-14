@@ -410,6 +410,8 @@ namespace lemon
       _depth=0;
       setOrder();
       setRNew1tRInOut1t();
+      for(typename G1::NodeIt n(g1);n!=INVALID;++n)
+        m[n]=INVALID;
     }
 
     ///Returns the current mapping type

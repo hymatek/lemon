@@ -352,7 +352,12 @@ int main() {
   check(!checkIso(p10,c10),
         "P10 and C10 are not isomorphic.");
   check(checkIso(c10,c10),
-        "C10 and C10 are not isomorphic.");
+        "C10 and C10 are isomorphic.");
+
+  check(!vf2(p10,c10).iso().run(),
+        "P10 and C10 are not isomorphic.");
+  check(vf2(c10,c10).iso().run(),
+        "C10 and C10 are isomorphic.");
 
   check(!checkSub(c5,petersen,c5_col,petersen_col1),
         "There should exist a C5->Petersen mapping.");
