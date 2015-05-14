@@ -18,6 +18,10 @@
 #ifndef LEMON_VF2_H
 #define LEMON_VF2_H
 
+///\ingroup graph_properties
+///\file
+///\brief VF2 algorithm \cite cordella2004sub.
+
 #include <lemon/core.h>
 #include <lemon/concepts/graph.h>
 #include <lemon/dfs.h>
@@ -90,25 +94,69 @@ namespace lemon
     }
   }
 
-  enum MappingType {
+  ///Graph mapping types.
+
+  ///\ingroup graph_isomorphism
+  ///The \ref Vf2 "VF2" algorithm is capable of finding different kind of
+  ///embeddings, this enum specifies its type.
+  ///
+  ///See \ref graph_isomorphism for a more detailed description.
+  enum Vf2MappingType {
+    /// Subgraph isomorphism
     SUBGRAPH = 0,
+    /// Induced subgraph isomorphism
     INDUCED = 1,
+    /// Graph isomorphism
+
+    /// If the two graph has the same number of nodes, than it is
+    /// equivalent to \ref INDUCED, and if they also have the same
+    /// number of edges, then it is also equivalent to \ref SUBGRAPH.
+    ///
+    /// However, using this setting is faster than the other two
+    /// options.
     ISOMORPH = 2
   };
 
-  template<class G1, class G2, class I, class NEq = bits::vf2::AlwaysEq >
+  ///%VF2 algorithm class.
+
+  ///\ingroup graph_isomorphism This class provides an efficient
+  ///implementation of the %VF2 algorithm \cite cordella2004sub
+  ///for variants of the (Sub)graph Isomorphism problem.
+  ///
+  ///There is also a \ref vf2() "function-type interface" called \ref vf2()
+  ///for the %VF2 algorithm, which is probably more convenient in most
+  ///use-cases.
+  ///
+  ///\tparam G1 The type of the graph to be embedded.
+  ///The default type is \ref ListDigraph.
+  ///\tparam G2 The type of the graph g1 will be embedded into.
+  ///The default type is \ref ListDigraph.
+  ///\tparam M The type of the NodeMap storing the mapping.
+  ///By default, it is G1::NodeMap<G2::Node>
+  ///\tparam NEQ A bool-valued binary functor determinining whether a node is
+  ///mappable to another. By default it is an always true operator.
+  ///
+  ///\sa vf2()
+#ifdef DOXYGEN
+  template<class G1, class G2, class M, class NEQ >
+#else
+  template<class G1=ListDigraph,
+           class G2=ListDigraph,
+           class M = typename G1::template NodeMap<G2::Node>,
+           class NEQ = bits::vf2::AlwaysEq >
+#endif
   class Vf2
   {
     //Current depth in the DFS tree.
     int _depth;
     //Functor with bool operator()(G1::Node,G2::Node), which returns 1
     //if and only if the 2 nodes are equivalent.
-    NEq _nEq;
+    NEQ _nEq;
 
     typename G2::template NodeMap<int> _conn;
-    //Current matching. We index it by the nodes of g1, and match[v] is
+    //Current mapping. We index it by the nodes of g1, and match[v] is
     //a node of g2.
-    I &_match;
+    M &_mapping;
     //order[i] is the node of g1, for which we find a pair if depth=i
     std::vector<typename G1::Node> order;
     //currEdgeIts[i] is an edge iterator, witch is last used in the ith
@@ -121,10 +169,10 @@ namespace lemon
     //lookup tables for cut the searchtree
     typename G1::template NodeMap<int> rNew1t,rInOut1t;
 
-    MappingType _mapping_type;
+    Vf2MappingType _mapping_type;
 
     //cut the search tree
-    template<MappingType MT>
+    template<Vf2MappingType MT>
     bool cut(const typename G1::Node n1,const typename G2::Node n2) const
     {
       int rNew2=0,rInOut2=0;
@@ -149,7 +197,7 @@ namespace lemon
         }
     }
 
-    template<MappingType MT>
+    template<Vf2MappingType MT>
     bool feas(const typename G1::Node n1,const typename G2::Node n2)
     {
       if(!_nEq(n1,n2))
@@ -158,8 +206,8 @@ namespace lemon
       for(typename G1::IncEdgeIt e1(_g1,n1); e1!=INVALID; ++e1)
         {
           const typename G1::Node currNode=_g1.oppositeNode(n1,e1);
-          if(_match[currNode]!=INVALID)
-            --_conn[_match[currNode]];
+          if(_mapping[currNode]!=INVALID)
+            --_conn[_mapping[currNode]];
         }
       bool isIso=1;
       for(typename G2::IncEdgeIt e2(_g2,n2); e2!=INVALID; ++e2)
@@ -177,7 +225,7 @@ namespace lemon
       for(typename G1::IncEdgeIt e1(_g1,n1); e1!=INVALID; ++e1)
         {
           const typename G1::Node currNode=_g1.oppositeNode(n1,e1);
-          if(_match[currNode]!=INVALID&&_conn[_match[currNode]]!=-1)
+          if(_mapping[currNode]!=INVALID&&_conn[_mapping[currNode]]!=-1)
             {
               switch(MT)
                 {
@@ -186,11 +234,11 @@ namespace lemon
                   isIso=0;
                   break;
                 case SUBGRAPH:
-                  if(_conn[_match[currNode]]<-1)
+                  if(_conn[_mapping[currNode]]<-1)
                     isIso=0;
                   break;
                 }
-              _conn[_match[currNode]]=-1;
+              _conn[_mapping[currNode]]=-1;
             }
         }
       return isIso&&cut<MT>(n1,n2);
@@ -199,7 +247,7 @@ namespace lemon
     void addPair(const typename G1::Node n1,const typename G2::Node n2)
     {
       _conn[n2]=-1;
-      _match.set(n1,n2);
+      _mapping.set(n1,n2);
       for(typename G2::IncEdgeIt e2(_g2,n2); e2!=INVALID; ++e2)
         if(_conn[_g2.oppositeNode(n2,e2)]!=-1)
           ++_conn[_g2.oppositeNode(n2,e2)];
@@ -208,7 +256,7 @@ namespace lemon
     void subPair(const typename G1::Node n1,const typename G2::Node n2)
     {
       _conn[n2]=0;
-      _match.set(n1,INVALID);
+      _mapping.set(n1,INVALID);
       for(typename G2::IncEdgeIt e2(_g2,n2); e2!=INVALID; ++e2)
         {
           const typename G2::Node currNode=_g2.oppositeNode(n2,e2);
@@ -231,9 +279,7 @@ namespace lemon
       bfs.run();
     }
 
-  public:
-
-    template<MappingType MT>
+    template<Vf2MappingType MT>
     bool extMatch()
     {
       while(_depth>=0)
@@ -250,14 +296,14 @@ namespace lemon
           if(currEdgeIts[_depth]==INVALID)
             {
               typename G1::IncEdgeIt fstMatchedE(_g1,order[_depth]);
-              //if _match[order[_depth]]!=INVALID, we dont use
+              //if _mapping[order[_depth]]!=INVALID, we dont use
               //fstMatchedE
-              if(_match[order[_depth]]==INVALID)
+              if(_mapping[order[_depth]]==INVALID)
                 for(; fstMatchedE!=INVALID &&
-                      _match[_g1.oppositeNode(order[_depth],
+                      _mapping[_g1.oppositeNode(order[_depth],
                                               fstMatchedE)]==INVALID;
                     ++fstMatchedE) ; //find fstMatchedE
-              if(fstMatchedE==INVALID||_match[order[_depth]]!=INVALID)
+              if(fstMatchedE==INVALID||_mapping[order[_depth]]!=INVALID)
                 {
                   //We did not find an covered neighbour, this means
                   //the graph is not connected(or _depth==0).  Every
@@ -268,10 +314,10 @@ namespace lemon
                   //try(match[order[_depth]]!=INVALID)
                   typename G2::NodeIt n2(_g2);
                   //if its not the first try
-                  if(_match[order[_depth]]!=INVALID)
+                  if(_mapping[order[_depth]]!=INVALID)
                     {
-                      n2=++typename G2::NodeIt(_g2,_match[order[_depth]]);
-                      subPair(order[_depth],_match[order[_depth]]);
+                      n2=++typename G2::NodeIt(_g2,_mapping[order[_depth]]);
+                      subPair(order[_depth],_mapping[order[_depth]]);
                     }
                   for(; n2!=INVALID; ++n2)
                     if(MT!=SUBGRAPH&&_conn[n2]==0)
@@ -294,15 +340,16 @@ namespace lemon
                 }
               else
                 {
-                  currPNode=_match[_g1.oppositeNode(order[_depth],fstMatchedE)];
+                  currPNode=_mapping[_g1.oppositeNode(order[_depth],
+                                                      fstMatchedE)];
                   currEdgeIts[_depth]=typename G2::IncEdgeIt(_g2,currPNode);
                 }
             }
           else
             {
-              currPNode=_g2.oppositeNode(_match[order[_depth]],
+              currPNode=_g2.oppositeNode(_mapping[order[_depth]],
                                          currEdgeIts[_depth]);
-              subPair(order[_depth],_match[order[_depth]]);
+              subPair(order[_depth],_mapping[order[_depth]]);
               ++currEdgeIts[_depth];
             }
           for(; currEdgeIts[_depth]!=INVALID; ++currEdgeIts[_depth])
@@ -345,8 +392,18 @@ namespace lemon
         }
     }
   public:
-    Vf2(const G1 &g1, const G2 &g2,I &i, const NEq &nEq = NEq() ) :
-      _nEq(nEq), _conn(g2,0), _match(i), order(countNodes(g1)),
+    ///Constructor
+
+    ///Constructor
+
+    ///\param g1 The graph to be embedded into \e g2.
+    ///\param g2 The graph \e g1 will be embedded into.
+    ///\param m \ref concepts::ReadWriteMap "read-write" NodeMap
+    ///storing the found mapping.
+    ///\param neq A bool-valued binary functor determinining whether a node is
+    ///mappable to another. By default it is an always true operator.
+    Vf2(const G1 &g1, const G2 &g2,M &m, const NEQ &neq = NEQ() ) :
+      _nEq(neq), _conn(g2,0), _mapping(m), order(countNodes(g1)),
       currEdgeIts(countNodes(g1),INVALID), _g1(g1), _g2(g2), rNew1t(g1,0),
       rInOut1t(g1,0), _mapping_type(SUBGRAPH)
     {
@@ -355,9 +412,29 @@ namespace lemon
       setRNew1tRInOut1t();
     }
 
-    MappingType mappingType() const { return _mapping_type; }
-    void mappingType(MappingType m_type) { _mapping_type = m_type; }
+    ///Returns the current mapping type
 
+    ///Returns the current mapping type
+    ///
+    Vf2MappingType mappingType() const { return _mapping_type; }
+    ///Sets mapping type
+
+    ///Sets mapping type.
+    ///
+    ///The mapping type is set to \ref SUBGRAPH by default.
+    ///
+    ///\sa See \ref for the possible values.
+    void mappingType(Vf2MappingType m_type) { _mapping_type = m_type; }
+
+    ///Find a mapping
+
+    ///It finds a mapping between from g1 into g2 according to the mapping
+    ///type set by \ref mappingType(Vf2MappingType) "mappingType()".
+    ///
+    ///By subsequent calls, it returns all possible mappings one-by-one.
+    ///
+    ///\retval true if a mapping is found.
+    ///\retval false if there is no (more) mapping.
     bool find()
     {
       switch(_mapping_type)
@@ -384,7 +461,7 @@ namespace lemon
     const G1 &_g1;
     const G2 &_g2;
 
-    MappingType _mapping_type;
+    Vf2MappingType _mapping_type;
 
     typedef typename G1::template NodeMap<typename G2::Node> Mapping;
     bool _local_mapping;
@@ -401,6 +478,15 @@ namespace lemon
       : _g1(g1), _g2(g2), _mapping_type(SUBGRAPH), _local_mapping(true) {}
   };
 
+  /// Auxiliary class for the function-type interface of %VF2 algorithm.
+
+  /// This auxiliary class implements the named parameters of
+  /// \ref vf2() "function-type interface" of \ref Vf2 algorithm.
+  ///
+  /// \warning This class should only be used through the function \ref vf2().
+  ///
+  /// \tparam TR The traits class that defines various types used by the
+  /// algorithm.
   template<class TR>
   class Vf2Wizard : public TR
   {
@@ -418,7 +504,7 @@ namespace lemon
     using TR::_node_eq;
 
   public:
-    ///Copy constructor
+    ///Constructor
     Vf2Wizard(const Graph1 &g1,const Graph2 &g2) : Base(g1,g2) {}
 
     ///Copy constructor
@@ -457,6 +543,10 @@ namespace lemon
     ///
     ///\ref named-templ-param "Named parameter" function for setting
     ///the equivalence relation between the nodes.
+    ///
+    ///\param node_eq A bool-valued binary functor determinining
+    ///whether a node is mappable to another. By default it is an
+    ///always true operator.
     template<class T>
     Vf2Wizard< SetNodeEqBase<T> > nodeEq(const T &node_eq)
     {
@@ -468,6 +558,11 @@ namespace lemon
     ///
     ///\ref named-templ-param "Named parameter" function for setting
     ///the node labels defining equivalence relation between them.
+    ///
+    ///\param m1 It is arbitrary \ref ReadMap "readable node map" of g1.
+    ///\param m1 It is arbitrary \ref ReadMap "readable node map" of g2.
+    ///
+    ///The value type of these maps must be equal comparable.
     template<class M1, class M2>
     Vf2Wizard< SetNodeEqBase<bits::vf2::MapEq<M1,M2> > >
     nodeLabels(const M1 &m1,const M2 &m2)
@@ -475,24 +570,49 @@ namespace lemon
       return nodeEq(bits::vf2::MapEq<M1,M2>(m1,m2));
     }
 
-    Vf2Wizard<Base> &mappingType(MappingType m_type)
+    ///\brief \ref named-templ-param "Named parameter" for setting
+    ///the mapping type.
+    ///
+    ///\ref named-templ-param "Named parameter" for setting
+    ///the mapping type.
+    ///
+    ///The mapping type is set to \ref SUBGRAPH by default.
+    ///
+    ///\sa See \ref for the possible values.
+    Vf2Wizard<Base> &mappingType(Vf2MappingType m_type)
     {
       _mapping_type = m_type;
       return *this;
     }
 
+    ///\brief \ref named-templ-param "Named parameter" for setting
+    ///the mapping type to \ref INDUCED.
+    ///
+    ///\ref named-templ-param "Named parameter" for setting
+    ///the mapping type to \ref INDUCED.
     Vf2Wizard<Base> &induced()
     {
       _mapping_type = INDUCED;
       return *this;
     }
 
+    ///\brief \ref named-templ-param "Named parameter" for setting
+    ///the mapping type to \ref ISOMORPH.
+    ///
+    ///\ref named-templ-param "Named parameter" for setting
+    ///the mapping type to \ref ISOMORPH.
     Vf2Wizard<Base> &iso()
     {
       _mapping_type = ISOMORPH;
       return *this;
     }
 
+    ///Runs VF2 algorithm.
+
+    ///This method runs VF2 algorithm.
+    ///
+    ///\retval true if a mapping is found.
+    ///\retval false if there is no (more) mapping.
     bool run()
     {
       if(Base::_local_mapping)
@@ -512,6 +632,26 @@ namespace lemon
     }
   };
 
+  ///Function-type interface for VF2 algorithm.
+
+  /// \ingroup graph_isomorphism
+  ///Function-type interface for VF2 algorithm \cite cordella2004sub.
+  ///
+  ///This function has several \ref named-func-param "named parameters"
+  ///declared as the members of class \ref Vf2Wizard.
+  ///The following examples show how to use these parameters.
+  ///\code
+  ///  // Find an embedding of graph g into graph h
+  ///  ListGraph::NodeMap<ListGraph::Node> m(g);
+  ///  vf2(g,h).mapping(m).run();
+  ///
+  ///  // Check whether graphs g and h are isomorphic
+  ///  bool is_iso = vf2(g,h).iso().run();
+  ///\endcode
+  ///\warning Don't forget to put the \ref Vf2Wizard::run() "run()"
+  ///to the end of the expression.
+  ///\sa Vf2Wizard
+  ///\sa Vf2
   template<class G1, class G2>
   Vf2Wizard<Vf2WizardBase<G1,G2> > vf2(const G1 &g1, const G2 &g2)
   {

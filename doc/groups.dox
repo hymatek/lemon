@@ -561,6 +561,35 @@ like connectivity, bipartiteness, euler property, simplicity etc.
 */
 
 /**
+@defgroup graph_isomorphism Graph Isomorphism
+@ingroup algs
+\brief Algorithms for testing (sub)graph isomorphism
+
+This group contains algorithms for finding isomorph copies of a
+given graph in another one, or simply check whether two graphs are isomorphic.
+
+The formal definition of subgraph isomorphism is as follows.
+
+We are given two graphs, \f$G_1=(V_1,E_1)\f$ and \f$G_2=(V_2,E_2)\f$. A
+function \f$f:V_1\longrightarrow V_2\f$ is called \e mapping or \e
+embedding if \f$f(u)\neq f(v)\f$ whenever \f$u\neq v\f$.
+
+The standard <em>Subgraph Isomorphism Problem (SIP)</em> looks for a
+mapping with the property that whenever \f$(u,v)\in E_1\f$, then
+\f$(f(u),f(v))\in E_2\f$.
+
+In case of <em>Induced Subgraph Isomorphism Problem (ISIP)</em> one
+also requires that if \f$(u,v)\not\in E_1\f$, then \f$(f(u),f(v))\not\in
+E_2\f$
+
+In addition, the graph nodes may be \e labeled, i.e. we are given two
+node labelings \f$l_1:V_1\longrightarrow L\f$ and \f$l_2:V_2\longrightarrow
+L\f$ and we require that \f$l_1(u)=l_2(f(u))\f$ holds for all nodes \f$u \in
+G\f$.
+
+*/
+
+/**
 @defgroup planar Planar Embedding and Drawing
 @ingroup algs
 \brief Algorithms for planarity checking, embedding and drawing
