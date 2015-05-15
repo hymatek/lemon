@@ -196,6 +196,7 @@ namespace lemon {
     ///\code
     /// for(auto c: lp.cols())
     ///   doSomething(c);
+    ///\endcode
     LemonRangeWrapper1<ColIt, LpBase> cols() {
       return LemonRangeWrapper1<ColIt, LpBase>(*this);
     }
@@ -306,6 +307,7 @@ namespace lemon {
     ///\code
     /// for(auto c: lp.rows())
     ///   doSomething(c);
+    ///\endcode
     LemonRangeWrapper1<RowIt, LpBase> rows() {
       return LemonRangeWrapper1<RowIt, LpBase>(*this);
     }
@@ -657,7 +659,7 @@ namespace lemon {
 
     ///This data structure represents a column of the matrix,
     ///thas is it strores a linear expression of the dual variables
-    ///(\ref Row "Row"s).
+    ///(\ref LpBase::Row "Row"s).
     ///
     ///There are several ways to access and modify the contents of this
     ///container.
@@ -674,7 +676,7 @@ namespace lemon {
     ///\endcode
     ///(This code computes the sum of all coefficients).
     ///- Numbers (<tt>double</tt>'s)
-    ///and variables (\ref Row "Row"s) directly convert to an
+    ///and variables (\ref LpBase::Row "Row"s) directly convert to an
     ///\ref DualExpr and the usual linear operations are defined, so
     ///\code
     ///v+w
@@ -1186,13 +1188,13 @@ namespace lemon {
     ///its elements with new row (i.e. variables)
     ///\param t can be
     ///- a standard STL compatible iterable container with
-    ///\ref Row as its \c values_type like
+    ///\ref LpBase::Row "Row" as its \c values_type like
     ///\code
     ///std::vector<LpBase::Row>
     ///std::list<LpBase::Row>
     ///\endcode
     ///- a standard STL compatible iterable container with
-    ///\ref Row as its \c mapped_type like
+    ///\ref LpBase::Row "Row" as its \c mapped_type like
     ///\code
     ///std::map<AnyType,LpBase::Row>
     ///\endcode

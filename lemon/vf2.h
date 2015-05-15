@@ -425,7 +425,7 @@ namespace lemon
     ///
     ///The mapping type is set to \ref SUBGRAPH by default.
     ///
-    ///\sa See \ref for the possible values.
+    ///\sa See \ref Vf2MappingType for the possible values.
     void mappingType(Vf2MappingType m_type) { _mapping_type = m_type; }
 
     ///Find a mapping
@@ -561,8 +561,10 @@ namespace lemon
     ///\ref named-templ-param "Named parameter" function for setting
     ///the node labels defining equivalence relation between them.
     ///
-    ///\param m1 It is arbitrary \ref ReadMap "readable node map" of g1.
-    ///\param m1 It is arbitrary \ref ReadMap "readable node map" of g2.
+    ///\param m1 It is arbitrary \ref concepts::ReadMap "readable node map"
+    ///of g1.
+    ///\param m2 It is arbitrary \ref concepts::ReadMap "readable node map"
+    ///of g2.
     ///
     ///The value type of these maps must be equal comparable.
     template<class M1, class M2>
@@ -580,7 +582,7 @@ namespace lemon
     ///
     ///The mapping type is set to \ref SUBGRAPH by default.
     ///
-    ///\sa See \ref for the possible values.
+    ///\sa See \ref Vf2MappingType for the possible values.
     Vf2Wizard<Base> &mappingType(Vf2MappingType m_type)
     {
       _mapping_type = m_type;
