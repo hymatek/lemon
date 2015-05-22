@@ -2299,7 +2299,7 @@ namespace lemon {
           snapshot.addNode(node);
         }
         virtual void add(const std::vector<Node>& nodes) {
-          for (int i = nodes.size() - 1; i >= 0; ++i) {
+          for (int i = nodes.size() - 1; i >= 0; --i) {
             snapshot.addNode(nodes[i]);
           }
         }
@@ -2349,7 +2349,7 @@ namespace lemon {
           snapshot.addEdge(edge);
         }
         virtual void add(const std::vector<Edge>& edges) {
-          for (int i = edges.size() - 1; i >= 0; ++i) {
+          for (int i = edges.size() - 1; i >= 0; --i) {
             snapshot.addEdge(edges[i]);
           }
         }
