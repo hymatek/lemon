@@ -428,7 +428,7 @@ namespace lemon
     ///\sa See \ref Vf2MappingType for the possible values.
     void mappingType(Vf2MappingType m_type) { _mapping_type = m_type; }
 
-    ///Find a mapping
+    ///Finds a mapping
 
     ///It finds a mapping between from g1 into g2 according to the mapping
     ///type set by \ref mappingType(Vf2MappingType) "mappingType()".

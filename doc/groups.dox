@@ -585,7 +585,7 @@ E_2\f$
 In addition, the graph nodes may be \e labeled, i.e. we are given two
 node labelings \f$l_1:V_1\longrightarrow L\f$ and \f$l_2:V_2\longrightarrow
 L\f$ and we require that \f$l_1(u)=l_2(f(u))\f$ holds for all nodes \f$u \in
-G\f$.
+G_1\f$.
 
 */
 
