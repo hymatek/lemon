@@ -1244,7 +1244,7 @@ namespace lemon {
   ///
   ///\code
   ///ListDigraph digraph;
-  ///ListDigraph::ArcMap<int> cm(digraph);
+  ///ListDigraph::ArcMap<int> cap(digraph);
   ///ListDigraph::Node src, trg;
   ///digraphReader(digraph, std::cin).
   ///  arcMap("capacity", cap).
