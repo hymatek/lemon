@@ -26,7 +26,6 @@
 #include <lemon/concepts/graph.h>
 #include <lemon/dfs.h>
 #include <lemon/bfs.h>
-#include <test/test_tools.h>
 
 #include <vector>
 #include <set>
