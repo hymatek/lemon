@@ -339,7 +339,7 @@ namespace lemon {
                      DimacsDescriptor desc=DimacsDescriptor()) {
     typename Digraph::Node u,v;
     if(desc.type==DimacsDescriptor::NONE) desc=dimacsType(is);
-    if(desc.type!=DimacsDescriptor::MAX || desc.type!=DimacsDescriptor::SP)
+    if(desc.type!=DimacsDescriptor::MAX && desc.type!=DimacsDescriptor::SP)
       throw FormatError("Problem type mismatch");
     _readDimacs(is, g, capacity, u, v, infty, desc);
   }
