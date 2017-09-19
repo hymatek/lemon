@@ -15,11 +15,13 @@
  *
  */
 
-#include <lemon/vf2.h>
+#include <lemon/vf2pp.h>
 #include <lemon/concepts/digraph.h>
 #include <lemon/smart_graph.h>
 #include <lemon/lgf_reader.h>
 #include <lemon/concepts/maps.h>
+#include <lemon/maps.h>
+#include <lemon/list_graph.h>
 
 #include <test/test_tools.h>
 #include <sstream>
@@ -149,7 +151,7 @@ SmartGraph::NodeMap<int> petersen_col1(petersen);
 SmartGraph::NodeMap<int> petersen_col2(petersen);
 SmartGraph::NodeMap<int> c5_col(c5);
 
-void make_graphs() {
+void make_graphs(){
   std::stringstream ss(petersen_lgf);
   graphReader(petersen, ss)
     .nodeMap("col1",petersen_col1)
@@ -159,7 +161,7 @@ void make_graphs() {
   ss.clear();
   ss.str("");
   ss<<c5_lgf;
-  //std::stringstream ss2(c5_lgf);
+
   graphReader(c5, ss)
     .nodeMap("col",c5_col)
     .run();
@@ -181,18 +183,17 @@ void make_graphs() {
 
 }
 
-class EqComparable {
+class IntConvertible1{
 public:
-  bool operator==(const EqComparable&) {
-    return false;
+  operator int(){
+    return 0;
   }
 };
 
-template<class A, class B>
-class EqClass {
+class IntConvertible2{
 public:
-  bool operator()(A, B){
-    return false;
+  operator int(){
+    return 0;
   }
 };
 
@@ -204,23 +205,50 @@ void checkVf2Compile() {
   bool succ;
   ::lemon::ignore_unused_variable_warning(succ);
 
-  succ = vf2(g,h).run();
-  succ = vf2(g,h).induced().run();
-  succ = vf2(g,h).iso().run();
-  succ = vf2(g,h).mapping(r).run();
+  succ = vf2pp(g,h).run();
+  succ = vf2pp(g,h).induced().run();
+  succ = vf2pp(g,h).iso().run();
+  succ = vf2pp(g,h).mapping(r).run();
+  succ = vf2pp(g,h).induced().mapping(r).run();
+  succ = vf2pp(g,h).iso().mapping(r).run();
 
-  Vf2<G1,G2,concepts::ReadWriteMap<typename G1::Node, typename G2::Node>,
-      EqClass<typename G1::Node,typename G2::Node> >
-    myVf2(g,h,r,EqClass<typename G1::Node,typename G2::Node>());
-  myVf2.find();
 
-  succ = vf2(g,h).induced().mapping(r).run();
-  succ = vf2(g,h).iso().mapping(r).run();
+  concepts::ReadMap<typename G1::Node, int> c1;
+  concepts::ReadMap<typename G2::Node, int> c2;
+  Vf2pp<G1,G2,concepts::ReadWriteMap<typename G1::Node, typename G2::Node>,
+        concepts::ReadMap<typename G1::Node, int>,
+        concepts::ReadMap<typename G2::Node, int> >
+    myVf2pp(g,h,r,c1,c2);
+  myVf2pp.find();
 
-  concepts::ReadMap<typename G1::Node, EqComparable> l1;
-  concepts::ReadMap<typename G2::Node, EqComparable> l2;
-  succ = vf2(g,h).nodeLabels(l1,l2).mapping(r).run();
-  succ = vf2(g,h).nodeEq(EqClass<typename G1::Node,typename G2::Node>())
+  succ = vf2pp(g,h).nodeLabels(c1,c2).mapping(r).run();
+  succ = vf2pp(g,h).nodeLabels(c1,c2)
+    .mapping(r).run();
+
+
+  concepts::ReadMap<typename G1::Node, char> c1_c;
+  concepts::ReadMap<typename G2::Node, char> c2_c;
+  Vf2pp<G1,G2,concepts::ReadWriteMap<typename G1::Node, typename G2::Node>,
+        concepts::ReadMap<typename G1::Node, char>,
+        concepts::ReadMap<typename G2::Node, char> >
+    myVf2pp_c(g,h,r,c1_c,c2_c);
+  myVf2pp_c.find();
+
+  succ = vf2pp(g,h).nodeLabels(c1_c,c2_c).mapping(r).run();
+  succ = vf2pp(g,h).nodeLabels(c1_c,c2_c)
+    .mapping(r).run();
+
+
+  concepts::ReadMap<typename G1::Node, IntConvertible1> c1_IntConv;
+  concepts::ReadMap<typename G2::Node, IntConvertible2> c2_IntConv;
+  Vf2pp<G1,G2,concepts::ReadWriteMap<typename G1::Node, typename G2::Node>,
+        concepts::ReadMap<typename G1::Node, IntConvertible1>,
+        concepts::ReadMap<typename G2::Node, IntConvertible2> >
+    myVf2pp_IntConv(g,h,r,c1_IntConv,c2_IntConv);
+  myVf2pp_IntConv.find();
+
+  succ = vf2pp(g,h).nodeLabels(c1_IntConv,c2_IntConv).mapping(r).run();
+  succ = vf2pp(g,h).nodeLabels(c1_IntConv,c2_IntConv)
     .mapping(r).run();
 }
 
@@ -264,7 +292,7 @@ void checkInd(const G1 &g1, const G2 &g2, const I &i) {
 template<class G1,class G2>
 int checkSub(const G1 &g1, const G2 &g2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).mapping(iso).run()) {
+  if(vf2pp(g1,g2).mapping(iso).run()){
     checkSub(g1,g2,iso);
     return true;
   }
@@ -275,7 +303,7 @@ int checkSub(const G1 &g1, const G2 &g2) {
 template<class G1,class G2>
 int checkInd(const G1 &g1, const G2 &g2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).induced().mapping(iso).run()) {
+  if(vf2pp(g1,g2).induced().mapping(iso).run()) {
     checkInd(g1,g2,iso);
     return true;
   }
@@ -286,7 +314,7 @@ int checkInd(const G1 &g1, const G2 &g2) {
 template<class G1,class G2>
 int checkIso(const G1 &g1, const G2 &g2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).iso().mapping(iso).run()) {
+  if(vf2pp(g1,g2).iso().mapping(iso).run()) {
     check(countNodes(g1)==countNodes(g2),
           "Wrong iso alg.: they are not isomophic.");
     checkInd(g1,g2,iso);
@@ -306,7 +334,7 @@ void checkLabel(const G1 &g1, const G2 &,
 template<class G1,class G2,class L1,class L2>
 int checkSub(const G1 &g1, const G2 &g2, const L1 &l1, const L2 &l2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).nodeLabels(l1,l2).mapping(iso).run()){
+  if(vf2pp(g1,g2).nodeLabels(l1,l2).mapping(iso).run()) {
     checkSub(g1,g2,iso);
     checkLabel(g1,g2,l1,l2,iso);
     return true;
@@ -317,7 +345,7 @@ int checkSub(const G1 &g1, const G2 &g2, const L1 &l1, const L2 &l2) {
 
 int main() {
   make_graphs();
-  //   justCompile();
+//   justCompile();
   check(checkSub(c5,petersen), "There should exist a C5->Petersen mapping.");
   check(!checkSub(c7,petersen),
         "There should not exist a C7->Petersen mapping.");
@@ -352,9 +380,9 @@ int main() {
   check(checkIso(c10,c10),
         "C10 and C10 are isomorphic.");
 
-  check(!vf2(p10,c10).iso().run(),
+  check(!vf2pp(p10,c10).iso().run(),
         "P10 and C10 are not isomorphic.");
-  check(vf2(c10,c10).iso().run(),
+  check(vf2pp(c10,c10).iso().run(),
         "C10 and C10 are isomorphic.");
 
   check(!checkSub(c5,petersen,c5_col,petersen_col1),
