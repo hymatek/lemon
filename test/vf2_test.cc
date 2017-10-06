@@ -16,6 +16,7 @@
  */
 
 #include <lemon/vf2.h>
+#include <lemon/vf2pp.h>
 #include <lemon/concepts/digraph.h>
 #include <lemon/smart_graph.h>
 #include <lemon/lgf_reader.h>
@@ -152,31 +153,31 @@ SmartGraph::NodeMap<int> c5_col(c5);
 void make_graphs() {
   std::stringstream ss(petersen_lgf);
   graphReader(petersen, ss)
-    .nodeMap("col1",petersen_col1)
-    .nodeMap("col2",petersen_col2)
+    .nodeMap("col1", petersen_col1)
+    .nodeMap("col2", petersen_col2)
     .run();
 
   ss.clear();
   ss.str("");
-  ss<<c5_lgf;
+  ss << c5_lgf;
   //std::stringstream ss2(c5_lgf);
   graphReader(c5, ss)
-    .nodeMap("col",c5_col)
+    .nodeMap("col", c5_col)
     .run();
 
   ss.clear();
   ss.str("");
-  ss<<c7_lgf;
+  ss << c7_lgf;
   graphReader(c7, ss).run();
 
   ss.clear();
   ss.str("");
-  ss<<c10_lgf;
+  ss << c10_lgf;
   graphReader(c10, ss).run();
 
   ss.clear();
   ss.str("");
-  ss<<p10_lgf;
+  ss << p10_lgf;
   graphReader(p10, ss).run();
 
 }
@@ -193,6 +194,20 @@ class EqClass {
 public:
   bool operator()(A, B){
     return false;
+  }
+};
+
+class IntConvertible1 {
+public:
+  operator int() {
+    return 0;
+  }
+};
+
+class IntConvertible2 {
+public:
+  operator int() {
+    return 0;
   }
 };
 
@@ -224,141 +239,221 @@ void checkVf2Compile() {
     .mapping(r).run();
 }
 
-void justCompile() {
+void vf2Compile() {
   checkVf2Compile<concepts::Graph,concepts::Graph>();
   checkVf2Compile<concepts::Graph,SmartGraph>();
   checkVf2Compile<SmartGraph,concepts::Graph>();
 }
 
-template<class G1, class G2, class I>
-void checkSub(const G1 &g1, const G2 &g2, const I &i) {
-  {
-    std::set<typename G2::Node> image;
-    for(typename G1::NodeIt n(g1);n!=INVALID;++n){
-      check(i[n]!=INVALID, "Wrong isomorphism: incomplete mapping.");
-      check(image.count(i[n])==0,"Wrong isomorphism: not injective.");
-      image.insert(i[n]);
-    }
-  }
-  for(typename G1::EdgeIt e(g1);e!=INVALID;++e)
-    check(findEdge(g2,i[g1.u(e)],i[g1.v(e)])!=INVALID,
-          "Wrong isomorphism: missing edge(checkSub).");
+template<class G1,class G2>
+void checkVf2ppCompile() {
+  G1 g;
+  G2 h;
+  concepts::ReadWriteMap<typename G1::Node, typename G2::Node> r;
+  bool succ;
+  ::lemon::ignore_unused_variable_warning(succ);
+
+  succ = vf2pp(g,h).run();
+  succ = vf2pp(g,h).induced().run();
+  succ = vf2pp(g,h).iso().run();
+  succ = vf2pp(g,h).mapping(r).run();
+  succ = vf2pp(g,h).induced().mapping(r).run();
+  succ = vf2pp(g,h).iso().mapping(r).run();
+
+  concepts::ReadMap<typename G1::Node, int> c1;
+  concepts::ReadMap<typename G2::Node, int> c2;
+  Vf2pp<G1,G2,concepts::ReadWriteMap<typename G1::Node, typename G2::Node>,
+        concepts::ReadMap<typename G1::Node, int>,
+        concepts::ReadMap<typename G2::Node, int> >
+    myVf2pp(g,h,r,c1,c2);
+  myVf2pp.find();
+
+  succ = vf2pp(g,h).nodeLabels(c1,c2).mapping(r).run();
+  succ = vf2pp(g,h).nodeLabels(c1,c2).mapping(r).run();
+
+  concepts::ReadMap<typename G1::Node, char> c1_c;
+  concepts::ReadMap<typename G2::Node, char> c2_c;
+  Vf2pp<G1,G2,concepts::ReadWriteMap<typename G1::Node, typename G2::Node>,
+        concepts::ReadMap<typename G1::Node, char>,
+        concepts::ReadMap<typename G2::Node, char> >
+    myVf2pp_c(g,h,r,c1_c,c2_c);
+  myVf2pp_c.find();
+
+  succ = vf2pp(g,h).nodeLabels(c1_c,c2_c).mapping(r).run();
+  succ = vf2pp(g,h).nodeLabels(c1_c,c2_c).mapping(r).run();
+
+  concepts::ReadMap<typename G1::Node, IntConvertible1> c1_IntConv;
+  concepts::ReadMap<typename G2::Node, IntConvertible2> c2_IntConv;
+  Vf2pp<G1,G2,concepts::ReadWriteMap<typename G1::Node, typename G2::Node>,
+        concepts::ReadMap<typename G1::Node, IntConvertible1>,
+        concepts::ReadMap<typename G2::Node, IntConvertible2> >
+    myVf2pp_IntConv(g,h,r,c1_IntConv,c2_IntConv);
+  myVf2pp_IntConv.find();
+
+  succ = vf2pp(g,h).nodeLabels(c1_IntConv,c2_IntConv).mapping(r).run();
+  succ = vf2pp(g,h).nodeLabels(c1_IntConv,c2_IntConv).mapping(r).run();
+}
+
+void vf2ppCompile() {
+  checkVf2ppCompile<concepts::Graph,concepts::Graph>();
+  checkVf2ppCompile<concepts::Graph,SmartGraph>();
+  checkVf2ppCompile<SmartGraph,concepts::Graph>();
 }
 
 template<class G1, class G2, class I>
-void checkInd(const G1 &g1, const G2 &g2, const I &i) {
+void checkSubIso(const G1 &g1, const G2 &g2, const I &i) {
   std::set<typename G2::Node> image;
-  for(typename G1::NodeIt n(g1);n!=INVALID;++n) {
+  for (typename G1::NodeIt n(g1);n!=INVALID;++n){
     check(i[n]!=INVALID, "Wrong isomorphism: incomplete mapping.");
     check(image.count(i[n])==0,"Wrong isomorphism: not injective.");
     image.insert(i[n]);
   }
-  for(typename G1::NodeIt n(g1); n!=INVALID; ++n)
-    for(typename G1::NodeIt m(g1); m!=INVALID; ++m)
+  for (typename G1::EdgeIt e(g1);e!=INVALID;++e) {
+    check(findEdge(g2,i[g1.u(e)],i[g1.v(e)])!=INVALID,
+          "Wrong isomorphism: missing edge(checkSub).");
+  }
+}
+
+template<class G1, class G2, class I>
+void checkIndIso(const G1 &g1, const G2 &g2, const I &i) {
+  std::set<typename G2::Node> image;
+  for (typename G1::NodeIt n(g1);n!=INVALID;++n) {
+    check(i[n]!=INVALID, "Wrong isomorphism: incomplete mapping.");
+    check(image.count(i[n])==0,"Wrong isomorphism: not injective.");
+    image.insert(i[n]);
+  }
+  for (typename G1::NodeIt n(g1); n!=INVALID; ++n) {
+    for (typename G1::NodeIt m(g1); m!=INVALID; ++m) {
       if((findEdge(g1,n,m)==INVALID) != (findEdge(g2,i[n],i[m])==INVALID)) {
         std::cout << "Wrong isomorphism: edge mismatch";
         exit(1);
       }
+    }
+  }
 }
 
-template<class G1,class G2>
-int checkSub(const G1 &g1, const G2 &g2) {
+template<class G1,class G2,class T>
+bool checkSub(const G1 &g1, const G2 &g2, const T &vf2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).mapping(iso).run()) {
-    checkSub(g1,g2,iso);
+  if (const_cast<T&>(vf2).mapping(iso).run()) {
+    checkSubIso(g1,g2,iso);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
-template<class G1,class G2>
-int checkInd(const G1 &g1, const G2 &g2) {
+template<class G1,class G2,class T>
+bool checkInd(const G1 &g1, const G2 &g2, const T &vf2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).induced().mapping(iso).run()) {
-    checkInd(g1,g2,iso);
+  if (const_cast<T&>(vf2).induced().mapping(iso).run()) {
+    checkIndIso(g1,g2,iso);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
-template<class G1,class G2>
-int checkIso(const G1 &g1, const G2 &g2) {
+template<class G1,class G2,class T>
+bool checkIso(const G1 &g1, const G2 &g2, const T &vf2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).iso().mapping(iso).run()) {
+  if (const_cast<T&>(vf2).iso().mapping(iso).run()) {
     check(countNodes(g1)==countNodes(g2),
           "Wrong iso alg.: they are not isomophic.");
-    checkInd(g1,g2,iso);
+    checkIndIso(g1,g2,iso);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
 template<class G1, class G2, class L1, class L2, class I>
 void checkLabel(const G1 &g1, const G2 &,
-                const L1 &l1, const L2 &l2,const I &i) {
-  for(typename G1::NodeIt n(g1);n!=INVALID;++n)
+                const L1 &l1, const L2 &l2, const I &i) {
+  for (typename G1::NodeIt n(g1);n!=INVALID;++n) {
     check(l1[n]==l2[i[n]],"Wrong isomorphism: label mismatch.");
+  }
 }
 
-template<class G1,class G2,class L1,class L2>
-int checkSub(const G1 &g1, const G2 &g2, const L1 &l1, const L2 &l2) {
+template<class G1,class G2,class L1,class L2,class T>
+bool checkSub(const G1 &g1, const G2 &g2, const L1 &l1, const L2 &l2, const T &vf2) {
   typename G1:: template NodeMap<typename G2::Node> iso(g1,INVALID);
-  if(vf2(g1,g2).nodeLabels(l1,l2).mapping(iso).run()){
-    checkSub(g1,g2,iso);
+  if (const_cast<T&>(vf2).nodeLabels(l1,l2).mapping(iso).run()){
+    checkSubIso(g1,g2,iso);
     checkLabel(g1,g2,l1,l2,iso);
     return true;
   }
-  else
-    return false;
+  return false;
+}
+
+template<class G1,class G2>
+void checkSub(const G1 &g1, const G2 &g2, bool expected, const char* msg) {
+  check(checkSub(g1,g2,vf2(g1,g2)) == expected, msg);
+  check(checkSub(g1,g2,vf2pp(g1,g2)) == expected, msg);
+}
+
+template<class G1,class G2>
+void checkInd(const G1 &g1, const G2 &g2, bool expected, const char* msg) {
+  check(checkInd(g1,g2,vf2(g1,g2)) == expected, msg);
+  check(checkInd(g1,g2,vf2pp(g1,g2)) == expected, msg);
+}
+
+template<class G1,class G2>
+void checkIso(const G1 &g1, const G2 &g2, bool expected, const char* msg) {
+  check(checkIso(g1,g2,vf2(g1,g2)) == expected, msg);
+  check(checkIso(g1,g2,vf2pp(g1,g2)) == expected, msg);
+}
+
+template<class G1,class G2,class L1,class L2>
+void checkSub(const G1 &g1, const G2 &g2, const L1 &l1, const L2 &l2, bool expected, const char* msg) {
+  check(checkSub(g1,g2,l1,l2,vf2(g1,g2)) == expected, msg);
+  check(checkSub(g1,g2,l1,l2,vf2pp(g1,g2)) == expected, msg);
 }
 
 int main() {
   make_graphs();
-  //   justCompile();
-  check(checkSub(c5,petersen), "There should exist a C5->Petersen mapping.");
-  check(!checkSub(c7,petersen),
-        "There should not exist a C7->Petersen mapping.");
-  check(checkSub(p10,petersen), "There should exist a P10->Petersen mapping.");
-  check(!checkSub(c10,petersen),
-        "There should not exist a C10->Petersen mapping.");
-  check(checkSub(petersen,petersen),
-        "There should exist a Petersen->Petersen mapping.");
 
-  check(checkInd(c5,petersen),
-        "There should exist a C5->Petersen spanned mapping.");
-  check(!checkInd(c7,petersen),
-        "There should exist a C7->Petersen spanned mapping.");
-  check(!checkInd(p10,petersen),
-        "There should not exist a P10->Petersen spanned mapping.");
-  check(!checkInd(c10,petersen),
-        "There should not exist a C10->Petersen spanned mapping.");
-  check(checkInd(petersen,petersen),
+  checkSub(c5,petersen,true,
+      "There should exist a C5->Petersen mapping.");
+  checkSub(c7,petersen,false,
+      "There should not exist a C7->Petersen mapping.");
+  checkSub(p10,petersen,true,
+      "There should exist a P10->Petersen mapping.");
+  checkSub(c10,petersen,false,
+      "There should not exist a C10->Petersen mapping.");
+  checkSub(petersen,petersen,true,
+      "There should exist a Petersen->Petersen mapping.");
+
+  checkInd(c5,petersen,true,
+      "There should exist a C5->Petersen spanned mapping.");
+  checkInd(c7,petersen,false,
+      "There should exist a C7->Petersen spanned mapping.");
+  checkInd(p10,petersen,false,
+      "There should not exist a P10->Petersen spanned mapping.");
+  checkInd(c10,petersen,false,
+      "There should not exist a C10->Petersen spanned mapping.");
+  checkInd(petersen,petersen,true,
         "There should exist a Petersen->Petersen spanned mapping.");
 
-  check(!checkSub(petersen,c10),
-        "There should not exist a Petersen->C10 mapping.");
-  check(checkSub(p10,c10),
-        "There should exist a P10->C10 mapping.");
-  check(!checkInd(p10,c10),
-        "There should not exist a P10->C10 spanned mapping.");
-  check(!checkSub(c10,p10),
-        "There should not exist a C10->P10 mapping.");
+  checkSub(petersen,c10,false,
+      "There should not exist a Petersen->C10 mapping.");
+  checkSub(p10,c10,true,
+      "There should exist a P10->C10 mapping.");
+  checkInd(p10,c10,false,
+      "There should not exist a P10->C10 spanned mapping.");
+  checkSub(c10,p10,false,
+      "There should not exist a C10->P10 mapping.");
 
-  check(!checkIso(p10,c10),
-        "P10 and C10 are not isomorphic.");
-  check(checkIso(c10,c10),
-        "C10 and C10 are isomorphic.");
+  checkIso(p10,c10,false,
+      "P10 and C10 are not isomorphic.");
+  checkIso(c10,c10,true,
+      "C10 and C10 are isomorphic.");
 
-  check(!vf2(p10,c10).iso().run(),
-        "P10 and C10 are not isomorphic.");
-  check(vf2(c10,c10).iso().run(),
-        "C10 and C10 are isomorphic.");
+  checkSub(c5,petersen,c5_col,petersen_col1,false,
+      "There should exist a C5->Petersen mapping.");
+  checkSub(c5,petersen,c5_col,petersen_col2,true,
+      "There should exist a C5->Petersen mapping.");
 
-  check(!checkSub(c5,petersen,c5_col,petersen_col1),
-        "There should exist a C5->Petersen mapping.");
-  check(checkSub(c5,petersen,c5_col,petersen_col2),
-        "There should exist a C5->Petersen mapping.");
+  check(!vf2(p10,c10).iso().run(), "P10 and C10 are not isomorphic.");
+  check(!vf2pp(p10,c10).iso().run(), "P10 and C10 are not isomorphic.");
+
+  check(vf2(c10,c10).iso().run(), "C10 and C10 are isomorphic.");
+  check(vf2pp(c10,c10).iso().run(), "C10 and C10 are isomorphic.");
 }
