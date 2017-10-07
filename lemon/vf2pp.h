@@ -24,8 +24,6 @@
 
 #include <lemon/core.h>
 #include <lemon/concepts/graph.h>
-#include <lemon/dfs.h>
-#include <lemon/bfs.h>
 #include <lemon/bits/vf2_internals.h>
 
 #include <vector>
@@ -33,37 +31,6 @@
 #include <utility>
 
 namespace lemon {
-  namespace bits {
-    namespace vf2pp {
-
-      template <class G>
-      class DfsLeaveOrder : public DfsVisitor<G> {
-        int i;
-        const G &_g;
-        std::vector<typename G::Node> &_order;
-      public:
-        DfsLeaveOrder(const G &g, std::vector<typename G::Node> &order)
-          : i(countNodes(g)), _g(g), _order(order) {
-        }
-        void leave(const typename G::Node &node) {
-          _order[--i]=node;
-        }
-      };
-
-      template <class G>
-      class BfsLeaveOrder : public BfsVisitor<G> {
-        int i;
-        const G &_g;
-        std::vector<typename G::Node> &_order;
-      public:
-        BfsLeaveOrder(const G &g, std::vector<typename G::Node> &order) { }
-        void process(const typename G::Node &node) {
-          _order[i++]=node;
-        }
-      };
-    }
-  }
-
 
   ///%VF2 Plus Plus algorithm class.
 
