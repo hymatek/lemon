@@ -112,35 +112,35 @@ namespace lemon {
            class NEQ = bits::vf2::AlwaysEq >
 #endif
   class Vf2 {
-    //Current depth in the DFS tree.
-    int _depth;
-
-    //Functor with bool operator()(G1::Node,G2::Node), which returns 1
-    //if and only if the two nodes are equivalent
-    NEQ _nEq;
-
-    //_conn[v2] = number of covered neighbours of v2
-    typename G2::template NodeMap<int> _conn;
-
-    //The current mapping. _mapping[v1]=v2 iff v1 has been mapped to v2,
-    //where v1 is a node of G1 and v2 is a node of G2
-    M &_mapping;
-
-    //order[i] is the node of g1 for which a pair is searched if depth=i
-    std::vector<typename G1::Node> order;
-
-    //currEdgeIts[i] is the last used edge iterator in the i-th
-    //depth to find a pair for node order[i]
-    std::vector<typename G2::IncEdgeIt> currEdgeIts;
- 
     //The graph to be embedded
     const G1 &_g1;
 
     //The graph into which g1 is to be embedded
     const G2 &_g2;
 
+    //Functor with bool operator()(G1::Node,G2::Node), which returns 1
+    //if and only if the two nodes are equivalent
+    NEQ _nEq;
+
+    //Current depth in the DFS tree.
+    int _depth;
+
+    //The current mapping. _mapping[v1]=v2 iff v1 has been mapped to v2,
+    //where v1 is a node of G1 and v2 is a node of G2
+    M &_mapping;
+
+    //_order[i] is the node of g1 for which a pair is searched if depth=i
+    std::vector<typename G1::Node> _order;
+ 
+    //_conn[v2] = number of covered neighbours of v2
+    typename G2::template NodeMap<int> _conn;
+
+    //_currEdgeIts[i] is the last used edge iterator in the i-th
+    //depth to find a pair for node _order[i]
+    std::vector<typename G2::IncEdgeIt> _currEdgeIts;
+
     //lookup tables for cutting the searchtree
-    typename G1::template NodeMap<int> rNew1t,rInOut1t;
+    typename G1::template NodeMap<int> _rNew1t, _rInOut1t;
 
     MappingType _mapping_type;
 
@@ -159,11 +159,11 @@ namespace lemon {
       }
       switch(MT) {
       case INDUCED:
-        return rInOut1t[n1]<=rInOut2&&rNew1t[n1]<=rNew2;
+        return _rInOut1t[n1]<=rInOut2&&_rNew1t[n1]<=rNew2;
       case SUBGRAPH:
-        return rInOut1t[n1]<=rInOut2;
+        return _rInOut1t[n1]<=rInOut2;
       case ISOMORPH:
-        return rInOut1t[n1]==rInOut2&&rNew1t[n1]==rNew2;
+        return _rInOut1t[n1]==rInOut2&&_rNew1t[n1]==rNew2;
       default:
         return false;
       }
@@ -235,12 +235,12 @@ namespace lemon {
     void setOrder() {
       // we will find pairs for the nodes of g1 in this order
 
-      // bits::vf2::DfsLeaveOrder<G1> v(_g1,order);
+      // bits::vf2::DfsLeaveOrder<G1> v(_g1,_order);
       //   DfsVisit<G1,bits::vf2::DfsLeaveOrder<G1> >dfs(_g1, v);
       //   dfs.run();
 
       //it is more efficient in practice than DFS
-      bits::vf2::BfsLeaveOrder<G1> v(_g1,order);
+      bits::vf2::BfsLeaveOrder<G1> v(_g1,_order);
       BfsVisit<G1,bits::vf2::BfsLeaveOrder<G1> >bfs(_g1, v);
       bfs.run();
     }
@@ -248,14 +248,14 @@ namespace lemon {
     template<MappingType MT>
     bool extMatch() {
       while(_depth>=0) {
-        if(_depth==static_cast<int>(order.size())) {
+        if(_depth==static_cast<int>(_order.size())) {
           //all nodes of g1 are mapped to nodes of g2
           --_depth;
           return true;
         }
-        typename G1::Node& nodeOfDepth = order[_depth];
+        typename G1::Node& nodeOfDepth = _order[_depth];
         const typename G2::Node& pairOfNodeOfDepth = _mapping[nodeOfDepth];
-        typename G2::IncEdgeIt &edgeItOfDepth = currEdgeIts[_depth];
+        typename G2::IncEdgeIt &edgeItOfDepth = _currEdgeIts[_depth];
         //the node of g2 whose neighbours are the candidates for
         //the pair of nodeOfDepth
         typename G2::Node currPNode;
@@ -326,15 +326,15 @@ namespace lemon {
     //calculate the lookup table for cutting the search tree
     void setRNew1tRInOut1t() {
       typename G1::template NodeMap<int> tmp(_g1,0);
-      for(unsigned int i=0; i<order.size(); ++i) {
-        const typename G1::Node& orderI = order[i];
+      for(unsigned int i=0; i<_order.size(); ++i) {
+        const typename G1::Node& orderI = _order[i];
         tmp[orderI]=-1;
         for(typename G1::IncEdgeIt e1(_g1,orderI); e1!=INVALID; ++e1) {
           const typename G1::Node currNode=_g1.oppositeNode(orderI,e1);
           if(tmp[currNode]>0)
-            ++rInOut1t[orderI];
+            ++_rInOut1t[orderI];
           else if(tmp[currNode]==0)
-            ++rNew1t[orderI];
+            ++_rNew1t[orderI];
         }
         for(typename G1::IncEdgeIt e1(_g1,orderI); e1!=INVALID; ++e1) {
           const typename G1::Node currNode=_g1.oppositeNode(orderI,e1);
@@ -355,11 +355,11 @@ namespace lemon {
     ///\param neq A bool-valued binary functor determining whether a node is
     ///mappable to another. By default it is an always true operator.
     Vf2(const G1 &g1, const G2 &g2, M &m, const NEQ &neq = NEQ() ) :
-      _nEq(neq), _conn(g2,0), _mapping(m), order(countNodes(g1)),
-      currEdgeIts(countNodes(g1),INVALID), _g1(g1), _g2(g2), rNew1t(g1,0),
-      rInOut1t(g1,0), _mapping_type(SUBGRAPH), _deallocMappingAfterUse(0)
+      _g1(g1), _g2(g2), _nEq(neq), _depth(0), _mapping(m),
+      _order(countNodes(g1)), _conn(g2,0),
+      _currEdgeIts(countNodes(g1),INVALID), _rNew1t(g1,0), _rInOut1t(g1,0),
+      _mapping_type(SUBGRAPH), _deallocMappingAfterUse(0)
     {
-      _depth=0;
       setOrder();
       setRNew1tRInOut1t();
       for(typename G1::NodeIt n(g1);n!=INVALID;++n)

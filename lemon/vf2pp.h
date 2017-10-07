@@ -28,11 +28,9 @@
 #include <lemon/bfs.h>
 #include <lemon/bits/vf2_internals.h>
 
-
 #include <vector>
 #include <algorithm>
 #include <utility>
-
 
 namespace lemon {
   namespace bits {
@@ -101,38 +99,38 @@ namespace lemon {
            class M2 = typename G2::template NodeMap<int> >
 #endif
   class Vf2pp {
-    //Current depth in the search tree.
-    int _depth;
-
-    //_conn[v2] = number of covered neighbours of v2
-    typename G2::template NodeMap<int> _conn;
-
-    //The current mapping. _mapping[v1]=v2 iff v1 has been mapped to v2,
-    //where v1 is a node of G1 and v2 is a node of G2
-    M &_mapping;
-
-    //order[i] is a node of g1 for which a pair is searched if depth=i
-    std::vector<typename G1::Node> order;
-
-    //currEdgeIts[i] is the last used edge iterator in the i-th
-    //depth to find a pair for node order[i]
-    std::vector<typename G2::IncEdgeIt> currEdgeIts;
- 
     //The graph to be embedded
     const G1 &_g1;
 
     //The graph into which g1 is to be embedded
     const G2 &_g2;
 
-    //rNewLabels1[v] is a pair of form
+    //Current depth in the search tree.
+    int _depth;
+
+    //The current mapping. _mapping[v1]=v2 iff v1 has been mapped to v2,
+    //where v1 is a node of G1 and v2 is a node of G2
+    M &_mapping;
+
+    //_order[i] is a node of g1 for which a pair is searched if depth=i
+    std::vector<typename G1::Node> _order;
+
+    //_conn[v2] = number of covered neighbours of v2
+    typename G2::template NodeMap<int> _conn;
+
+    //_currEdgeIts[i] is the last used edge iterator in the i-th
+    //depth to find a pair for node _order[i]
+    std::vector<typename G2::IncEdgeIt> _currEdgeIts;
+ 
+    //_rNewLabels1[v] is a pair of form
     //(label; num. of uncov. nodes with such label and no covered neighbours)
     typename G1::template NodeMap<std::vector<std::pair<int,int> > >
-    rNewLabels1;
+    _rNewLabels1;
 
-    //rInOutLabels1[v] is the number of covered neighbours of v for each label
+    //_rInOutLabels1[v] is the number of covered neighbours of v for each label
     //in form (label,number of such labels)
     typename G1::template NodeMap<std::vector<std::pair<int,int> > >
-    rInOutLabels1;
+    _rInOutLabels1;
 
     //_intLabels1[v]==i means that node v has label i in _g1
     //(i is in {0,1,2,..,K-1}, where K is the number of diff. labels)
@@ -143,11 +141,11 @@ namespace lemon {
     M2 &_intLabels2;
 
     //largest label
-    const int maxLabel;
+    const int _maxLabel;
 
     //lookup tables for manipulating with label class cardinalities
     //(after use they have to be reset to 0..0)
-    std::vector<int> labelTmp1,labelTmp2;
+    std::vector<int> _labelTmp1,_labelTmp2;
 
     MappingType _mapping_type;
 
@@ -161,50 +159,50 @@ namespace lemon {
       for(typename G2::IncEdgeIt e2(_g2,n2); e2!=INVALID; ++e2) {
         const typename G2::Node currNode=_g2.oppositeNode(n2,e2);
         if(_conn[currNode]>0)
-          --labelTmp1[_intLabels2[currNode]];
+          --_labelTmp1[_intLabels2[currNode]];
         else if(MT!=SUBGRAPH&&_conn[currNode]==0)
-          --labelTmp2[_intLabels2[currNode]];
+          --_labelTmp2[_intLabels2[currNode]];
       }
 
       bool ret=1;
       if(ret) {
-        for(unsigned int i = 0; i < rInOutLabels1[n1].size(); ++i)
-          labelTmp1[rInOutLabels1[n1][i].first]+=rInOutLabels1[n1][i].second;
+        for(unsigned int i = 0; i < _rInOutLabels1[n1].size(); ++i)
+          _labelTmp1[_rInOutLabels1[n1][i].first]+=_rInOutLabels1[n1][i].second;
 
         if(MT!=SUBGRAPH)
-          for(unsigned int i = 0; i < rNewLabels1[n1].size(); ++i)
-            labelTmp2[rNewLabels1[n1][i].first]+=rNewLabels1[n1][i].second;
+          for(unsigned int i = 0; i < _rNewLabels1[n1].size(); ++i)
+            _labelTmp2[_rNewLabels1[n1][i].first]+=_rNewLabels1[n1][i].second;
 
         switch(MT) {
         case INDUCED:
-          for(unsigned int i = 0; i < rInOutLabels1[n1].size(); ++i)
-            if(labelTmp1[rInOutLabels1[n1][i].first]>0) {
+          for(unsigned int i = 0; i < _rInOutLabels1[n1].size(); ++i)
+            if(_labelTmp1[_rInOutLabels1[n1][i].first]>0) {
               ret=0;
               break;
             }
           if(ret)
-            for(unsigned int i = 0; i < rNewLabels1[n1].size(); ++i)
-              if(labelTmp2[rNewLabels1[n1][i].first]>0) {
+            for(unsigned int i = 0; i < _rNewLabels1[n1].size(); ++i)
+              if(_labelTmp2[_rNewLabels1[n1][i].first]>0) {
                 ret=0;
                 break;
               }
           break;
         case SUBGRAPH:
-          for(unsigned int i = 0; i < rInOutLabels1[n1].size(); ++i)
-            if(labelTmp1[rInOutLabels1[n1][i].first]>0) {
+          for(unsigned int i = 0; i < _rInOutLabels1[n1].size(); ++i)
+            if(_labelTmp1[_rInOutLabels1[n1][i].first]>0) {
               ret=0;
               break;
             }
           break;
         case ISOMORPH:
-          for(unsigned int i = 0; i < rInOutLabels1[n1].size(); ++i)
-            if(labelTmp1[rInOutLabels1[n1][i].first]!=0) {
+          for(unsigned int i = 0; i < _rInOutLabels1[n1].size(); ++i)
+            if(_labelTmp1[_rInOutLabels1[n1][i].first]!=0) {
               ret=0;
               break;
             }
           if(ret)
-            for(unsigned int i = 0; i < rNewLabels1[n1].size(); ++i)
-              if(labelTmp2[rNewLabels1[n1][i].first]!=0) {
+            for(unsigned int i = 0; i < _rNewLabels1[n1].size(); ++i)
+              if(_labelTmp2[_rNewLabels1[n1][i].first]!=0) {
                 ret=0;
                 break;
               }
@@ -212,19 +210,19 @@ namespace lemon {
         default:
           return false;
         }
-        for(unsigned int i = 0; i < rInOutLabels1[n1].size(); ++i)
-          labelTmp1[rInOutLabels1[n1][i].first]=0;
+        for(unsigned int i = 0; i < _rInOutLabels1[n1].size(); ++i)
+          _labelTmp1[_rInOutLabels1[n1][i].first]=0;
 
         if(MT!=SUBGRAPH)
-          for(unsigned int i = 0; i < rNewLabels1[n1].size(); ++i)
-            labelTmp2[rNewLabels1[n1][i].first]=0;
+          for(unsigned int i = 0; i < _rNewLabels1[n1].size(); ++i)
+            _labelTmp2[_rNewLabels1[n1][i].first]=0;
       }
 
       for(typename G2::IncEdgeIt e2(_g2,n2); e2!=INVALID; ++e2) {
         const typename G2::Node currNode=_g2.oppositeNode(n2,e2);
-        labelTmp1[_intLabels2[currNode]]=0;
+        _labelTmp1[_intLabels2[currNode]]=0;
         if(MT!=SUBGRAPH&&_conn[currNode]==0)
-          labelTmp2[_intLabels2[currNode]]=0;
+          _labelTmp2[_intLabels2[currNode]]=0;
       }
 
       return ret;
@@ -310,7 +308,7 @@ namespace lemon {
     void processBFSLevel(typename G1::Node source,unsigned int& orderIndex,
                          typename G1::template NodeMap<int>& dm1,
                          typename G1::template NodeMap<bool>& added) {
-      order[orderIndex]=source;
+      _order[orderIndex]=source;
       added[source]=1;
 
       unsigned int endPosOfLevel=orderIndex,
@@ -320,11 +318,11 @@ namespace lemon {
       typename G1::template NodeMap<int> currConn(_g1,0);
 
       while(orderIndex<=lastAdded){
-        typename G1::Node currNode = order[orderIndex];
+        typename G1::Node currNode = _order[orderIndex];
         for(typename G1::IncEdgeIt e(_g1,currNode); e!=INVALID; ++e) {
           typename G1::Node n = _g1.oppositeNode(currNode,e);
           if(!added[n]) {
-            order[++lastAdded]=n;
+            _order[++lastAdded]=n;
             added[n]=1;
           }
         }
@@ -332,18 +330,18 @@ namespace lemon {
           for(unsigned int j = startPosOfLevel; j <= endPosOfLevel; ++j) {
             int minInd=j;
             for(unsigned int i = j+1; i <= endPosOfLevel; ++i)
-              if(currConn[order[i]]>currConn[order[minInd]]||
-                 (currConn[order[i]]==currConn[order[minInd]]&&
-                  (dm1[order[i]]>dm1[order[minInd]]||
-                   (dm1[order[i]]==dm1[order[minInd]]&&
-                    labelTmp1[_intLabels1[order[minInd]]]>
-                    labelTmp1[_intLabels1[order[i]]]))))
+              if(currConn[_order[i]]>currConn[_order[minInd]]||
+                 (currConn[_order[i]]==currConn[_order[minInd]]&&
+                  (dm1[_order[i]]>dm1[_order[minInd]]||
+                   (dm1[_order[i]]==dm1[_order[minInd]]&&
+                    _labelTmp1[_intLabels1[_order[minInd]]]>
+                    _labelTmp1[_intLabels1[_order[i]]]))))
                 minInd=i;
 
-            --labelTmp1[_intLabels1[order[minInd]]];
-            for(typename G1::IncEdgeIt e(_g1,order[minInd]); e!=INVALID; ++e)
-              ++currConn[_g1.oppositeNode(order[minInd],e)];
-            std::swap(order[j],order[minInd]);
+            --_labelTmp1[_intLabels1[_order[minInd]]];
+            for(typename G1::IncEdgeIt e(_g1,_order[minInd]); e!=INVALID; ++e)
+              ++currConn[_g1.oppositeNode(_order[minInd],e)];
+            std::swap(_order[j],_order[minInd]);
           }
           startPosOfLevel=endPosOfLevel+1;
           endPosOfLevel=lastAdded;
@@ -356,7 +354,7 @@ namespace lemon {
     //we will find pairs for the nodes of g1 in this order
     void setOrder(){
       for(typename G2::NodeIt n2(_g2); n2!=INVALID; ++n2)
-        ++labelTmp1[_intLabels2[n2]];
+        ++_labelTmp1[_intLabels2[n2]];
 
       typename G1::template NodeMap<int> dm1(_g1,0);
       for(typename G1::EdgeIt e(_g1); e!=INVALID; ++e) {
@@ -372,38 +370,38 @@ namespace lemon {
           typename G1::Node minNode = n;
           for(typename G1::NodeIt n1(_g1,minNode); n1!=INVALID; ++n1)
             if(!added[n1] &&
-               (labelTmp1[_intLabels1[minNode]]>
-                labelTmp1[_intLabels1[n1]]||(dm1[minNode]<dm1[n1]&&
-                                             labelTmp1[_intLabels1[minNode]]==
-                                             labelTmp1[_intLabels1[n1]])))
+               (_labelTmp1[_intLabels1[minNode]]>
+                _labelTmp1[_intLabels1[n1]]||(dm1[minNode]<dm1[n1]&&
+                                             _labelTmp1[_intLabels1[minNode]]==
+                                             _labelTmp1[_intLabels1[n1]])))
               minNode=n1;
           processBFSLevel(minNode,orderIndex,dm1,added);
         }
         else
           ++n;
       }
-      for(unsigned int i = 0; i < labelTmp1.size(); ++i)
-        labelTmp1[i]=0;
+      for(unsigned int i = 0; i < _labelTmp1.size(); ++i)
+        _labelTmp1[i]=0;
     }
 
 
     template<MappingType MT>
     bool extMatch(){
       while(_depth>=0) {
-        if(_depth==static_cast<int>(order.size())) {
+        if(_depth==static_cast<int>(_order.size())) {
           //all nodes of g1 are mapped to nodes of g2
           --_depth;
           return true;
         }
-        typename G1::Node& nodeOfDepth = order[_depth];
+        typename G1::Node& nodeOfDepth = _order[_depth];
         const typename G2::Node& pairOfNodeOfDepth = _mapping[nodeOfDepth];
-        typename G2::IncEdgeIt &edgeItOfDepth = currEdgeIts[_depth];
+        typename G2::IncEdgeIt &edgeItOfDepth = _currEdgeIts[_depth];
         //the node of g2 whose neighbours are the candidates for
-        //the pair of order[_depth]
+        //the pair of _order[_depth]
         typename G2::Node currPNode;
         if(edgeItOfDepth==INVALID){
           typename G1::IncEdgeIt fstMatchedE(_g1,nodeOfDepth);
-          //if _mapping[order[_depth]]!=INVALID, we don't need fstMatchedE
+          //if _mapping[_order[_depth]]!=INVALID, we don't need fstMatchedE
           if(pairOfNodeOfDepth==INVALID) {
             for(; fstMatchedE!=INVALID &&
                   _mapping[_g1.oppositeNode(nodeOfDepth,
@@ -468,34 +466,34 @@ namespace lemon {
     //calculate the lookup table for cutting the search tree
     void setRNew1tRInOut1t(){
       typename G1::template NodeMap<int> tmp(_g1,0);
-      for(unsigned int i=0; i<order.size(); ++i) {
-        tmp[order[i]]=-1;
-        for(typename G1::IncEdgeIt e1(_g1,order[i]); e1!=INVALID; ++e1) {
-          const typename G1::Node currNode=_g1.oppositeNode(order[i],e1);
+      for(unsigned int i=0; i<_order.size(); ++i) {
+        tmp[_order[i]]=-1;
+        for(typename G1::IncEdgeIt e1(_g1,_order[i]); e1!=INVALID; ++e1) {
+          const typename G1::Node currNode=_g1.oppositeNode(_order[i],e1);
           if(tmp[currNode]>0)
-            ++labelTmp1[_intLabels1[currNode]];
+            ++_labelTmp1[_intLabels1[currNode]];
           else if(tmp[currNode]==0)
-            ++labelTmp2[_intLabels1[currNode]];
+            ++_labelTmp2[_intLabels1[currNode]];
         }
-        //labelTmp1[i]=number of neightbours with label i in set rInOut
-        //labelTmp2[i]=number of neightbours with label i in set rNew
-        for(typename G1::IncEdgeIt e1(_g1,order[i]); e1!=INVALID; ++e1) {
-          const int& currIntLabel = _intLabels1[_g1.oppositeNode(order[i],e1)];
-          if(labelTmp1[currIntLabel]>0) {
-            rInOutLabels1[order[i]]
+        //_labelTmp1[i]=number of neightbours with label i in set rInOut
+        //_labelTmp2[i]=number of neightbours with label i in set rNew
+        for(typename G1::IncEdgeIt e1(_g1,_order[i]); e1!=INVALID; ++e1) {
+          const int& currIntLabel = _intLabels1[_g1.oppositeNode(_order[i],e1)];
+          if(_labelTmp1[currIntLabel]>0) {
+            _rInOutLabels1[_order[i]]
               .push_back(std::make_pair(currIntLabel,
-                                        labelTmp1[currIntLabel]));
-            labelTmp1[currIntLabel]=0;
+                                        _labelTmp1[currIntLabel]));
+            _labelTmp1[currIntLabel]=0;
           }
-          else if(labelTmp2[currIntLabel]>0) {
-            rNewLabels1[order[i]].
-              push_back(std::make_pair(currIntLabel,labelTmp2[currIntLabel]));
-            labelTmp2[currIntLabel]=0;
+          else if(_labelTmp2[currIntLabel]>0) {
+            _rNewLabels1[_order[i]].
+              push_back(std::make_pair(currIntLabel,_labelTmp2[currIntLabel]));
+            _labelTmp2[currIntLabel]=0;
           }
         }
 
-        for(typename G1::IncEdgeIt e1(_g1,order[i]); e1!=INVALID; ++e1) {
-          int& tmpCurrNode=tmp[_g1.oppositeNode(order[i],e1)];
+        for(typename G1::IncEdgeIt e1(_g1,_order[i]); e1!=INVALID; ++e1) {
+          int& tmpCurrNode=tmp[_g1.oppositeNode(_order[i],e1)];
           if(tmpCurrNode!=-1)
             ++tmpCurrNode;
         }
@@ -532,10 +530,10 @@ namespace lemon {
     ///The labels must be the numbers {0,1,2,..,K-1}, where K is the number of
     ///different labels.
     Vf2pp(const G1 &g1, const G2 &g2,M &m, M1 &intLabels1, M2 &intLabels2) :
-      _depth(0), _conn(g2,0), _mapping(m), order(countNodes(g1),INVALID),
-      currEdgeIts(countNodes(g1),INVALID), _g1(g1), _g2(g2), rNewLabels1(_g1),
-      rInOutLabels1(_g1), _intLabels1(intLabels1) ,_intLabels2(intLabels2),
-      maxLabel(getMaxLabel()), labelTmp1(maxLabel+1),labelTmp2(maxLabel+1),
+      _g1(g1), _g2(g2), _depth(0), _mapping(m), _order(countNodes(g1),INVALID),
+      _conn(g2,0), _currEdgeIts(countNodes(g1),INVALID), _rNewLabels1(_g1),
+      _rInOutLabels1(_g1), _intLabels1(intLabels1) ,_intLabels2(intLabels2),
+      _maxLabel(getMaxLabel()), _labelTmp1(_maxLabel+1),_labelTmp2(_maxLabel+1),
       _mapping_type(SUBGRAPH), _deallocMappingAfterUse(0),
       _deallocLabelsAfterUse(0)
     {
