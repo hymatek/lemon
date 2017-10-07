@@ -53,8 +53,6 @@ namespace lemon {
         }
       };
 
-
-
       template <class G>
       class DfsLeaveOrder : public DfsVisitor<G> {
         const G &_g;
@@ -93,7 +91,7 @@ namespace lemon {
   ///
   ///There is also a \ref vf2() "function-type interface" called \ref vf2()
   ///for the %VF2 algorithm, which is probably more convenient in most
-  ///use-cases.
+  ///use cases.
   ///
   ///\tparam G1 The type of the graph to be embedded.
   ///The default type is \ref ListDigraph.
@@ -102,7 +100,7 @@ namespace lemon {
   ///\tparam M The type of the NodeMap storing the mapping.
   ///By default, it is G1::NodeMap<G2::Node>
   ///\tparam NEQ A bool-valued binary functor determinining whether a node is
-  ///mappable to another. By default it is an always true operator.
+  ///mappable to another. By default, it is an always-true operator.
   ///
   ///\sa vf2()
 #ifdef DOXYGEN
@@ -116,23 +114,31 @@ namespace lemon {
   class Vf2 {
     //Current depth in the DFS tree.
     int _depth;
+
     //Functor with bool operator()(G1::Node,G2::Node), which returns 1
-    //ifff the two nodes are equivalent.
+    //if and only if the two nodes are equivalent
     NEQ _nEq;
 
+    //_conn[v2] = number of covered neighbours of v2
     typename G2::template NodeMap<int> _conn;
-    //Current mapping. We index it by the nodes of g1, and match[v] is
-    //a node of g2.
+
+    //The current mapping. _mapping[v1]=v2 iff v1 has been mapped to v2,
+    //where v1 is a node of G1 and v2 is a node of G2
     M &_mapping;
-    //order[i] is the node of g1, for which we search a pair if depth=i
+
+    //order[i] is the node of g1 for which a pair is searched if depth=i
     std::vector<typename G1::Node> order;
-    //currEdgeIts[i] is an edge iterator, witch is last used in the ith
-    //depth to find a pair for order[i].
+
+    //currEdgeIts[i] is the last used edge iterator in the i-th
+    //depth to find a pair for node order[i]
     std::vector<typename G2::IncEdgeIt> currEdgeIts;
-    //The small graph.
+ 
+    //The graph to be embedded
     const G1 &_g1;
-    //The large graph.
+
+    //The graph into which g1 is to be embedded
     const G2 &_g2;
+
     //lookup tables for cutting the searchtree
     typename G1::template NodeMap<int> rNew1t,rInOut1t;
 
@@ -242,34 +248,34 @@ namespace lemon {
     template<MappingType MT>
     bool extMatch() {
       while(_depth>=0) {
-        //there are not nodes in g1, which has not pair in g2.
         if(_depth==static_cast<int>(order.size())) {
+          //all nodes of g1 are mapped to nodes of g2
           --_depth;
           return true;
         }
         typename G1::Node& nodeOfDepth = order[_depth];
         const typename G2::Node& pairOfNodeOfDepth = _mapping[nodeOfDepth];
         typename G2::IncEdgeIt &edgeItOfDepth = currEdgeIts[_depth];
-        //the node of g2, which neighbours are the candidates for
+        //the node of g2 whose neighbours are the candidates for
         //the pair of nodeOfDepth
         typename G2::Node currPNode;
         if(edgeItOfDepth==INVALID) {
           typename G1::IncEdgeIt fstMatchedE(_g1,nodeOfDepth);
-          //if pairOfNodeOfDepth!=INVALID, we dont use
-          //fstMatchedE
-          if(pairOfNodeOfDepth==INVALID)
+          //if pairOfNodeOfDepth!=INVALID, we don't use fstMatchedE
+          if(pairOfNodeOfDepth==INVALID) {
             for(; fstMatchedE!=INVALID &&
                   _mapping[_g1.oppositeNode(nodeOfDepth,
                                             fstMatchedE)]==INVALID;
                 ++fstMatchedE) ; //find fstMatchedE
+          }
           if(fstMatchedE==INVALID||pairOfNodeOfDepth!=INVALID) {
-            //We found no covered neighbours, this means
-            //the graph is not connected(or _depth==0).  Each
-            //uncovered(and there are some other properties due
+            //We found no covered neighbours, this means that
+            //the graph is not connected (or _depth==0). Each
+            //uncovered (and there are some other properties due
             //to the spec. problem types) node of g2 is
-            //candidate.  We can read the iterator of the last
+            //candidate. We can read the iterator of the last
             //tried node from the match if it is not the first
-            //try(match[nodeOfDepth]!=INVALID)
+            //try (match[nodeOfDepth]!=INVALID)
             typename G2::NodeIt n2(_g2);
             //if it's not the first try
             if(pairOfNodeOfDepth!=INVALID) {
@@ -317,7 +323,7 @@ namespace lemon {
       return false;
     }
 
-    //calc. the lookup table for cut the searchtree
+    //calculate the lookup table for cutting the search tree
     void setRNew1tRInOut1t() {
       typename G1::template NodeMap<int> tmp(_g1,0);
       for(unsigned int i=0; i<order.size(); ++i) {
@@ -351,7 +357,8 @@ namespace lemon {
     Vf2(const G1 &g1, const G2 &g2, M &m, const NEQ &neq = NEQ() ) :
       _nEq(neq), _conn(g2,0), _mapping(m), order(countNodes(g1)),
       currEdgeIts(countNodes(g1),INVALID), _g1(g1), _g2(g2), rNew1t(g1,0),
-      rInOut1t(g1,0), _mapping_type(SUBGRAPH), _deallocMappingAfterUse(0) {
+      rInOut1t(g1,0), _mapping_type(SUBGRAPH), _deallocMappingAfterUse(0)
+    {
       _depth=0;
       setOrder();
       setRNew1tRInOut1t();
@@ -440,11 +447,11 @@ namespace lemon {
 
 
   /// Auxiliary class for the function-type interface of %VF2 algorithm.
-
+  ///
   /// This auxiliary class implements the named parameters of
   /// \ref vf2() "function-type interface" of \ref Vf2 algorithm.
   ///
-  /// \warning This class should only be used through the function \ref vf2().
+  /// \warning This class is not to be used directly.
   ///
   /// \tparam TR The traits class that defines various types used by the
   /// algorithm.
@@ -465,11 +472,10 @@ namespace lemon {
 
   public:
     ///Constructor
-    Vf2Wizard(const Graph1 &g1,const Graph2 &g2) : Base(g1,g2) {
-    }
+    Vf2Wizard(const Graph1 &g1,const Graph2 &g2) : Base(g1,g2) {}
 
     ///Copy constructor
-    Vf2Wizard(const Base &b) : Base(b) { }
+    Vf2Wizard(const Base &b) : Base(b) {}
 
     ///Copy constructor
     Vf2Wizard(const Vf2Wizard &b) : Base(b) {}

@@ -26,7 +26,7 @@
 namespace lemon {
   ///\ingroup graph_isomorphism
   ///The \ref Vf2 "VF2" algorithm is capable of finding different kind of
-  ///embeddings, this enum specifies its type.
+  ///graph embeddings, this enum specifies their types.
   ///
   ///See \ref graph_isomorphism for a more detailed description.
   enum MappingType {
@@ -35,13 +35,12 @@ namespace lemon {
     /// Induced subgraph isomorphism
     INDUCED = 1,
     /// Graph isomorphism
-
-    /// If the two graph has the same number of nodes, than it is
+    ///
+    /// If the two graphs have the same number of nodes, than it is
     /// equivalent to \ref INDUCED, and if they also have the same
     /// number of edges, then it is also equivalent to \ref SUBGRAPH.
     ///
-    /// However, using this setting is faster than the other two
-    /// options.
+    /// However, using this setting is faster than the other two options.
     ISOMORPH = 2
   };
 }

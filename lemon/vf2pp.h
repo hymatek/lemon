@@ -75,7 +75,7 @@ namespace lemon {
   ///
   ///There is also a \ref vf2pp() "function-type interface" called
   ///\ref vf2pp() for the %VF2 Plus Plus algorithm, which is probably
-  ///more convenient in most use-cases.
+  ///more convenient in most use cases.
   ///
   ///\tparam G1 The type of the graph to be embedded.
   ///The default type is \ref ListDigraph.
@@ -96,11 +96,8 @@ namespace lemon {
 #else
   template<class G1=ListDigraph,
            class G2=ListDigraph,
-           class M = typename G1::template NodeMap<G2::Node>,//the mapping
-           //labels of G1,the labels are the numbers {0,1,2,..,K-1},
-           //where K is the number of different labels
+           class M = typename G1::template NodeMap<G2::Node>,
            class M1 = typename G1::template NodeMap<int>,
-           //labels of G2, ...
            class M2 = typename G2::template NodeMap<int> >
 #endif
   class Vf2pp {
@@ -114,17 +111,17 @@ namespace lemon {
     //where v1 is a node of G1 and v2 is a node of G2
     M &_mapping;
 
-    //order[i] is a node of g1, for which a pair is searched if depth=i
+    //order[i] is a node of g1 for which a pair is searched if depth=i
     std::vector<typename G1::Node> order;
 
-    //currEdgeIts[i] is the last used edge iterator in the ith
+    //currEdgeIts[i] is the last used edge iterator in the i-th
     //depth to find a pair for node order[i]
     std::vector<typename G2::IncEdgeIt> currEdgeIts;
-
-    //The small graph.
+ 
+    //The graph to be embedded
     const G1 &_g1;
 
-    //The large graph.
+    //The graph into which g1 is to be embedded
     const G2 &_g2;
 
     //rNewLabels1[v] is a pair of form
@@ -137,24 +134,24 @@ namespace lemon {
     typename G1::template NodeMap<std::vector<std::pair<int,int> > >
     rInOutLabels1;
 
-    //_intLabels1[v]==i means that vertex v has the i label in
-    //_g1 (i is in {0,1,2,..,K-1}, where K is the number of diff. labels)
+    //_intLabels1[v]==i means that node v has label i in _g1
+    //(i is in {0,1,2,..,K-1}, where K is the number of diff. labels)
     M1 &_intLabels1;
 
-    //_intLabels2[v]==i means that vertex v has the i label in
-    //_g2 (i is in {0,1,2,..,K-1}, where K is the number of diff. labels)
+    //_intLabels2[v]==i means that node v has label i in _g2
+    //(i is in {0,1,2,..,K-1}, where K is the number of diff. labels)
     M2 &_intLabels2;
 
     //largest label
     const int maxLabel;
 
     //lookup tables for manipulating with label class cardinalities
-    //after use they have to be reset to 0..0
+    //(after use they have to be reset to 0..0)
     std::vector<int> labelTmp1,labelTmp2;
 
     MappingType _mapping_type;
 
-    //indicates whether the mapping or the labels must be deleted in the ctor
+    //indicates whether the mapping or the labels must be deleted in the destructor
     bool _deallocMappingAfterUse,_deallocLabelsAfterUse;
 
 
@@ -286,8 +283,7 @@ namespace lemon {
       return isIso&&cutByLabels<MT>(n1,n2);
     }
 
-
-    //matches n1 and n2
+    //maps n1 to n2
     void addPair(const typename G1::Node n1,const typename G2::Node n2) {
       _conn[n2]=-1;
       _mapping.set(n1,n2);
@@ -298,8 +294,7 @@ namespace lemon {
       }
     }
 
-
-    //dematches n1 and n2
+    //removes mapping of n1 to n2
     void subPair(const typename G1::Node n1,const typename G2::Node n2) {
       _conn[n2]=0;
       _mapping.set(n1,INVALID);
@@ -311,7 +306,6 @@ namespace lemon {
           ++_conn[n2];
       }
     }
-
 
     void processBFSLevel(typename G1::Node source,unsigned int& orderIndex,
                          typename G1::template NodeMap<int>& dm1,
@@ -364,7 +358,6 @@ namespace lemon {
       for(typename G2::NodeIt n2(_g2); n2!=INVALID; ++n2)
         ++labelTmp1[_intLabels2[n2]];
 
-      //       OutDegMap<G1> dm1(_g1);
       typename G1::template NodeMap<int> dm1(_g1,0);
       for(typename G1::EdgeIt e(_g1); e!=INVALID; ++e) {
         ++dm1[_g1.u(e)];
@@ -397,34 +390,34 @@ namespace lemon {
     template<MappingType MT>
     bool extMatch(){
       while(_depth>=0) {
-        //there is no node in g1, which has not pair in g2.
         if(_depth==static_cast<int>(order.size())) {
+          //all nodes of g1 are mapped to nodes of g2
           --_depth;
           return true;
         }
         typename G1::Node& nodeOfDepth = order[_depth];
         const typename G2::Node& pairOfNodeOfDepth = _mapping[nodeOfDepth];
         typename G2::IncEdgeIt &edgeItOfDepth = currEdgeIts[_depth];
-        //the node of g2, which neighbours are the candidates for
+        //the node of g2 whose neighbours are the candidates for
         //the pair of order[_depth]
         typename G2::Node currPNode;
         if(edgeItOfDepth==INVALID){
           typename G1::IncEdgeIt fstMatchedE(_g1,nodeOfDepth);
-          //if _mapping[order[_depth]]!=INVALID, we dont need
-          //fstMatchedE
-          if(pairOfNodeOfDepth==INVALID)
+          //if _mapping[order[_depth]]!=INVALID, we don't need fstMatchedE
+          if(pairOfNodeOfDepth==INVALID) {
             for(; fstMatchedE!=INVALID &&
                   _mapping[_g1.oppositeNode(nodeOfDepth,
                                             fstMatchedE)]==INVALID;
                 ++fstMatchedE); //find fstMatchedE, it could be preprocessed
+          }
           if(fstMatchedE==INVALID||pairOfNodeOfDepth!=INVALID) {
-            //We found no covered neighbours, this means
-            //the graph is not connected(or _depth==0).  Each
-            //uncovered(and there are some other properties due
+            //We found no covered neighbours, this means that
+            //the graph is not connected (or _depth==0). Each
+            //uncovered (and there are some other properties due
             //to the spec. problem types) node of g2 is
-            //candidate.  We can read the iterator of the last
+            //candidate. We can read the iterator of the last
             //tried node from the match if it is not the first
-            //try(match[nodeOfDepth]!=INVALID)
+            //try (match[nodeOfDepth]!=INVALID)
             typename G2::NodeIt n2(_g2);
             //if it's not the first try
             if(pairOfNodeOfDepth!=INVALID) {
@@ -447,13 +440,13 @@ namespace lemon {
               --_depth;
             continue;
           }
-          else{
+          else {
             currPNode=_mapping[_g1.oppositeNode(nodeOfDepth,
                                                 fstMatchedE)];
             edgeItOfDepth=typename G2::IncEdgeIt(_g2,currPNode);
           }
         }
-        else{
+        else {
           currPNode=_g2.oppositeNode(pairOfNodeOfDepth,
                                      edgeItOfDepth);
           subPair(nodeOfDepth,pairOfNodeOfDepth);
@@ -472,7 +465,7 @@ namespace lemon {
       return false;
     }
 
-    //calc. the lookup table for cutting the searchtree
+    //calculate the lookup table for cutting the search tree
     void setRNew1tRInOut1t(){
       typename G1::template NodeMap<int> tmp(_g1,0);
       for(unsigned int i=0; i<order.size(); ++i) {
@@ -675,7 +668,7 @@ namespace lemon {
 
   public:
     ///Constructor
-    Vf2ppWizard(const Graph1 &g1,const Graph2 &g2) : Base(g1,g2) { }
+    Vf2ppWizard(const Graph1 &g1,const Graph2 &g2) : Base(g1,g2) {}
 
     ///Copy constructor
     Vf2ppWizard(const Base &b) : Base(b) {}
@@ -684,7 +677,7 @@ namespace lemon {
     template<typename T>
     struct SetMappingBase : public Base {
       typedef T Mapping;
-      SetMappingBase(const Base &b) : Base(b) { }
+      SetMappingBase(const Base &b) : Base(b) {}
     };
 
     ///\brief \ref named-templ-param "Named parameter" for setting
@@ -713,11 +706,11 @@ namespace lemon {
     ///the node labels.
     ///
     ///\param nodeLabels1 A \ref concepts::ReadMap "readable node map"
-    ///of g1 with integer value. In case of K different labels, the labels
-    ///must be the {0,1,..,K-1} numbers.
+    ///of g1 with integer values. In case of K different labels, the labels
+    ///must be the numbers {0,1,..,K-1}.
     ///\param nodeLabels2 A \ref concepts::ReadMap "readable node map"
-    ///of g2 with integer value. In case of K different labels, the labels
-    ///must be the {0,1,..,K-1} numbers.
+    ///of g2 with integer values. In case of K different labels, the labels
+    ///must be the numbers {0,1,..,K-1}.
     template<typename NL1, typename NL2>
     Vf2ppWizard< SetNodeLabelsBase<NL1,NL2> >
     nodeLabels(const NL1 &nodeLabels1, const NL2 &nodeLabels2) {
@@ -877,7 +870,7 @@ namespace lemon {
   ///  int num_isos = vf2pp(g1,g2).iso().count();
   ///
   ///  // Iterate through all the induced subgraph mappings
-  ///  //of graph g1 into g2 using the labels c1 and c2
+  ///  // of graph g1 into g2 using the labels c1 and c2
   ///  auto* myVf2pp = vf2pp(g1,g2).mapping(m).nodeLabels(c1,c2)
   ///  .induced().getPtrToVf2Object();
   ///  while(myVf2pp->find()){
