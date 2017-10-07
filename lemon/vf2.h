@@ -232,7 +232,7 @@ namespace lemon {
       }
     }
 
-    void setOrder() {
+    void initOrder() {
       // we will find pairs for the nodes of g1 in this order
 
       // bits::vf2::DfsLeaveOrder<G1> v(_g1,_order);
@@ -324,7 +324,7 @@ namespace lemon {
     }
 
     //calculate the lookup table for cutting the search tree
-    void setRNew1tRInOut1t() {
+    void initRNew1tRInOut1t() {
       typename G1::template NodeMap<int> tmp(_g1,0);
       for(unsigned int i=0; i<_order.size(); ++i) {
         const typename G1::Node& orderI = _order[i];
@@ -360,8 +360,8 @@ namespace lemon {
       _currEdgeIts(countNodes(g1),INVALID), _rNew1t(g1,0), _rInOut1t(g1,0),
       _mapping_type(SUBGRAPH), _deallocMappingAfterUse(0)
     {
-      setOrder();
-      setRNew1tRInOut1t();
+      initOrder();
+      initRNew1tRInOut1t();
       for(typename G1::NodeIt n(g1);n!=INVALID;++n)
         m[n]=INVALID;
     }

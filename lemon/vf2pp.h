@@ -352,7 +352,7 @@ namespace lemon {
 
 
     //we will find pairs for the nodes of g1 in this order
-    void setOrder(){
+    void initOrder(){
       for(typename G2::NodeIt n2(_g2); n2!=INVALID; ++n2)
         ++_labelTmp1[_intLabels2[n2]];
 
@@ -464,7 +464,7 @@ namespace lemon {
     }
 
     //calculate the lookup table for cutting the search tree
-    void setRNew1tRInOut1t(){
+    void initRNew1tRInOut1t(){
       typename G1::template NodeMap<int> tmp(_g1,0);
       for(unsigned int i=0; i<_order.size(); ++i) {
         tmp[_order[i]]=-1;
@@ -537,8 +537,8 @@ namespace lemon {
       _mapping_type(SUBGRAPH), _deallocMappingAfterUse(0),
       _deallocLabelsAfterUse(0)
     {
-      setOrder();
-      setRNew1tRInOut1t();
+      initOrder();
+      initRNew1tRInOut1t();
 
       //reset mapping
       for(typename G1::NodeIt n(g1);n!=INVALID;++n)
