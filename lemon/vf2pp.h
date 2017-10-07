@@ -72,7 +72,7 @@ namespace lemon {
     //The graph into which g1 is to be embedded
     const G2 &_g2;
 
-    //Current depth in the search tree.
+    //Current depth in the search tree
     int _depth;
 
     //The current mapping. _mapping[v1]=v2 iff v1 has been mapped to v2,

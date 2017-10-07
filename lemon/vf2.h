@@ -24,7 +24,6 @@
 
 #include <lemon/core.h>
 #include <lemon/concepts/graph.h>
-#include <lemon/dfs.h>
 #include <lemon/bfs.h>
 #include <lemon/bits/vf2_internals.h>
 
@@ -50,19 +49,6 @@ namespace lemon {
         MapEq(const M1 &m1, const M2 &m2) : _m1(m1), _m2(m2) { }
         bool operator()(typename M1::Key k1, typename M2::Key k2) const {
           return _m1[k1] == _m2[k2];
-        }
-      };
-
-      template <class G>
-      class DfsLeaveOrder : public DfsVisitor<G> {
-        const G &_g;
-        std::vector<typename G::Node> &_order;
-        int i;
-      public:
-        DfsLeaveOrder(const G &g, std::vector<typename G::Node> &order)
-          : i(countNodes(g)), _g(g), _order(order) { }
-        void leave(const typename G::Node &node) {
-          _order[--i]=node;
         }
       };
 
@@ -122,7 +108,7 @@ namespace lemon {
     //if and only if the two nodes are equivalent
     NEQ _nEq;
 
-    //Current depth in the DFS tree.
+    //Current depth in the search tree
     int _depth;
 
     //The current mapping. _mapping[v1]=v2 iff v1 has been mapped to v2,
@@ -233,15 +219,10 @@ namespace lemon {
     }
 
     void initOrder() {
-      // we will find pairs for the nodes of g1 in this order
-
-      // bits::vf2::DfsLeaveOrder<G1> v(_g1,_order);
-      //   DfsVisit<G1,bits::vf2::DfsLeaveOrder<G1> >dfs(_g1, v);
-      //   dfs.run();
-
-      //it is more efficient in practice than DFS
+      //determine the order in which we will find pairs for the nodes of g1
+      //BFS order is more efficient in practice than DFS
       bits::vf2::BfsLeaveOrder<G1> v(_g1,_order);
-      BfsVisit<G1,bits::vf2::BfsLeaveOrder<G1> >bfs(_g1, v);
+      BfsVisit<G1,bits::vf2::BfsLeaveOrder<G1> > bfs(_g1, v);
       bfs.run();
     }
 
