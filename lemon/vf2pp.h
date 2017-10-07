@@ -272,7 +272,7 @@ namespace lemon {
       }
     }
 
-    void processBFSLevel(typename G1::Node source,unsigned int& orderIndex,
+    void processBfsTree(typename G1::Node source,unsigned int& orderIndex,
                          typename G1::template NodeMap<int>& dm1,
                          typename G1::template NodeMap<bool>& added) {
       _order[orderIndex]=source;
@@ -342,7 +342,7 @@ namespace lemon {
                                              _labelTmp1[_intLabels1[minNode]]==
                                              _labelTmp1[_intLabels1[n1]])))
               minNode=n1;
-          processBFSLevel(minNode,orderIndex,dm1,added);
+          processBfsTree(minNode,orderIndex,dm1,added);
         }
         else
           ++n;
