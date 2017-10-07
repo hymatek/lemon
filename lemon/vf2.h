@@ -94,9 +94,9 @@ namespace lemon {
   ///use cases.
   ///
   ///\tparam G1 The type of the graph to be embedded.
-  ///The default type is \ref ListDigraph.
+  ///The default type is \ref ListGraph.
   ///\tparam G2 The type of the graph g1 will be embedded into.
-  ///The default type is \ref ListDigraph.
+  ///The default type is \ref ListGraph.
   ///\tparam M The type of the NodeMap storing the mapping.
   ///By default, it is G1::NodeMap<G2::Node>
   ///\tparam NEQ A bool-valued binary functor determinining whether a node is
@@ -106,8 +106,8 @@ namespace lemon {
 #ifdef DOXYGEN
   template<class G1, class G2, class M, class NEQ >
 #else
-  template<class G1=ListDigraph,
-           class G2=ListDigraph,
+  template<class G1 = ListGraph,
+           class G2 = ListGraph,
            class M = typename G1::template NodeMap<G2::Node>,
            class NEQ = bits::vf2::AlwaysEq >
 #endif

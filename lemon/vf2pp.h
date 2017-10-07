@@ -76,9 +76,9 @@ namespace lemon {
   ///more convenient in most use cases.
   ///
   ///\tparam G1 The type of the graph to be embedded.
-  ///The default type is \ref ListDigraph.
+  ///The default type is \ref ListGraph.
   ///\tparam G2 The type of the graph g1 will be embedded into.
-  ///The default type is \ref ListDigraph.
+  ///The default type is \ref ListGraph.
   ///\tparam M The type of the NodeMap storing the mapping.
   ///By default, it is G1::NodeMap<G2::Node>
   ///\tparam M1 The type of the NodeMap storing the integer node labels of G1.
@@ -92,8 +92,8 @@ namespace lemon {
 #ifdef DOXYGEN
   template<class G1, class G2, class M, class M1, class M2 >
 #else
-  template<class G1=ListDigraph,
-           class G2=ListDigraph,
+  template<class G1 = ListGraph,
+           class G2 = ListGraph,
            class M = typename G1::template NodeMap<G2::Node>,
            class M1 = typename G1::template NodeMap<int>,
            class M2 = typename G2::template NodeMap<int> >
