@@ -43,10 +43,10 @@ namespace lemon {
   /// A structure for representing directed path in a digraph.
   /// \tparam GR The digraph type in which the path is.
   ///
-  /// In a sense, the path can be treated as a list of arcs. The
-  /// LEMON path type stores just this list. As a consequence, it
-  /// cannot enumerate the nodes of the path and the source node of
-  /// a zero length path is undefined.
+  /// In a sense, a path can be treated as a list of arcs. The
+  /// LEMON path type simply stores this list. As a consequence, it
+  /// cannot enumerate the nodes in the path, and the source node of
+  /// a zero-length path is undefined.
   ///
   /// This implementation is a back and front insertable and erasable
   /// path type. It can be indexed in O(1) time. The front and back
@@ -168,7 +168,8 @@ namespace lemon {
 
     /// \brief The n-th arc.
     ///
-    /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
+    /// Gives back the n-th arc. This function runs in O(1) time.
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
     const Arc& nth(int n) const {
       return n < int(head.size()) ? *(head.rbegin() + n) :
         *(tail.begin() + (n - head.size()));
@@ -261,15 +262,15 @@ namespace lemon {
   /// A structure for representing directed path in a digraph.
   /// \tparam GR The digraph type in which the path is.
   ///
-  /// In a sense, the path can be treated as a list of arcs. The
-  /// LEMON path type stores just this list. As a consequence it
-  /// cannot enumerate the nodes in the path and the zero length paths
-  /// cannot store the source.
+  /// In a sense, a path can be treated as a list of arcs. The
+  /// LEMON path type simply stores this list. As a consequence, it
+  /// cannot enumerate the nodes in the path, and the source node of
+  /// a zero-length path is undefined.
   ///
   /// This implementation is a just back insertable and erasable path
   /// type. It can be indexed in O(1) time. The back insertion and
   /// erasure is amortized O(1) time. This implementation is faster
-  /// then the \c Path type because it use just one vector for the
+  /// than the \c Path type because it use just one vector for the
   /// arcs.
   template <typename GR>
   class SimplePath {
@@ -390,7 +391,8 @@ namespace lemon {
 
     /// \brief The n-th arc.
     ///
-    /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
+    /// Gives back the n-th arc. This function runs in O(1) time.
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
     const Arc& nth(int n) const {
       return data[n];
     }
@@ -455,10 +457,10 @@ namespace lemon {
   /// A structure for representing directed path in a digraph.
   /// \tparam GR The digraph type in which the path is.
   ///
-  /// In a sense, the path can be treated as a list of arcs. The
-  /// LEMON path type stores just this list. As a consequence it
-  /// cannot enumerate the nodes in the path and the zero length paths
-  /// cannot store the source.
+  /// In a sense, a path can be treated as a list of arcs. The
+  /// LEMON path type simply stores this list. As a consequence, it
+  /// cannot enumerate the nodes in the path, and the source node of
+  /// a zero-length path is undefined.
   ///
   /// This implementation is a back and front insertable and erasable
   /// path type. It can be indexed in O(k) time, where k is the rank
@@ -598,7 +600,7 @@ namespace lemon {
     /// \brief The n-th arc.
     ///
     /// This function looks for the n-th arc in O(n) time.
-    /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
     const Arc& nth(int n) const {
       Node *node = first;
       for (int i = 0; i < n; ++i) {
@@ -784,7 +786,7 @@ namespace lemon {
     /// starting with
     /// \c it will put into \c tpath. If \c tpath have arcs
     /// before the operation they are removed first.  The time
-    /// complexity of this function is O(1) plus the the time of emtying
+    /// complexity of this function is O(1) plus the time of emtying
     /// \c tpath. If \c it is \c INVALID then it just clears \c tpath
     void split(ArcIt it, ListPath& tpath) {
       tpath.clear();
@@ -825,18 +827,17 @@ namespace lemon {
   /// A structure for representing directed path in a digraph.
   /// \tparam GR The digraph type in which the path is.
   ///
-  /// In a sense, the path can be treated as a list of arcs. The
-  /// LEMON path type stores just this list. As a consequence it
-  /// cannot enumerate the nodes in the path and the source node of
-  /// a zero length path is undefined.
+  /// In a sense, a path can be treated as a list of arcs. The
+  /// LEMON path type simply stores this list. As a consequence, it
+  /// cannot enumerate the nodes in the path, and the source node of
+  /// a zero-length path is undefined.
   ///
   /// This implementation is completly static, i.e. it can be copy constucted
   /// or copy assigned from another path, but otherwise it cannot be
   /// modified.
   ///
-  /// Being the the most memory efficient path type in LEMON,
-  /// it is intented to be
-  /// used when you want to store a large number of paths.
+  /// Being the most memory-efficient path type in LEMON, it is
+  /// intented to be used when you want to store a large number of paths.
   template <typename GR>
   class StaticPath {
   public:
@@ -954,7 +955,8 @@ namespace lemon {
 
     /// \brief The n-th arc.
     ///
-    /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
+    /// Gives back the n-th arc. This function runs in O(1) time.
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
     const Arc& nth(int n) const {
       return _arcs[n];
     }
@@ -970,7 +972,7 @@ namespace lemon {
     /// \brief Return true when the path is empty.
     int empty() const { return len == 0; }
 
-    /// \brief Erase all arcs in the digraph.
+    /// \brief Reset the path to an empty one.
     void clear() {
       len = 0;
       if (_arcs) delete[] _arcs;
@@ -1160,15 +1162,17 @@ namespace lemon {
     return path.empty() ? INVALID : digraph.target(path.back());
   }
 
-  /// \brief Class which helps to iterate through the nodes of a path
+  /// \brief Class for iterating through the nodes of a path
   ///
-  /// In a sense, the path can be treated as a list of arcs. The
-  /// LEMON path type stores only this list. As a consequence, it
-  /// cannot enumerate the nodes in the path and the zero length paths
-  /// cannot have a source node.
+  /// Class for iterating through the nodes of a path.
   ///
-  /// This class implements the node iterator of a path structure. To
-  /// provide this feature, the underlying digraph should be passed to
+  /// In a sense, a path can be treated as a list of arcs. The
+  /// LEMON path type simply stores this list. As a consequence, it
+  /// cannot enumerate the nodes in the path, and the source node of
+  /// a zero-length path is undefined.
+  ///
+  /// However, this class implements a node iterator for path structures.
+  /// To provide this feature, the underlying digraph should be passed to
   /// the constructor of the iterator.
   template <typename Path>
   class PathNodeIt {
