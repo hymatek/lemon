@@ -182,6 +182,15 @@ namespace lemon {
       return ArcIt(*this, n);
     }
 
+    /// \brief The n-th arc.
+    ///
+    /// Gives back the n-th arc. This operator is just an alias for \ref nth(),
+    /// it runs in O(1) time.
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
+    const Arc& operator[](int n) const {
+      return nth(n);
+    }
+
     /// \brief The first arc of the path
     const Arc& front() const {
       return head.empty() ? tail.front() : head.back();
@@ -402,6 +411,15 @@ namespace lemon {
       return ArcIt(*this, n);
     }
 
+    /// \brief The n-th arc.
+    ///
+    /// Gives back the n-th arc. This operator is just an alias for \ref nth(),
+    /// it runs in O(1) time.
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
+    const Arc& operator[](int n) const {
+      return data[n];
+    }
+
     /// \brief The first arc of the path.
     const Arc& front() const {
       return data.front();
@@ -616,6 +634,15 @@ namespace lemon {
         node = node->next;
       }
       return ArcIt(*this, node);
+    }
+
+    /// \brief The n-th arc.
+    ///
+    /// Looks for the n-th arc in O(n) time. This operator is just an alias
+    /// for \ref nth().
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
+    const Arc& operator[](int n) const {
+      return nth(n);
     }
 
     /// \brief Length of the path.
@@ -964,6 +991,15 @@ namespace lemon {
     /// \brief The arc iterator pointing to the n-th arc.
     ArcIt nthIt(int n) const {
       return ArcIt(*this, n);
+    }
+
+    /// \brief The n-th arc.
+    ///
+    /// Gives back the n-th arc. This operator is just an alias for \ref nth(),
+    /// it runs in O(1) time.
+    /// \pre \c n is in the range <tt>[0..length() - 1]</tt>.
+    const Arc& operator[](int n) const {
+      return _arcs[n];
     }
 
     /// \brief The length of the path.
