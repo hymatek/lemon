@@ -111,7 +111,6 @@ namespace lemon {
       static const Word loMask = (1u << 31) - 1;
       static const Word hiMask = ~loMask;
 
-
       static Word tempering(Word rnd) {
         rnd ^= (rnd >> 11);
         rnd ^= (rnd << 7) & 0x9D2C5680u;
@@ -243,7 +242,6 @@ namespace lemon {
 
     private:
 
-
       void fillState() {
         static const Word mask[2] = { 0x0ul, RandomTraits<Word>::mask };
         static const Word loMask = RandomTraits<Word>::loMask;
@@ -270,7 +268,6 @@ namespace lemon {
           curr[length - shift] ^ mask[curr[length - 1] & 1ul];
 
       }
-
 
       Word *current;
       Word state[length];
@@ -471,12 +468,12 @@ namespace lemon {
     ///
     /// The Mersenne Twister is a twisted generalized feedback
     /// shift-register generator of Matsumoto and Nishimura. The period
-    /// of this generator is \f$ 2^{19937} - 1 \f$ and it is
+    /// of this generator is \f$ 2^{19937} - 1\f$ and it is
     /// equi-distributed in 623 dimensions for 32-bit numbers. The time
     /// performance of this generator is comparable to the commonly used
     /// generators.
     ///
-    /// This is a template version implementation both 32-bit and
+    /// This is a template implementation of both 32-bit and
     /// 64-bit architecture optimized versions. The generators differ
     /// sligthly in the initialization and generation phase so they
     /// produce two completly different sequences.
@@ -485,15 +482,19 @@ namespace lemon {
     /// Random, \ref Random32 or \ref Random64.
     ///
     /// The generator gives back random numbers of serveral types. To
-    /// get a random number from a range of a floating point type you
+    /// get a random number from a range of a floating point type, you
     /// can use one form of the \c operator() or the \c real() member
     /// function. If you want to get random number from the {0, 1, ...,
-    /// n-1} integer range use the \c operator[] or the \c integer()
+    /// n-1} integer range, use the \c operator[] or the \c integer()
     /// method. And to get random number from the whole range of an
-    /// integer type you can use the argumentless \c integer() or \c
-    /// uinteger() functions. After all you can get random bool with
-    /// equal chance of true and false or given probability of true
-    /// result with the \c boolean() member functions.
+    /// integer type, you can use the argumentless \c integer() or
+    /// \c uinteger() functions. Finally, you can get random bool with
+    /// equal chance of true and false or with given probability of true
+    /// result using the \c boolean() member functions.
+    ///
+    /// Various non-uniform distributions are also supported: normal (Gauss),
+    /// exponential, gamma, Poisson, etc.; and a few two-dimensional
+    /// distributions, too.
     ///
     ///\code
     /// // The commented code is identical to the other
@@ -513,13 +514,11 @@ namespace lemon {
     /// bool h = rnd.boolean(0.8);            // P(h = true) = 0.8
     ///\endcode
     ///
-    /// LEMON provides a global instance of the random number
-    /// generator which name is \ref lemon::rnd "rnd". Usually it is a
-    /// good programming convenience to use this global generator to get
-    /// random numbers.
+    /// LEMON provides a global instance of the random number generator:
+    /// \ref lemon::rnd "rnd". In most cases, it is a good practice
+    /// to use this global generator to get random numbers.
     ///
     /// \sa \ref Random, \ref Random32 or \ref Random64.
-    ///
     template<class Word>
     class Random {
     private:
@@ -644,9 +643,9 @@ namespace lemon {
         return true;
       }
 
-      /// \brief Seding from process id and time
+      /// \brief Seeding from process id and time
       ///
-      /// Seding from process id and time. This function uses the
+      /// Seeding from process id and time. This function uses the
       /// current process id and the current time for initialize the
       /// random sequence.
       /// \return Currently always \c true.
@@ -942,7 +941,7 @@ namespace lemon {
 
       ///@}
 
-      ///\name Two Dimensional Distributions
+      ///\name Two-Dimensional Distributions
       ///
       ///@{
 
@@ -960,7 +959,7 @@ namespace lemon {
         } while(V1*V1+V2*V2>=1);
         return dim2::Point<double>(V1,V2);
       }
-      /// A kind of two dimensional normal (Gauss) distribution
+      /// A kind of two-dimensional normal (Gauss) distribution
 
       /// This function provides a turning symmetric two-dimensional distribution.
       /// Both coordinates are of standard normal distribution, but they are not
@@ -979,7 +978,7 @@ namespace lemon {
         double W=std::sqrt(-2*std::log(S)/S);
         return dim2::Point<double>(W*V1,W*V2);
       }
-      /// A kind of two dimensional exponential distribution
+      /// A kind of two-dimensional exponential distribution
 
       /// This function provides a turning symmetric two-dimensional distribution.
       /// The x-coordinate is of conditionally exponential distribution
@@ -1008,49 +1007,48 @@ namespace lemon {
   ///
   /// \brief Mersenne Twister random number generator
   ///
-  /// This class implements either the 32 bit or the 64 bit version of
+  /// This class implements either the 32-bit or the 64-bit version of
   /// the Mersenne Twister random number generator algorithm
-  /// depending the the system architecture.
+  /// depending on the system architecture.
   /// 
-  /// For the API description, see its base class \ref
-  /// _random_bits::Random
+  /// For the API description, see its base class
+  /// \ref _random_bits::Random.
   ///
   /// \sa \ref _random_bits::Random
   typedef _random_bits::Random<unsigned long> Random;
+
   /// \ingroup misc
   ///
-  /// \brief Mersenne Twister random number generator (32 bit version)
+  /// \brief Mersenne Twister random number generator (32-bit version)
   ///
-  /// This class implements the 32 bit version of the Mersenne Twister
+  /// This class implements the 32-bit version of the Mersenne Twister
   /// random number generator algorithm. It is recommended to be used
   /// when someone wants to make sure that the \e same pseudo random
   /// sequence will be generated on every platfrom.
   ///
-  /// For the API description, see its base class \ref
-  /// _random_bits::Random
+  /// For the API description, see its base class
+  /// \ref _random_bits::Random.
   ///
   /// \sa \ref _random_bits::Random
-
   typedef _random_bits::Random<unsigned int> Random32;
+
   /// \ingroup misc
   ///
-  /// \brief Mersenne Twister random number generator (64 bit version)
+  /// \brief Mersenne Twister random number generator (64-bit version)
   ///
-  /// This class implements the 64 bit version of the Mersenne Twister
-  /// random number generator algorithm. (Even though it will run
-  /// on 32 bit architectures, too.) It is recommended to ber used when
+  /// This class implements the 64-bit version of the Mersenne Twister
+  /// random number generator algorithm. (Even though it runs
+  /// on 32-bit architectures, too.) It is recommended to be used when
   /// someone wants to make sure that the \e same pseudo random sequence
   /// will be generated on every platfrom.
   ///
-  /// For the API description, see its base class \ref
-  /// _random_bits::Random
+  /// For the API description, see its base class
+  /// \ref _random_bits::Random.
   ///
   /// \sa \ref _random_bits::Random
   typedef _random_bits::Random<unsigned long long> Random64;
 
-
   extern Random rnd;
-
   
 }
 
