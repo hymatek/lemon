@@ -182,13 +182,13 @@ void checkEdmondsKarpCompile()
 
 
 template <typename T>
-T cutValue (const SmartDigraph& g,
-              const SmartDigraph::NodeMap<bool>& cut,
-              const SmartDigraph::ArcMap<T>& cap) {
+T cutValue(const SmartDigraph& g,
+           const SmartDigraph::NodeMap<bool>& cut,
+           const SmartDigraph::ArcMap<T>& cap) {
 
-  T c=0;
-  for(SmartDigraph::ArcIt e(g); e!=INVALID; ++e) {
-    if (cut[g.source(e)] && !cut[g.target(e)]) c+=cap[e];
+  T c = 0;
+  for (SmartDigraph::ArcIt e(g); e != INVALID; ++e) {
+    if (cut[g.source(e)] && !cut[g.target(e)]) c += cap[e];
   }
   return c;
 }
@@ -217,23 +217,24 @@ bool checkFlow(const SmartDigraph& g,
   return true;
 }
 
-void initFlowTest()
+void checkInitPreflow()
 {
   DIGRAPH_TYPEDEFS(SmartDigraph);
 
   SmartDigraph g;
-  SmartDigraph::ArcMap<int> cap(g),iflow(g);
-  Node s=g.addNode(); Node t=g.addNode();
-  Node n1=g.addNode(); Node n2=g.addNode();
+  SmartDigraph::ArcMap<int> cap(g), iflow(g);
+  Node s = g.addNode(); Node t = g.addNode();
+  Node n1 = g.addNode(); Node n2 = g.addNode();
   Arc a;
-  a=g.addArc(s,n1); cap[a]=20; iflow[a]=20;
-  a=g.addArc(n1,n2); cap[a]=10; iflow[a]=0;
-  a=g.addArc(n2,t); cap[a]=20; iflow[a]=0;
+  a = g.addArc(s, n1); cap[a] = 20; iflow[a] = 20;
+  a = g.addArc(n1, n2); cap[a] = 10; iflow[a] = 0;
+  a = g.addArc(n2, t); cap[a] = 20; iflow[a] = 0;
 
-  Preflow<SmartDigraph> pre(g,cap,s,t);
+  Preflow<SmartDigraph> pre(g, cap, s, t);
   pre.init(iflow);
   pre.startFirstPhase();
-  check(pre.flowValue() == 10, "The incorrect max flow value.");
+
+  check(pre.flowValue() == 10, "Incorrect max flow value.");
   check(pre.minCut(s), "Wrong min cut (Node s).");
   check(pre.minCut(n1), "Wrong min cut (Node n1).");
   check(!pre.minCut(n2), "Wrong min cut (Node n2).");
@@ -302,8 +303,7 @@ void checkMaxFlowAlg() {
 
   check(max_flow.flowValue() == min_cut_value &&
         min_cut_value == 2 * flow_value,
-        "The max flow value or the min cut value was not doubled");
-
+        "The max flow value or the min cut value was not doubled.");
 
   max_flow.flowMap(flow);
 
@@ -322,7 +322,7 @@ void checkMaxFlowAlg() {
 
   CutMap min_cut3(g);
   max_flow.minCutMap(min_cut3);
-  min_cut_value=cutValue(g, min_cut3, cap);
+  min_cut_value = cutValue(g, min_cut3, cap);
 
   check(max_flow.flowValue() == min_cut_value,
         "The max flow value or the min cut value is wrong.");
@@ -379,15 +379,14 @@ int main() {
   typedef Preflow<SmartDigraph, SmartDigraph::ArcMap<float> > PType2;
   checkMaxFlowAlg<PType1, PreflowStartFunctions<PType1> >();
   checkMaxFlowAlg<PType2, PreflowStartFunctions<PType2> >();
-  initFlowTest();
+
+  checkInitPreflow();
 
   // Check EdmondsKarp
   typedef EdmondsKarp<SmartDigraph, SmartDigraph::ArcMap<int> > EKType1;
   typedef EdmondsKarp<SmartDigraph, SmartDigraph::ArcMap<float> > EKType2;
   checkMaxFlowAlg<EKType1, GeneralStartFunctions<EKType1> >();
   checkMaxFlowAlg<EKType2, GeneralStartFunctions<EKType2> >();
-
-  initFlowTest();
 
   return 0;
 }
