@@ -165,8 +165,6 @@ void checkEdmondsKarpCompile()
   typedef int Value;
   typedef concepts::Digraph Digraph;
   typedef concepts::ReadMap<Digraph::Arc, Value> CapMap;
-  typedef Elevator<Digraph, Digraph::Node> Elev;
-  typedef LinkedElevator<Digraph, Digraph::Node> LinkedElev;
 
   Digraph g;
   Digraph::Node n;
