@@ -26,6 +26,7 @@
 #include <lemon/concepts/maps.h>
 #include <lemon/lgf_reader.h>
 #include <lemon/elevator.h>
+#include <lemon/tolerance.h>
 
 using namespace lemon;
 
@@ -64,7 +65,6 @@ char test_lgf[] =
   "@attributes\n"
   "source 1\n"
   "target 8\n";
-
 
 // Checks the general interface of a max flow algorithm
 template <typename GR, typename CAP>
@@ -197,10 +197,11 @@ template <typename T>
 bool checkFlow(const SmartDigraph& g,
                const SmartDigraph::ArcMap<T>& flow,
                const SmartDigraph::ArcMap<T>& cap,
-               SmartDigraph::Node s, SmartDigraph::Node t) {
+               SmartDigraph::Node s, SmartDigraph::Node t,
+               const Tolerance<T>& tol) {
 
   for (SmartDigraph::ArcIt e(g); e != INVALID; ++e) {
-    if (flow[e] < 0 || flow[e] > cap[e]) return false;
+    if (tol.negative(flow[e]) || tol.less(cap[e], flow[e])) return false;
   }
 
   for (SmartDigraph::NodeIt n(g); n != INVALID; ++n) {
@@ -212,7 +213,7 @@ bool checkFlow(const SmartDigraph& g,
     for (SmartDigraph::InArcIt e(g, n); e != INVALID; ++e) {
       sum -= flow[e];
     }
-    if (sum != 0) return false;
+    if (tol.nonZero(sum)) return false;
   }
   return true;
 }
@@ -251,6 +252,8 @@ void checkMaxFlowAlg() {
   typedef CapMap FlowMap;
   typedef BoolNodeMap CutMap;
 
+  Tolerance<Value> tol;
+
   Digraph g;
   Node s, t;
   CapMap cap(g);
@@ -264,14 +267,14 @@ void checkMaxFlowAlg() {
   MF max_flow(g, cap, s, t);
   max_flow.run();
 
-  check(checkFlow(g, max_flow.flowMap(), cap, s, t),
+  check(checkFlow(g, max_flow.flowMap(), cap, s, t, tol),
         "The flow is not feasible.");
 
   CutMap min_cut(g);
   max_flow.minCutMap(min_cut);
   Value min_cut_value = cutValue(g, min_cut, cap);
 
-  check(max_flow.flowValue() == min_cut_value,
+  check(!tol.different(max_flow.flowValue(), min_cut_value),
         "The max flow value is not equal to the min cut value.");
 
   FlowMap flow(g);
@@ -288,21 +291,21 @@ void checkMaxFlowAlg() {
   max_flow.minCutMap(min_cut1);
   min_cut_value = cutValue(g, min_cut1, cap);
 
-  check(max_flow.flowValue() == min_cut_value &&
-        min_cut_value == 2 * flow_value,
+  check(!tol.different(max_flow.flowValue(), min_cut_value) &&
+        !tol.different(min_cut_value, 2 * flow_value),
         "The max flow value or the min cut value is wrong.");
 
   SF::startSecondPhase(max_flow);       // start second phase of the algorithm
 
-  check(checkFlow(g, max_flow.flowMap(), cap, s, t),
+  check(checkFlow(g, max_flow.flowMap(), cap, s, t, tol),
         "The flow is not feasible.");
 
   CutMap min_cut2(g);
   max_flow.minCutMap(min_cut2);
   min_cut_value = cutValue(g, min_cut2, cap);
 
-  check(max_flow.flowValue() == min_cut_value &&
-        min_cut_value == 2 * flow_value,
+  check(!tol.different(max_flow.flowValue(), min_cut_value) &&
+        !tol.different(min_cut_value, 2 * flow_value),
         "The max flow value or the min cut value was not doubled.");
 
   max_flow.flowMap(flow);
@@ -324,7 +327,7 @@ void checkMaxFlowAlg() {
   max_flow.minCutMap(min_cut3);
   min_cut_value = cutValue(g, min_cut3, cap);
 
-  check(max_flow.flowValue() == min_cut_value,
+  check(!tol.different(max_flow.flowValue(), min_cut_value),
         "The max flow value or the min cut value is wrong.");
 }
 
