@@ -66,6 +66,38 @@ char test_lgf[] =
   "source 1\n"
   "target 8\n";
 
+char test_lgf_float[] =
+  "@nodes\n"
+  "label\n"
+  "0\n"
+  "1\n"
+  "2\n"
+  "3\n"
+  "4\n"
+  "5\n"
+  "6\n"
+  "7\n"
+  "8\n"
+  "9\n"
+  "@arcs\n"
+  "      capacity\n"
+  "0 1 0.1\n"
+  "0 2 0.1\n"
+  "0 3 0.1\n"
+  "1 4 0.1\n"
+  "2 4 0.1\n"
+  "3 4 0.1\n"
+  "4 5 0.3\n"
+  "5 6 0.1\n"
+  "5 7 0.1\n"
+  "5 8 0.1\n"
+  "6 9 0.1\n"
+  "7 9 0.1\n"
+  "8 9 0.1\n"
+  "@attributes\n"
+  "source 0\n"
+  "target 9\n";
+
 // Checks the general interface of a max flow algorithm
 template <typename GR, typename CAP>
 struct MaxFlowClassConcept
@@ -258,10 +290,10 @@ void checkMaxFlowAlg(const char *input_lgf,  typename MF::Value expected) {
   Node s, t;
   CapMap cap(g);
   std::istringstream input(input_lgf);
-  DigraphReader<Digraph>(g,input)
+  DigraphReader<Digraph>(g, input)
       .arcMap("capacity", cap)
-      .node("source",s)
-      .node("target",t)
+      .node("source", s)
+      .node("target", t)
       .run();
 
   MF max_flow(g, cap, s, t);
@@ -280,8 +312,8 @@ void checkMaxFlowAlg(const char *input_lgf,  typename MF::Value expected) {
         "Incorrect min cut value.");
 
   FlowMap flow(g);
-  for (ArcIt e(g); e != INVALID; ++e) flow[e] = max_flow.flowMap()[e];
-  for (ArcIt e(g); e != INVALID; ++e) cap[e] = 2 * cap[e];
+  for (ArcIt e(g); e != INVALID; ++e) flow[e] = 13 * max_flow.flowMap()[e];
+  for (ArcIt e(g); e != INVALID; ++e) cap[e] = 17 * cap[e];
   max_flow.init(flow);
 
   SF::startFirstPhase(max_flow);       // start first phase of the algorithm
@@ -290,9 +322,9 @@ void checkMaxFlowAlg(const char *input_lgf,  typename MF::Value expected) {
   max_flow.minCutMap(min_cut1);
   min_cut_value = cutValue(g, min_cut1, cap);
 
-  check(!tol.different(2 * expected, max_flow.flowValue()),
+  check(!tol.different(17 * expected, max_flow.flowValue()),
         "Incorrect max flow value.");
-  check(!tol.different(2 * expected, min_cut_value),
+  check(!tol.different(17 * expected, min_cut_value),
         "Incorrect min cut value.");
 
   SF::startSecondPhase(max_flow);       // start second phase of the algorithm
@@ -304,9 +336,9 @@ void checkMaxFlowAlg(const char *input_lgf,  typename MF::Value expected) {
   max_flow.minCutMap(min_cut2);
   min_cut_value = cutValue(g, min_cut2, cap);
 
-  check(!tol.different(2 * expected, max_flow.flowValue()),
+  check(!tol.different(17 * expected, max_flow.flowValue()),
         "Incorrect max flow value.");
-  check(!tol.different(2 * expected, min_cut_value),
+  check(!tol.different(17 * expected, min_cut_value),
         "Incorrect min cut value.");
 
   max_flow.flowMap(flow);
@@ -382,9 +414,13 @@ int main() {
   typedef Preflow<SmartDigraph, SmartDigraph::ArcMap<int> > PType1;
   typedef Preflow<SmartDigraph, SmartDigraph::ArcMap<float> > PType2;
   typedef Preflow<SmartDigraph, SmartDigraph::ArcMap<double> > PType3;
+
   checkMaxFlowAlg<PType1, PreflowStartFunctions<PType1> >(test_lgf, 13);
   checkMaxFlowAlg<PType2, PreflowStartFunctions<PType2> >(test_lgf, 13);
   checkMaxFlowAlg<PType3, PreflowStartFunctions<PType3> >(test_lgf, 13);
+
+  checkMaxFlowAlg<PType2, PreflowStartFunctions<PType2> >(test_lgf_float, 0.3);
+  checkMaxFlowAlg<PType3, PreflowStartFunctions<PType3> >(test_lgf_float, 0.3);
 
   checkInitPreflow();
 
@@ -392,9 +428,13 @@ int main() {
   typedef EdmondsKarp<SmartDigraph, SmartDigraph::ArcMap<int> > EKType1;
   typedef EdmondsKarp<SmartDigraph, SmartDigraph::ArcMap<float> > EKType2;
   typedef EdmondsKarp<SmartDigraph, SmartDigraph::ArcMap<double> > EKType3;
+
   checkMaxFlowAlg<EKType1, GeneralStartFunctions<EKType1> >(test_lgf, 13);
   checkMaxFlowAlg<EKType2, GeneralStartFunctions<EKType2> >(test_lgf, 13);
   checkMaxFlowAlg<EKType3, GeneralStartFunctions<EKType3> >(test_lgf, 13);
+
+  checkMaxFlowAlg<EKType2, GeneralStartFunctions<EKType2> >(test_lgf_float, 0.3);
+  checkMaxFlowAlg<EKType3, GeneralStartFunctions<EKType3> >(test_lgf_float, 0.3);
 
   return 0;
 }
