@@ -2383,7 +2383,7 @@ namespace lemon {
       PlanarEmbedding<Graph> pe(_graph);
       if (!pe.run()) return false;
 
-      run(pe);
+      run(pe.embeddingMap());
       return true;
     }
 

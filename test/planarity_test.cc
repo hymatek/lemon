@@ -245,13 +245,29 @@ int main() {
     if (planar) {
       checkEmbedding(graph, pe);
 
-      PlanarDrawing<Graph> pd(graph);
-      pd.run(pe.embeddingMap());
-      checkDrawing(graph, pd);
+      {
+        PlanarDrawing<Graph> pd(graph);
+        pd.run(pe.embeddingMap());
+        checkDrawing(graph, pd);
+      }
 
-      PlanarColoring<Graph> pc(graph);
-      pc.runFiveColoring(pe.embeddingMap());
-      checkColoring(graph, pc, 5);
+      {
+        PlanarDrawing<Graph> pd(graph);
+        pd.run();
+        checkDrawing(graph, pd);
+      }
+
+      {
+        PlanarColoring<Graph> pc(graph);
+        pc.runFiveColoring(pe.embeddingMap());
+        checkColoring(graph, pc, 5);
+      }
+
+      {
+        PlanarColoring<Graph> pc(graph);
+        pc.runFiveColoring();
+        checkColoring(graph, pc, 5);
+      }
 
     } else {
       checkKuratowski(graph, pe);
