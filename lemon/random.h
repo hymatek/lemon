@@ -62,6 +62,8 @@
 #ifndef LEMON_RANDOM_H
 #define LEMON_RANDOM_H
 
+#include <lemon/config.h>
+
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -71,7 +73,7 @@
 #include <lemon/math.h>
 #include <lemon/dim2.h>
 
-#ifndef WIN32
+#ifndef LEMON_WIN32
 #include <sys/time.h>
 #include <ctime>
 #include <sys/types.h>
@@ -199,7 +201,7 @@ namespace lemon {
 
         initState(init);
 
-        num = length > end - begin ? length : end - begin;
+        num = static_cast<int>(length > end - begin ? length : end - begin);
         while (num--) {
           curr[0] = (curr[0] ^ ((curr[1] ^ (curr[1] >> (bits - 2))) * mul1))
             + *it + cnt;
@@ -213,7 +215,7 @@ namespace lemon {
           --curr;
         }
 
-        num = length - 1; cnt = length - (curr - state) - 1;
+        num = length - 1; cnt = static_cast<int>(length - (curr - state) - 1);
         while (num--) {
           curr[0] = (curr[0] ^ ((curr[1] ^ (curr[1] >> (bits - 2))) * mul2))
             - cnt;
@@ -340,7 +342,7 @@ namespace lemon {
         do {
           num = rnd() & mask;
         } while (num > max);
-        return num;
+        return static_cast<Result>(num);
       }
     };
 
@@ -605,7 +607,7 @@ namespace lemon {
     /// it uses the \c seedFromTime().
     /// \return Currently always \c true.
     bool seed() {
-#ifndef WIN32
+#ifndef LEMON_WIN32
       if (seedFromFile("/dev/urandom", 0)) return true;
 #endif
       if (seedFromTime()) return true;
@@ -625,7 +627,7 @@ namespace lemon {
     /// \param file The source file
     /// \param offset The offset, from the file read.
     /// \return \c true when the seeding successes.
-#ifndef WIN32
+#ifndef LEMON_WIN32
     bool seedFromFile(const std::string& file = "/dev/urandom", int offset = 0)
 #else
     bool seedFromFile(const std::string& file = "", int offset = 0)
@@ -647,7 +649,7 @@ namespace lemon {
     /// random sequence.
     /// \return Currently always \c true.
     bool seedFromTime() {
-#ifndef WIN32
+#ifndef LEMON_WIN32
       timeval tv;
       gettimeofday(&tv, 0);
       seed(getpid() + tv.tv_sec + tv.tv_usec);

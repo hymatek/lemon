@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -35,7 +35,7 @@ void g()
   for(int i=0;i<1000;i++)
     {
       TimeStamp x(T);
-      ignore_unused_variable_warning(x);
+      ::lemon::ignore_unused_variable_warning(x);
     }
 }
 

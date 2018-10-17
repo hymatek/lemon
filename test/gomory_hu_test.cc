@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -68,6 +68,7 @@ void checkGomoryHuCompile()
   CutMap cut;
   Value v;
   int d;
+  ::lemon::ignore_unused_variable_warning(v,d);
 
   GomoryHu<Graph, CapMap> gh_test(g, cap);
   const GomoryHu<Graph, CapMap>&

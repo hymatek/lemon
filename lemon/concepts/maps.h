@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -60,10 +60,10 @@ namespace lemon {
           typename _ReadMap::Value own_val = m[own_key];
           own_val = m[own_key];
 
-          ignore_unused_variable_warning(key);
-          ignore_unused_variable_warning(val);
-          ignore_unused_variable_warning(own_key);
-          ignore_unused_variable_warning(own_val);
+          ::lemon::ignore_unused_variable_warning(key);
+          ::lemon::ignore_unused_variable_warning(val);
+          ::lemon::ignore_unused_variable_warning(own_key);
+          ::lemon::ignore_unused_variable_warning(own_val);
         }
         const Key& key;
         const typename _ReadMap::Key& own_key;
@@ -100,10 +100,10 @@ namespace lemon {
           m.set(key, val);
           m.set(own_key, own_val);
 
-          ignore_unused_variable_warning(key);
-          ignore_unused_variable_warning(val);
-          ignore_unused_variable_warning(own_key);
-          ignore_unused_variable_warning(own_val);
+          ::lemon::ignore_unused_variable_warning(key);
+          ::lemon::ignore_unused_variable_warning(val);
+          ::lemon::ignore_unused_variable_warning(own_key);
+          ::lemon::ignore_unused_variable_warning(own_val);
         }
         const Key& key;
         const Value& val;

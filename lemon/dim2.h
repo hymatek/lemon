@@ -20,6 +20,7 @@
 #define LEMON_DIM2_H
 
 #include <iostream>
+#include <algorithm>
 
 ///\ingroup geomdat
 ///\file

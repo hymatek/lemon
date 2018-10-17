@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -91,6 +91,7 @@ void checkMinCostArborescenceCompile()
   Arc e;
   VType c;
   bool b;
+  ::lemon::ignore_unused_variable_warning(c,b);
   int i;
   CostMap cost;
   ArbMap arb;
@@ -126,8 +127,8 @@ void checkMinCostArborescenceCompile()
   i = const_mcarb_test.dualSize(i);
   c = const_mcarb_test.dualValue(i);
 
-  ignore_unused_variable_warning(am);
-  ignore_unused_variable_warning(pm);
+  ::lemon::ignore_unused_variable_warning(am);
+  ::lemon::ignore_unused_variable_warning(pm);
 }
 
 int main() {

@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -63,11 +63,28 @@ associated to the current node.
  3      (40,10)      10      "Third node"
 \endcode
 
-The \c \@arcs section is very similar to the \c \@nodes section, it
-again starts with a header line describing the names of the maps, but
-the \c "label" map is not obligatory here. The following lines
-describe the arcs. The first two tokens of each line are the source
-and the target node of the arc, respectively, then come the map
+The \e LGF files can also contain bipartite graphs, in this case a
+\c \@red_nodes and a \c \@blue_nodes sections describe the node set of the
+graph. If a map is in both of these sections, then it can be used as a
+regular node map.
+
+\code
+ @red_nodes
+ label  only_red_map   name
+ 1      "cherry"       "John"
+ 2      "Santa Claus"  "Jack"
+ 3      "blood"        "Jason"
+ @blue_nodes
+ label  name
+ 4      "Elisabeth"
+ 5      "Eve"
+\endcode
+
+The \c \@arcs section is very similar to the \c \@nodes section,
+it again starts with a header line describing the names of the maps,
+but the \c "label" map is not obligatory here. The following lines
+describe the arcs. The first two tokens of each line are
+the source and the target node of the arc, respectively, then come the map
 values. The source and target tokens must be node labels.
 
 \code

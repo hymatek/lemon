@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -342,6 +342,7 @@ void checkWeightedFractionalMatching(const SmartGraph& graph,
       check(indeg == 1, "Invalid matching");
       pv += weight[mwfm.matching(n)];
       SmartGraph::Node o = graph.target(mwfm.matching(n));
+      ::lemon::ignore_unused_variable_warning(o);
     } else {
       check(mwfm.nodeValue(n) == 0, "Invalid matching");
       check(indeg == 0, "Invalid matching");
@@ -406,6 +407,7 @@ void checkWeightedPerfectFractionalMatching(const SmartGraph& graph,
     check(indeg == 1, "Invalid perfect matching");
     pv += weight[mwpfm.matching(n)];
     SmartGraph::Node o = graph.target(mwpfm.matching(n));
+    ::lemon::ignore_unused_variable_warning(o);
   }
 
   for (SmartGraph::EdgeIt e(graph); e != INVALID; ++e) {

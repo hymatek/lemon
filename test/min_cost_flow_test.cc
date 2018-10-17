@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -395,6 +395,12 @@ void runMcfGeqTests( Param param,
   mcf3.upperMap(neg2_u);
   checkMcf(mcf3, mcf3.run(param), neg2_gr, neg2_l, neg2_u, neg2_c, neg2_s,
            mcf3.OPTIMAL, true,     -300, test_str + "-18", GEQ);
+
+  // Tests for empty graph
+  Digraph gr0;
+  MCF mcf0(gr0);
+  mcf0.run(param);
+  check(mcf0.totalCost() == 0, "Wrong total cost");  
 }
 
 template < typename MCF, typename Param >

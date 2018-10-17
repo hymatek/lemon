@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -22,14 +22,20 @@
 #include<lemon/config.h>
 
 
-#ifdef LEMON_HAVE_GLPK
+#if LEMON_DEFAULT_LP == LEMON_GLPK_ || LEMON_DEFAULT_MIP == LEMON_GLPK_
 #include <lemon/glpk.h>
-#elif LEMON_HAVE_CPLEX
+#endif
+#if LEMON_DEFAULT_LP == LEMON_CPLEX_ || LEMON_DEFAULT_MIP == LEMON_CPLEX_
 #include <lemon/cplex.h>
-#elif LEMON_HAVE_SOPLEX
+#endif
+#if LEMON_DEFAULT_LP == LEMON_SOPLEX_
 #include <lemon/soplex.h>
-#elif LEMON_HAVE_CLP
+#endif
+#if LEMON_DEFAULT_LP == LEMON_CLP_
 #include <lemon/clp.h>
+#endif
+#if LEMON_DEFAULT_MIP == LEMON_CBC_
+#include <lemon/cbc.h>
 #endif
 
 ///\file
@@ -43,8 +49,8 @@ namespace lemon {
   ///The default LP solver identifier.
   ///\ingroup lp_group
   ///
-  ///Currently, the possible values are \c GLPK, \c CPLEX,
-  ///\c SOPLEX or \c CLP
+  ///Currently, the possible values are \c LEMON_GLPK_, \c LEMON_CPLEX_,
+  ///\c LEMON_SOPLEX_ or \c LEMON_CLP_
 #define LEMON_DEFAULT_LP SOLVER
   ///The default LP solver
 
@@ -59,32 +65,32 @@ namespace lemon {
   ///The default MIP solver identifier.
   ///\ingroup lp_group
   ///
-  ///Currently, the possible values are \c GLPK or \c CPLEX
+  ///Currently, the possible values are \c LEMON_GLPK_, \c LEMON_CPLEX_
+  ///or \c LEMON_CBC_
 #define LEMON_DEFAULT_MIP SOLVER
   ///The default MIP solver.
 
   ///The default MIP solver.
   ///\ingroup lp_group
   ///
-  ///Currently, it is either \c GlpkMip or \c CplexMip
+  ///Currently, it is either \c GlpkMip, \c CplexMip , \c CbcMip
   typedef GlpkMip Mip;
 #else
-#ifdef LEMON_HAVE_GLPK
-# define LEMON_DEFAULT_LP GLPK
+#if LEMON_DEFAULT_LP == LEMON_GLPK_
   typedef GlpkLp Lp;
-# define LEMON_DEFAULT_MIP GLPK
-  typedef GlpkMip Mip;
-#elif LEMON_HAVE_CPLEX
-# define LEMON_DEFAULT_LP CPLEX
+#elif LEMON_DEFAULT_LP == LEMON_CPLEX_
   typedef CplexLp Lp;
-# define LEMON_DEFAULT_MIP CPLEX
-  typedef CplexMip Mip;
-#elif LEMON_HAVE_SOPLEX
-# define DEFAULT_LP SOPLEX
+#elif LEMON_DEFAULT_LP == LEMON_SOPLEX_
   typedef SoplexLp Lp;
-#elif LEMON_HAVE_CLP
-# define DEFAULT_LP CLP
+#elif LEMON_DEFAULT_LP == LEMON_CLP_
   typedef ClpLp Lp;
+#endif
+#if LEMON_DEFAULT_MIP == LEMON_GLPK_
+  typedef GlpkMip Mip;
+#elif LEMON_DEFAULT_MIP == LEMON_CPLEX_
+  typedef CplexMip Mip;
+#elif LEMON_DEFAULT_MIP == LEMON_CBC_
+  typedef CbcMip Mip;
 #endif
 #endif
 

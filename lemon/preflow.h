@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -102,12 +102,12 @@ namespace lemon {
   ///
   /// This class provides an implementation of Goldberg-Tarjan's \e preflow
   /// \e push-relabel algorithm producing a \ref max_flow
-  /// "flow of maximum value" in a digraph \ref clrs01algorithms,
-  /// \ref amo93networkflows, \ref goldberg88newapproach.
+  /// "flow of maximum value" in a digraph \cite clrs01algorithms,
+  /// \cite amo93networkflows, \cite goldberg88newapproach.
   /// The preflow algorithms are the fastest known maximum
   /// flow algorithms. The current implementation uses a mixture of the
   /// \e "highest label" and the \e "bound decrease" heuristics.
-  /// The worst case time complexity of the algorithm is \f$O(n^2\sqrt{e})\f$.
+  /// The worst case time complexity of the algorithm is \f$O(n^2\sqrt{m})\f$.
   ///
   /// The algorithm consists of two phases. After the first phase
   /// the maximum flow value and the minimum cut is obtained. The
@@ -134,7 +134,7 @@ namespace lemon {
   class Preflow {
   public:
 
-    ///The \ref PreflowDefaultTraits "traits class" of the algorithm.
+    ///The \ref lemon::PreflowDefaultTraits "traits class" of the algorithm.
     typedef TR Traits;
     ///The type of the digraph the algorithm runs on.
     typedef typename Traits::Digraph Digraph;
@@ -476,7 +476,7 @@ namespace lemon {
     /// Initializes the internal data structures and sets the initial
     /// flow to the given \c flowMap. The \c flowMap should contain a
     /// flow or at least a preflow, i.e. at each node excluding the
-    /// source node the incoming flow should greater or equal to the
+    /// source node the incoming flow should be greater or equal to the
     /// outgoing flow.
     /// \return \c false if the given \c flowMap is not a preflow.
     template <typename FlowMap>
@@ -495,7 +495,7 @@ namespace lemon {
         for (OutArcIt e(_graph, n); e != INVALID; ++e) {
           excess -= (*_flow)[e];
         }
-        if (excess < 0 && n != _source) return false;
+        if (_tolerance.negative(excess) && n != _source) return false;
         (*_excess)[n] = excess;
       }
 
@@ -554,10 +554,10 @@ namespace lemon {
           (*_excess)[v] += rem;
         }
       }
-      for (NodeIt n(_graph); n != INVALID; ++n) 
+      for (NodeIt n(_graph); n != INVALID; ++n)
         if(n!=_source && n!=_target && _tolerance.positive((*_excess)[n]))
           _level->activate(n);
-          
+
       return true;
     }
 
@@ -585,7 +585,7 @@ namespace lemon {
           if (n == INVALID) goto first_phase_done;
           level = _level->highestActiveLevel();
           --num;
-          
+
           Value excess = (*_excess)[n];
           int new_level = _level->maxLevel();
 
@@ -639,7 +639,7 @@ namespace lemon {
 
           (*_excess)[n] = excess;
 
-          if (excess != 0) {
+          if (_tolerance.nonZero(excess)) {
             if (new_level + 1 < _level->maxLevel()) {
               _level->liftHighestActive(new_level + 1);
             } else {
@@ -720,7 +720,7 @@ namespace lemon {
 
           (*_excess)[n] = excess;
 
-          if (excess != 0) {
+          if (_tolerance.nonZero(excess)) {
             if (new_level + 1 < _level->maxLevel()) {
               _level->liftActiveOn(level, new_level + 1);
             } else {
@@ -791,7 +791,7 @@ namespace lemon {
       for (NodeIt n(_graph); n != INVALID; ++n) {
         if (!reached[n]) {
           _level->dirtyTopButOne(n);
-        } else if ((*_excess)[n] > 0 && _target != n) {
+        } else if (_tolerance.positive((*_excess)[n]) && _target != n) {
           _level->activate(n);
         }
       }
@@ -852,7 +852,7 @@ namespace lemon {
 
         (*_excess)[n] = excess;
 
-        if (excess != 0) {
+        if (_tolerance.nonZero(excess)) {
           if (new_level + 1 < _level->maxLevel()) {
             _level->liftHighestActive(new_level + 1);
           } else {

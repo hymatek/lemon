@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -103,7 +103,7 @@ int main()
     checkConcept<ReadWriteMap<A,B>, NullMap<A,B> >();
     NullMap<A,B> map1;
     NullMap<A,B> map2 = map1;
-    ignore_unused_variable_warning(map2);
+    ::lemon::ignore_unused_variable_warning(map2);
     map1 = nullMap<A,B>();
   }
 
@@ -114,14 +114,14 @@ int main()
     ConstMap<A,B> map1;
     ConstMap<A,B> map2 = B();
     ConstMap<A,B> map3 = map1;
-    ignore_unused_variable_warning(map2,map3);
+    ::lemon::ignore_unused_variable_warning(map2,map3);
 
     map1 = constMap<A>(B());
     map1 = constMap<A,B>();
     map1.setAll(B());
     ConstMap<A,C> map4(C(1));
     ConstMap<A,C> map5 = map4;
-    ignore_unused_variable_warning(map5);
+    ::lemon::ignore_unused_variable_warning(map5);
 
     map4 = constMap<A>(C(2));
     map4.setAll(C(3));
@@ -143,7 +143,7 @@ int main()
     checkConcept<ReadMap<A,A>, IdentityMap<A> >();
     IdentityMap<A> map1;
     IdentityMap<A> map2 = map1;
-    ignore_unused_variable_warning(map2);
+    ::lemon::ignore_unused_variable_warning(map2);
 
     map1 = identityMap<A>();
 
@@ -204,9 +204,9 @@ int main()
     typedef ComposeMap<DoubleMap, ReadMap<B,A> > CompMap;
     checkConcept<ReadMap<B,double>, CompMap>();
     CompMap map1 = CompMap(DoubleMap(),ReadMap<B,A>());
-    ignore_unused_variable_warning(map1);
+    ::lemon::ignore_unused_variable_warning(map1);
     CompMap map2 = composeMap(DoubleMap(), ReadMap<B,A>());
-    ignore_unused_variable_warning(map2);
+    ::lemon::ignore_unused_variable_warning(map2);
 
     SparseMap<double, bool> m1(false); m1[3.14] = true;
     RangeMap<double> m2(2); m2[0] = 3.0; m2[1] = 3.14;
@@ -219,9 +219,9 @@ int main()
     typedef CombineMap<DoubleMap, DoubleMap, std::plus<double> > CombMap;
     checkConcept<ReadMap<A,double>, CombMap>();
     CombMap map1 = CombMap(DoubleMap(), DoubleMap());
-    ignore_unused_variable_warning(map1);
+    ::lemon::ignore_unused_variable_warning(map1);
     CombMap map2 = combineMap(DoubleMap(), DoubleMap(), std::plus<double>());
-    ignore_unused_variable_warning(map2);
+    ::lemon::ignore_unused_variable_warning(map2);
 
     check(combineMap(constMap<B,int,2>(), identityMap<B>(), &binc)[B()] == 3,
           "Something is wrong with CombineMap");
@@ -233,15 +233,15 @@ int main()
     checkConcept<ReadMap<A,B>, FunctorToMap<F> >();
     FunctorToMap<F> map1;
     FunctorToMap<F> map2 = FunctorToMap<F>(F());
-    ignore_unused_variable_warning(map2);
+    ::lemon::ignore_unused_variable_warning(map2);
 
     B b = functorToMap(F())[A()];
-    ignore_unused_variable_warning(b);
+    ::lemon::ignore_unused_variable_warning(b);
 
     checkConcept<ReadMap<A,B>, MapToFunctor<ReadMap<A,B> > >();
     MapToFunctor<ReadMap<A,B> > map =
       MapToFunctor<ReadMap<A,B> >(ReadMap<A,B>());
-    ignore_unused_variable_warning(map);
+    ::lemon::ignore_unused_variable_warning(map);
 
     check(functorToMap(&func)[A()] == 3,
           "Something is wrong with FunctorToMap");
@@ -259,9 +259,9 @@ int main()
     checkConcept<ReadMap<double,double>,
       ConvertMap<ReadMap<double, int>, double> >();
     ConvertMap<RangeMap<bool>, int> map1(rangeMap(1, true));
-    ignore_unused_variable_warning(map1);
+    ::lemon::ignore_unused_variable_warning(map1);
     ConvertMap<RangeMap<bool>, int> map2 = convertMap<int>(rangeMap(2, false));
-    ignore_unused_variable_warning(map2);
+    ::lemon::ignore_unused_variable_warning(map2);
 
   }
 
@@ -535,7 +535,8 @@ int main()
           "Wrong SourceMap or TargetMap");
 
     typedef Orienter<Graph, const ConstMap<Edge, bool> > Digraph;
-    Digraph dgr(gr, constMap<Edge, bool>(true));
+    ConstMap<Edge, bool> true_edge_map(true);
+    Digraph dgr(gr, true_edge_map);
     OutDegMap<Digraph> odm(dgr);
     InDegMap<Digraph> idm(dgr);
 

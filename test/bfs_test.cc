@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -61,6 +61,7 @@ void checkBfsCompile()
   Node s, t, n;
   Arc e;
   int l, i;
+  ::lemon::ignore_unused_variable_warning(l,i);
   bool b;
   BType::DistMap d(G);
   BType::PredMap p(G);
@@ -150,6 +151,8 @@ void checkBfsFunctionCompile()
 
   Digraph g;
   bool b;
+  ::lemon::ignore_unused_variable_warning(b);
+
   bfs(g).run(Node());
   b=bfs(g).run(Node(),Node());
   bfs(g).run();

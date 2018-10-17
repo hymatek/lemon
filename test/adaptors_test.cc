@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -65,7 +65,7 @@ void checkReverseDigraph() {
   Digraph::Arc a1 = digraph.addArc(n1, n2);
   Digraph::Arc a2 = digraph.addArc(n1, n3);
   Digraph::Arc a3 = digraph.addArc(n2, n3);
-  ignore_unused_variable_warning(a3);
+  ::lemon::ignore_unused_variable_warning(a3);
 
   // Check the adaptor
   checkGraphNodeList(adaptor, 3);
@@ -100,7 +100,7 @@ void checkReverseDigraph() {
   Adaptor::Arc a6 = adaptor.addArc(n2, n4);
   Adaptor::Arc a7 = adaptor.addArc(n1, n4);
   Adaptor::Arc a8 = adaptor.addArc(n1, n2);
-  ignore_unused_variable_warning(a6,a7,a8);
+  ::lemon::ignore_unused_variable_warning(a6,a7,a8);
 
   adaptor.erase(a1);
   adaptor.erase(n3);
@@ -760,7 +760,7 @@ void checkSplitNodes() {
   Digraph::Arc a1 = digraph.addArc(n1, n2);
   Digraph::Arc a2 = digraph.addArc(n1, n3);
   Digraph::Arc a3 = digraph.addArc(n2, n3);
-  ignore_unused_variable_warning(a1,a2,a3);
+  ::lemon::ignore_unused_variable_warning(a1,a2,a3);
 
   checkGraphNodeList(adaptor, 6);
   checkGraphArcList(adaptor, 6);

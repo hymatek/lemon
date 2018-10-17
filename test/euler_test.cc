@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -101,8 +101,8 @@ int main()
     Digraph d;
     Graph g(d);
     Digraph::Node n = d.addNode();
-    ignore_unused_variable_warning(n);
-  
+    ::lemon::ignore_unused_variable_warning(n);
+
     checkDiEulerIt(d);
     checkDiEulerIt(g);
     checkEulerIt(g);
@@ -190,7 +190,7 @@ int main()
     Digraph::Node n3 = d.addNode();
     Digraph::Node n4 = d.addNode();
     Digraph::Node n5 = d.addNode();
-    ignore_unused_variable_warning(n0,n4,n5);
+    ::lemon::ignore_unused_variable_warning(n0,n4,n5);
 
     d.addArc(n1, n2);
     d.addArc(n2, n3);

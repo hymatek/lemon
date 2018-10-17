@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -65,8 +65,10 @@ void checkBellmanFordCompile()
   Node s, t, n;
   Arc e;
   Value l;
+  ::lemon::ignore_unused_variable_warning(l);
   int k=3;
   bool b;
+  ::lemon::ignore_unused_variable_warning(b);
   BF::DistMap d(gr);
   BF::PredMap p(gr);
   LengthMap length;
@@ -147,6 +149,8 @@ void checkBellmanFordFunctionCompile()
 
   Digraph g;
   bool b;
+  ::lemon::ignore_unused_variable_warning(b);
+
   bellmanFord(g,LengthMap()).run(Node());
   b = bellmanFord(g,LengthMap()).run(Node(),Node());
   bellmanFord(g,LengthMap())
@@ -190,7 +194,7 @@ void checkBellmanFord() {
   check(pathTarget(gr, p) == t, "path() found a wrong path.");
 
   ListPath<Digraph> path;
-  Value dist;
+  Value dist = 0;
   bool reached = bellmanFord(gr,length).path(path).dist(dist).run(s,t);
 
   check(reached && dist == -1, "Bellman-Ford found a wrong path.");

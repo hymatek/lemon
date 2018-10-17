@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -73,6 +73,7 @@ void checkCirculationCompile()
   BarrierMap bar;
   VType v;
   bool b;
+  ::lemon::ignore_unused_variable_warning(v,b);
 
   typedef Circulation<Digraph, CapMap, CapMap, SupplyMap>
             ::SetFlowMap<FlowMap>
@@ -103,7 +104,7 @@ void checkCirculationCompile()
   b = const_circ_test.barrier(n);
   const_circ_test.barrierMap(bar);
 
-  ignore_unused_variable_warning(fm);
+  ::lemon::ignore_unused_variable_warning(fm);
 }
 
 template <class G, class LM, class UM, class DM>

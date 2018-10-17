@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -145,6 +145,7 @@ void checkMaxMatchingCompile()
 
   MaxMatching<Graph>::Status stat =
     const_mat_test.status(n);
+  ::lemon::ignore_unused_variable_warning(stat);
   const MaxMatching<Graph>::StatusMap& smap =
     const_mat_test.statusMap();
   stat = smap[n];

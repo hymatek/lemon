@@ -16,6 +16,7 @@ SET(TESTS
   arc_look_up_test
   bellman_ford_test
   bfs_test
+  bpgraph_test
   circulation_test
   connectivity_test
   counter_test
@@ -34,19 +35,24 @@ SET(TESTS
   hao_orlin_test
   heap_test
   kruskal_test
+  lgf_reader_writer_test
   lgf_test
   maps_test
   matching_test
+  max_cardinality_search_test
+  max_clique_test
+  max_flow_test
   min_cost_arborescence_test
   min_cost_flow_test
   min_mean_cycle_test
+  nagamochi_ibaraki_test
   path_test
   planarity_test
-  preflow_test
   radix_sort_test
   random_test
   suurballe_test
   time_measure_test
+  tsp_test
   unionfind_test
 )
 
@@ -63,10 +69,13 @@ IF(LEMON_HAVE_LP)
     SET(LP_TEST_LIBS ${LP_TEST_LIBS} ${GLPK_LIBRARIES})
   ENDIF()
   IF(LEMON_HAVE_CPLEX)
-    SET(LP_TEST_LIBS ${LP_TEST_LIBS} ${CPLEX_LIBRARIES})
+    SET(LP_TEST_LIBS ${LP_TEST_LIBS} ${ILOG_LIBRARIES})
   ENDIF()
   IF(LEMON_HAVE_CLP)
     SET(LP_TEST_LIBS ${LP_TEST_LIBS} ${COIN_CLP_LIBRARIES})
+  ENDIF()
+  IF(LEMON_HAVE_SOPLEX)
+    SET(LP_TEST_LIBS ${LP_TEST_LIBS} ${SOPLEX_LIBRARIES})
   ENDIF()
 
   TARGET_LINK_LIBRARIES(lp_test ${LP_TEST_LIBS})
@@ -87,7 +96,7 @@ IF(LEMON_HAVE_LP)
     GET_TARGET_PROPERTY(TARGET_LOC lp_test LOCATION)
     GET_FILENAME_COMPONENT(TARGET_PATH ${TARGET_LOC} PATH)
     ADD_CUSTOM_COMMAND(TARGET lp_test POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy ${CPLEX_BIN_DIR}/cplex.dll ${TARGET_PATH}
+      COMMAND ${CMAKE_COMMAND} -E copy ${ILOG_CPLEX_DLL} ${TARGET_PATH}
     )
   ENDIF()
 ENDIF()
@@ -105,7 +114,7 @@ IF(LEMON_HAVE_MIP)
     SET(MIP_TEST_LIBS ${MIP_TEST_LIBS} ${GLPK_LIBRARIES})
   ENDIF()
   IF(LEMON_HAVE_CPLEX)
-    SET(MIP_TEST_LIBS ${MIP_TEST_LIBS} ${CPLEX_LIBRARIES})
+    SET(MIP_TEST_LIBS ${MIP_TEST_LIBS} ${ILOG_LIBRARIES})
   ENDIF()
   IF(LEMON_HAVE_CBC)
     SET(MIP_TEST_LIBS ${MIP_TEST_LIBS} ${COIN_CBC_LIBRARIES})
@@ -129,7 +138,7 @@ IF(LEMON_HAVE_MIP)
     GET_TARGET_PROPERTY(TARGET_LOC mip_test LOCATION)
     GET_FILENAME_COMPONENT(TARGET_PATH ${TARGET_LOC} PATH)
     ADD_CUSTOM_COMMAND(TARGET mip_test POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy ${CPLEX_BIN_DIR}/cplex.dll ${TARGET_PATH}
+      COMMAND ${CMAKE_COMMAND} -E copy ${ILOG_CPLEX_DLL} ${TARGET_PATH}
     )
   ENDIF()
 ENDIF()

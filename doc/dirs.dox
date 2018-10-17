@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -31,6 +31,19 @@ for educational purposes.
 This directory contains some auxiliary pages and the whole generated
 documentation.
 */
+
+/**
+\dir contrib
+\brief Directory for user contributed source codes.
+
+You can place your own C++ code using LEMON into this directory, which
+will compile to an executable along with LEMON when you build the
+library. This is probably the easiest way of compiling short to medium
+codes, for this does require neither a LEMON installed system-wide nor
+adding several paths to the compiler.
+
+Please have a look at <tt>contrib/CMakeLists.txt</tt> for
+instruction on how to add your own files into the build process.  */
 
 /**
 \dir test

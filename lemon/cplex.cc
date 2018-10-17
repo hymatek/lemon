@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -37,36 +37,54 @@ namespace lemon {
     }
   }
 
+  void CplexEnv::incCnt()
+  {
+    _cnt_lock->lock();
+    ++(*_cnt);
+    _cnt_lock->unlock();
+  }
+
+  void CplexEnv::decCnt()
+  {
+    _cnt_lock->lock();
+    --(*_cnt);
+    if (*_cnt == 0) {
+      delete _cnt;
+      _cnt_lock->unlock();
+      delete _cnt_lock;
+      CPXcloseCPLEX(&_env);
+    }
+    else _cnt_lock->unlock();
+  }
+  
   CplexEnv::CplexEnv() {
     int status;
-    _cnt = new int;
     _env = CPXopenCPLEX(&status);
-    if (_env == 0) {
-      delete _cnt;
-      _cnt = 0;
+    if (_env == 0)
       throw LicenseError(status);
-    }
+    _cnt = new int;
+    (*_cnt) = 1;
+    _cnt_lock = new bits::Lock;
   }
 
   CplexEnv::CplexEnv(const CplexEnv& other) {
     _env = other._env;
     _cnt = other._cnt;
-    ++(*_cnt);
+    _cnt_lock = other._cnt_lock;
+    incCnt();
   }
 
   CplexEnv& CplexEnv::operator=(const CplexEnv& other) {
+    decCnt();
     _env = other._env;
     _cnt = other._cnt;
-    ++(*_cnt);
+    _cnt_lock = other._cnt_lock;
+    incCnt();
     return *this;
   }
 
   CplexEnv::~CplexEnv() {
-    --(*_cnt);
-    if (*_cnt == 0) {
-      delete _cnt;
-      CPXcloseCPLEX(&_env);
-    }
+    decCnt();
   }
 
   CplexBase::CplexBase() : LpBase() {
@@ -490,6 +508,17 @@ namespace lemon {
     CPXsetintparam(cplexEnv(), CPX_PARAM_SCRIND,
                    _message_enabled ? CPX_ON : CPX_OFF);
   }
+
+  void CplexBase::_write(std::string file, std::string format) const
+  {
+    if(format == "MPS" || format == "LP")
+      CPXwriteprob(cplexEnv(), cplexLp(), file.c_str(), format.c_str());
+    else if(format == "SOL")
+      CPXsolwrite(cplexEnv(), cplexLp(), file.c_str());
+    else throw UnsupportedFormatError(format);
+  }
+
+
 
   // CplexLp members
 

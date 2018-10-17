@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -110,7 +110,7 @@ void checkMmcAlg(const SmartDigraph& gr,
                  const SmartDigraph::ArcMap<int>& cm,
                  int cost, int size) {
   MMC alg(gr, lm);
-  alg.findCycleMean();
+  check(alg.findCycleMean(), "Wrong result");
   check(alg.cycleMean() == static_cast<double>(cost) / size,
         "Wrong cycle mean");
   alg.findCycle();
@@ -210,6 +210,13 @@ int main() {
     checkMmcAlg<HowardMmc<GR, IntArcMap> >(gr, l2, c2,  5, 2);
     checkMmcAlg<HowardMmc<GR, IntArcMap> >(gr, l3, c3,  0, 1);
     checkMmcAlg<HowardMmc<GR, IntArcMap> >(gr, l4, c4, -1, 1);
+
+    // Howard with iteration limit
+    HowardMmc<GR, IntArcMap> mmc(gr, l1);
+    check((mmc.findCycleMean(2) == HowardMmc<GR, IntArcMap>::ITERATION_LIMIT),
+      "Wrong termination cause");
+    check((mmc.findCycleMean(4) == HowardMmc<GR, IntArcMap>::OPTIMAL),
+      "Wrong termination cause");
   }
 
   return 0;

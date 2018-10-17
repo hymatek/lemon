@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -43,7 +43,7 @@ namespace lemon {
   /// \tparam GR The digraph type in which the path is.
   ///
   /// In a sense, the path can be treated as a list of arcs. The
-  /// lemon path type stores just this list. As a consequence, it
+  /// LEMON path type stores just this list. As a consequence, it
   /// cannot enumerate the nodes of the path and the source node of
   /// a zero length path is undefined.
   ///
@@ -148,7 +148,7 @@ namespace lemon {
     /// \brief Reset the path to an empty one.
     void clear() { head.clear(); tail.clear(); }
 
-    /// \brief The nth arc.
+    /// \brief The n-th arc.
     ///
     /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
     const Arc& nth(int n) const {
@@ -156,7 +156,7 @@ namespace lemon {
         *(tail.begin() + (n - head.size()));
     }
 
-    /// \brief Initialize arc iterator to point to the nth arc
+    /// \brief Initialize arc iterator to point to the n-th arc
     ///
     /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
     ArcIt nthIt(int n) const {
@@ -244,7 +244,7 @@ namespace lemon {
   /// \tparam GR The digraph type in which the path is.
   ///
   /// In a sense, the path can be treated as a list of arcs. The
-  /// lemon path type stores just this list. As a consequence it
+  /// LEMON path type stores just this list. As a consequence it
   /// cannot enumerate the nodes in the path and the zero length paths
   /// cannot store the source.
   ///
@@ -317,7 +317,7 @@ namespace lemon {
 
       /// Constructor with starting point
       ArcIt(const SimplePath &_path, int _idx)
-        : idx(_idx), path(&_path) {}
+        : path(&_path), idx(_idx) {}
 
     public:
 
@@ -353,14 +353,14 @@ namespace lemon {
     /// \brief Reset the path to an empty one.
     void clear() { data.clear(); }
 
-    /// \brief The nth arc.
+    /// \brief The n-th arc.
     ///
     /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
     const Arc& nth(int n) const {
       return data[n];
     }
 
-    /// \brief  Initializes arc iterator to point to the nth arc.
+    /// \brief  Initializes arc iterator to point to the n-th arc.
     ArcIt nthIt(int n) const {
       return ArcIt(*this, n);
     }
@@ -421,7 +421,7 @@ namespace lemon {
   /// \tparam GR The digraph type in which the path is.
   ///
   /// In a sense, the path can be treated as a list of arcs. The
-  /// lemon path type stores just this list. As a consequence it
+  /// LEMON path type stores just this list. As a consequence it
   /// cannot enumerate the nodes in the path and the zero length paths
   /// cannot store the source.
   ///
@@ -543,9 +543,9 @@ namespace lemon {
       Node *node;
     };
 
-    /// \brief The nth arc.
+    /// \brief The n-th arc.
     ///
-    /// This function looks for the nth arc in O(n) time.
+    /// This function looks for the n-th arc in O(n) time.
     /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
     const Arc& nth(int n) const {
       Node *node = first;
@@ -555,7 +555,7 @@ namespace lemon {
       return node->arc;
     }
 
-    /// \brief Initializes arc iterator to point to the nth arc.
+    /// \brief Initializes arc iterator to point to the n-th arc.
     ArcIt nthIt(int n) const {
       Node *node = first;
       for (int i = 0; i < n; ++i) {
@@ -774,7 +774,7 @@ namespace lemon {
   /// \tparam GR The digraph type in which the path is.
   ///
   /// In a sense, the path can be treated as a list of arcs. The
-  /// lemon path type stores just this list. As a consequence it
+  /// LEMON path type stores just this list. As a consequence it
   /// cannot enumerate the nodes in the path and the source node of
   /// a zero length path is undefined.
   ///
@@ -883,14 +883,14 @@ namespace lemon {
       int idx;
     };
 
-    /// \brief The nth arc.
+    /// \brief The n-th arc.
     ///
     /// \pre \c n is in the <tt>[0..length() - 1]</tt> range.
     const Arc& nth(int n) const {
       return arcs[n];
     }
 
-    /// \brief The arc iterator pointing to the nth arc.
+    /// \brief The arc iterator pointing to the n-th arc.
     ArcIt nthIt(int n) const {
       return ArcIt(*this, n);
     }
@@ -1094,7 +1094,7 @@ namespace lemon {
   /// \brief Class which helps to iterate through the nodes of a path
   ///
   /// In a sense, the path can be treated as a list of arcs. The
-  /// lemon path type stores only this list. As a consequence, it
+  /// LEMON path type stores only this list. As a consequence, it
   /// cannot enumerate the nodes in the path and the zero length paths
   /// cannot have a source node.
   ///

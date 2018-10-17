@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -23,6 +23,7 @@
 ///\brief Header of the LEMON-CPLEX lp solver interface.
 
 #include <lemon/lp_base.h>
+#include <lemon/bits/lock.h>
 
 struct cpxenv;
 struct cpxlp;
@@ -40,7 +41,11 @@ namespace lemon {
   private:
     cpxenv* _env;
     mutable int* _cnt;
+    mutable bits::Lock* _cnt_lock;
 
+    void incCnt();
+    void decCnt();
+    
   public:
 
     /// \brief This exception is thrown when the license check is not
@@ -150,6 +155,8 @@ namespace lemon {
 
     bool _message_enabled;
 
+    void _write(std::string file, std::string format) const;
+
   public:
 
     /// Returns the used \c CplexEnv instance
@@ -169,6 +176,19 @@ namespace lemon {
     cpxlp* cplexLp() { return _prob; }
     /// Returns the cplex problem object
     const cpxlp* cplexLp() const { return _prob; }
+
+#ifdef DOXYGEN
+    /// Write the problem or the solution to a file in the given format
+
+    /// This function writes the problem or the solution
+    /// to a file in the given format.
+    /// Trying to write in an unsupported format will trigger
+    /// \ref lemon::LpBase::UnsupportedFormatError "UnsupportedFormatError".
+    /// \param file The file path
+    /// \param format The output file format.
+    /// Supportted formats are "MPS", "LP" and "SOL".
+    void write(std::string file, std::string format = "MPS") const {}
+#endif
 
   };
 

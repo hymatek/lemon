@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -68,7 +68,7 @@ int main()
     Digraph::NodeMap<int> order(d);
     Graph g(d);
     Digraph::Node n = d.addNode();
-    ignore_unused_variable_warning(n);
+    ::lemon::ignore_unused_variable_warning(n);
 
     check(stronglyConnected(d), "This digraph is strongly connected");
     check(countStronglyConnectedComponents(d) == 1,
@@ -97,6 +97,23 @@ int main()
     check(parallelFree(g), "This graph is parallel-free.");
     check(simpleGraph(g), "This graph is simple.");
   }
+
+  {
+    ListGraph g;
+    ListGraph::NodeMap<bool> map(g);
+
+    ListGraph::Node n1 = g.addNode();
+    ListGraph::Node n2 = g.addNode();
+
+    ListGraph::Edge e1 = g.addEdge(n1, n2);
+    ::lemon::ignore_unused_variable_warning(e1);
+    check(biNodeConnected(g), "Graph is bi-node-connected");
+
+    ListGraph::Node n3 = g.addNode();
+    ::lemon::ignore_unused_variable_warning(n3);
+    check(!biNodeConnected(g), "Graph is not bi-node-connected");
+  }
+
 
   {
     Digraph d;
@@ -246,7 +263,7 @@ int main()
     Digraph::Node shoe = d.addNode();
     Digraph::Node watch = d.addNode();
     Digraph::Node pants = d.addNode();
-    ignore_unused_variable_warning(watch);
+    ::lemon::ignore_unused_variable_warning(watch);
 
     d.addArc(socks, shoe);
     d.addArc(pants, shoe);

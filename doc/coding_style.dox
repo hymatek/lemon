@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2009
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -98,10 +98,10 @@ all_lower_case_with_underscores
 
 \subsection pri-loc-var Private member variables
 
-Private member variables should start with underscore
+Private member variables should start with underscore.
 
 \code
-_start_with_underscores
+_start_with_underscore
 \endcode
 
 \subsection cs-excep Exceptions

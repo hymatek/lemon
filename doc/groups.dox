@@ -2,7 +2,7 @@
  *
  * This file is a part of LEMON, a generic C++ optimization library.
  *
- * Copyright (C) 2003-2010
+ * Copyright (C) 2003-2013
  * Egervary Jeno Kombinatorikus Optimalizalasi Kutatocsoport
  * (Egervary Research Group on Combinatorial Optimization, EGRES).
  *
@@ -111,6 +111,14 @@ this with shortest path algorithms or minimum mean cycle algorithms,
 a range of weighted and cardinality optimization algorithms can be
 obtained. For other examples, the interested user is referred to the
 detailed documentation of particular adaptors.
+
+Since the adaptor classes conform to the \ref graph_concepts "graph concepts",
+an adaptor can even be applied to another one.
+The following image illustrates a situation when a \ref SubDigraph adaptor
+is applied on a digraph and \ref Undirector is applied on the subgraph.
+
+\image html adaptors2.png
+\image latex adaptors2.eps "Using graph adaptors" width=\textwidth
 
 The behavior of graph adaptors can be very different. Some of them keep
 capabilities of the original graph while in other cases this would be
@@ -309,7 +317,7 @@ implemented in LEMON.
 
 This group contains the common graph search algorithms, namely
 \e breadth-first \e search (BFS) and \e depth-first \e search (DFS)
-\ref clrs01algorithms.
+\cite clrs01algorithms.
 */
 
 /**
@@ -318,7 +326,7 @@ This group contains the common graph search algorithms, namely
 \brief Algorithms for finding shortest paths.
 
 This group contains the algorithms for finding shortest paths in digraphs
-\ref clrs01algorithms.
+\cite clrs01algorithms.
 
  - \ref Dijkstra algorithm for finding shortest paths from a source node
    when all arc lengths are non-negative.
@@ -340,7 +348,7 @@ This group contains the algorithms for finding shortest paths in digraphs
 \brief Algorithms for finding minimum cost spanning trees and arborescences.
 
 This group contains the algorithms for finding minimum cost spanning
-trees and arborescences \ref clrs01algorithms.
+trees and arborescences \cite clrs01algorithms.
 */
 
 /**
@@ -349,7 +357,7 @@ trees and arborescences \ref clrs01algorithms.
 \brief Algorithms for finding maximum flows.
 
 This group contains the algorithms for finding maximum flows and
-feasible circulations \ref clrs01algorithms, \ref amo93networkflows.
+feasible circulations \cite clrs01algorithms, \cite amo93networkflows.
 
 The \e maximum \e flow \e problem is to find a flow of maximum value between
 a single source and a single target. Formally, there is a \f$G=(V,A)\f$
@@ -365,13 +373,13 @@ following optimization problem.
 
 LEMON contains several algorithms for solving maximum flow problems:
 - \ref EdmondsKarp Edmonds-Karp algorithm
-  \ref edmondskarp72theoretical.
+  \cite edmondskarp72theoretical.
 - \ref Preflow Goldberg-Tarjan's preflow push-relabel algorithm
-  \ref goldberg88newapproach.
+  \cite goldberg88newapproach.
 - \ref DinitzSleatorTarjan Dinitz's blocking flow algorithm with dynamic trees
-  \ref dinic70algorithm, \ref sleator83dynamic.
+  \cite dinic70algorithm, \cite sleator83dynamic.
 - \ref GoldbergTarjan !Preflow push-relabel algorithm with dynamic trees
-  \ref goldberg88newapproach, \ref sleator83dynamic.
+  \cite goldberg88newapproach, \cite sleator83dynamic.
 
 In most cases the \ref Preflow algorithm provides the
 fastest method for computing a maximum flow. All implementations
@@ -391,25 +399,41 @@ For more information, see \ref Circulation.
 \brief Algorithms for finding minimum cost flows and circulations.
 
 This group contains the algorithms for finding minimum cost flows and
-circulations \ref amo93networkflows. For more information about this
-problem and its dual solution, see \ref min_cost_flow
+circulations \cite amo93networkflows. For more information about this
+problem and its dual solution, see: \ref min_cost_flow
 "Minimum Cost Flow Problem".
 
 LEMON contains several algorithms for this problem.
  - \ref NetworkSimplex Primal Network Simplex algorithm with various
-   pivot strategies \ref dantzig63linearprog, \ref kellyoneill91netsimplex.
+   pivot strategies \cite dantzig63linearprog, \cite kellyoneill91netsimplex.
  - \ref CostScaling Cost Scaling algorithm based on push/augment and
-   relabel operations \ref goldberg90approximation, \ref goldberg97efficient,
-   \ref bunnagel98efficient.
+   relabel operations \cite goldberg90approximation, \cite goldberg97efficient,
+   \cite bunnagel98efficient.
  - \ref CapacityScaling Capacity Scaling algorithm based on the successive
-   shortest path method \ref edmondskarp72theoretical.
+   shortest path method \cite edmondskarp72theoretical.
  - \ref CycleCanceling Cycle-Canceling algorithms, two of which are
-   strongly polynomial \ref klein67primal, \ref goldberg89cyclecanceling.
+   strongly polynomial \cite klein67primal, \cite goldberg89cyclecanceling.
 
-In general NetworkSimplex is the most efficient implementation,
-but in special cases other algorithms could be faster.
+In general, \ref NetworkSimplex and \ref CostScaling are the most efficient
+implementations.
+\ref NetworkSimplex is usually the fastest on relatively small graphs (up to
+several thousands of nodes) and on dense graphs, while \ref CostScaling is
+typically more efficient on large graphs (e.g. hundreds of thousands of
+nodes or above), especially if they are sparse.
+However, other algorithms could be faster in special cases.
 For example, if the total supply and/or capacities are rather small,
-CapacityScaling is usually the fastest algorithm (without effective scaling).
+\ref CapacityScaling is usually the fastest algorithm
+(without effective scaling).
+
+These classes are intended to be used with integer-valued input data
+(capacities, supply values, and costs), except for \ref CapacityScaling,
+which is capable of handling real-valued arc costs (other numerical
+data are required to be integer).
+
+For more details about these implementations and for a comprehensive
+experimental study, see the paper \cite KiralyKovacs12MCF.
+It also compares these codes to other publicly available
+minimum cost flow solvers.
 */
 
 /**
@@ -448,7 +472,7 @@ see the \ref max_flow "maximum flow problem".
 \brief Algorithms for finding minimum mean cycles.
 
 This group contains the algorithms for finding minimum mean cycles
-\ref clrs01algorithms, \ref amo93networkflows.
+\cite amo93networkflows, \cite karp78characterization.
 
 The \e minimum \e mean \e cycle \e problem is to find a directed cycle
 of minimum mean length (cost) in a digraph.
@@ -464,19 +488,17 @@ arc lengths uniformly by \f$\epsilon\f$ results in a conservative length
 function.
 
 LEMON contains three algorithms for solving the minimum mean cycle problem:
-- \ref KarpMmc Karp's original algorithm \ref amo93networkflows,
-  \ref dasdan98minmeancycle.
+- \ref KarpMmc Karp's original algorithm \cite karp78characterization.
 - \ref HartmannOrlinMmc Hartmann-Orlin's algorithm, which is an improved
-  version of Karp's algorithm \ref dasdan98minmeancycle.
+  version of Karp's algorithm \cite hartmann93finding.
 - \ref HowardMmc Howard's policy iteration algorithm
-  \ref dasdan98minmeancycle.
+  \cite dasdan98minmeancycle, \cite dasdan04experimental.
 
-In practice, the \ref HowardMmc "Howard" algorithm proved to be by far the
+In practice, the \ref HowardMmc "Howard" algorithm turned out to be by far the
 most efficient one, though the best known theoretical bound on its running
 time is exponential.
 Both \ref KarpMmc "Karp" and \ref HartmannOrlinMmc "Hartmann-Orlin" algorithms
-run in time O(ne) and use space O(n<sup>2</sup>+e), but the latter one is
-typically faster due to the applied early termination scheme.
+run in time O(nm) and use space O(n<sup>2</sup>+m).
 */
 
 /**
@@ -539,7 +561,7 @@ like connectivity, bipartiteness, euler property, simplicity etc.
 */
 
 /**
-@defgroup planar Planarity Embedding and Drawing
+@defgroup planar Planar Embedding and Drawing
 @ingroup algs
 \brief Algorithms for planarity checking, embedding and drawing
 
@@ -551,12 +573,52 @@ embedding and drawing.
 */
 
 /**
-@defgroup approx Approximation Algorithms
+@defgroup tsp Traveling Salesman Problem
+@ingroup algs
+\brief Algorithms for the symmetric traveling salesman problem
+
+This group contains basic heuristic algorithms for the the symmetric
+\e traveling \e salesman \e problem (TSP).
+Given an \ref FullGraph "undirected full graph" with a cost map on its edges,
+the problem is to find a shortest possible tour that visits each node exactly
+once (i.e. the minimum cost Hamiltonian cycle).
+
+These TSP algorithms are intended to be used with a \e metric \e cost
+\e function, i.e. the edge costs should satisfy the triangle inequality.
+Otherwise the algorithms could yield worse results.
+
+LEMON provides five well-known heuristics for solving symmetric TSP:
+ - \ref NearestNeighborTsp Neareast neighbor algorithm
+ - \ref GreedyTsp Greedy algorithm
+ - \ref InsertionTsp Insertion heuristic (with four selection methods)
+ - \ref ChristofidesTsp Christofides algorithm
+ - \ref Opt2Tsp 2-opt algorithm
+
+\ref NearestNeighborTsp, \ref GreedyTsp, and \ref InsertionTsp are the fastest
+solution methods. Furthermore, \ref InsertionTsp is usually quite effective.
+
+\ref ChristofidesTsp is somewhat slower, but it has the best guaranteed
+approximation factor: 3/2.
+
+\ref Opt2Tsp usually provides the best results in practice, but
+it is the slowest method. It can also be used to improve given tours,
+for example, the results of other algorithms.
+
+\image html tsp.png
+\image latex tsp.eps "Traveling salesman problem" width=\textwidth
+*/
+
+/**
+@defgroup approx_algs Approximation Algorithms
 @ingroup algs
 \brief Approximation algorithms.
 
 This group contains the approximation and heuristic algorithms
 implemented in LEMON.
+
+<b>Maximum Clique Problem</b>
+  - \ref GrossoLocatelliPullanMc An efficient heuristic algorithm of
+    Grosso, Locatelli, and Pullan.
 */
 
 /**
@@ -586,8 +648,8 @@ This group contains LP and MIP solver interfaces for LEMON.
 Various LP solvers could be used in the same manner with this
 high-level interface.
 
-The currently supported solvers are \ref glpk, \ref clp, \ref cbc,
-\ref cplex, \ref soplex.
+The currently supported solvers are \cite glpk, \cite clp, \cite cbc,
+\cite cplex, \cite soplex.
 */
 
 /**
@@ -674,6 +736,8 @@ This group contains methods for reading and writing
 
 This group contains general \c EPS drawing methods and special
 graph exporting tools.
+
+\image html graph_to_eps.png
 */
 
 /**
