@@ -339,7 +339,7 @@ namespace lemon {
         do {
           num = rnd() & mask;
         } while (num > max);
-        return num;
+        return static_cast<Result>(num);
       }
     };
 

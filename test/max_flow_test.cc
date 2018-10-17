@@ -419,7 +419,7 @@ int main() {
   checkMaxFlowAlg<PType2, PreflowStartFunctions<PType2> >(test_lgf, 13);
   checkMaxFlowAlg<PType3, PreflowStartFunctions<PType3> >(test_lgf, 13);
 
-  checkMaxFlowAlg<PType2, PreflowStartFunctions<PType2> >(test_lgf_float, 0.3);
+  checkMaxFlowAlg<PType2, PreflowStartFunctions<PType2> >(test_lgf_float, 0.3f);
   checkMaxFlowAlg<PType3, PreflowStartFunctions<PType3> >(test_lgf_float, 0.3);
 
   checkInitPreflow();
@@ -433,7 +433,7 @@ int main() {
   checkMaxFlowAlg<EKType2, GeneralStartFunctions<EKType2> >(test_lgf, 13);
   checkMaxFlowAlg<EKType3, GeneralStartFunctions<EKType3> >(test_lgf, 13);
 
-  checkMaxFlowAlg<EKType2, GeneralStartFunctions<EKType2> >(test_lgf_float, 0.3);
+  checkMaxFlowAlg<EKType2, GeneralStartFunctions<EKType2> >(test_lgf_float, 0.3f);
   checkMaxFlowAlg<EKType3, GeneralStartFunctions<EKType3> >(test_lgf_float, 0.3);
 
   return 0;
