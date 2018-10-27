@@ -115,7 +115,7 @@ namespace lemon {
     NodeQueue _node_queue;
     int _process, _postpone, _last;
 
-    int _node_num;
+    int _node_num, _unmatched;
 
   private:
 
@@ -179,6 +179,7 @@ namespace lemon {
             extendOnArc(a);
           } else if ((*_status)[v] == UNMATCHED) {
             augmentOnArc(a);
+            --_unmatched;
             return;
           }
         }
@@ -204,6 +205,7 @@ namespace lemon {
                 extendOnArc(b);
               } else if ((*_status)[x] == UNMATCHED) {
                 augmentOnArc(b);
+                --_unmatched;
                 return;
               }
             }
@@ -228,6 +230,7 @@ namespace lemon {
             extendOnArc(a);
           } else if ((*_status)[v] == UNMATCHED) {
             augmentOnArc(a);
+            --_unmatched;
             return;
           }
         }
@@ -437,6 +440,7 @@ namespace lemon {
         (*_matching)[n] = INVALID;
         (*_status)[n] = UNMATCHED;
       }
+      _unmatched = _node_num;
     }
 
     /// \brief Find an initial matching in a greedy way.
@@ -448,6 +452,7 @@ namespace lemon {
         (*_matching)[n] = INVALID;
         (*_status)[n] = UNMATCHED;
       }
+      _unmatched = _node_num;
       for (NodeIt n(_graph); n != INVALID; ++n) {
         if ((*_matching)[n] == INVALID) {
           for (OutArcIt a(_graph, n); a != INVALID ; ++a) {
@@ -457,6 +462,7 @@ namespace lemon {
               (*_status)[n] = MATCHED;
               (*_matching)[v] = _graph.oppositeArc(a);
               (*_status)[v] = MATCHED;
+              _unmatched -= 2;
               break;
             }
           }
@@ -479,6 +485,7 @@ namespace lemon {
         (*_matching)[n] = INVALID;
         (*_status)[n] = UNMATCHED;
       }
+      _unmatched = _node_num;
       for(EdgeIt e(_graph); e!=INVALID; ++e) {
         if (matching[e]) {
 
@@ -491,6 +498,8 @@ namespace lemon {
           if ((*_matching)[v] != INVALID) return false;
           (*_matching)[v] = _graph.direct(e, false);
           (*_status)[v] = MATCHED;
+
+          _unmatched -= 2;
         }
       }
       return true;
@@ -498,16 +507,20 @@ namespace lemon {
 
     /// \brief Start Edmonds' algorithm
     ///
-    /// This function runs the original Edmonds' algorithm.
+    /// This function runs the original Edmonds' algorithm. If the
+    /// \c decomposition parameter is set to false, then the Gallai-Edmonds
+    /// decomposition is not computed.
     ///
     /// \pre \ref init(), \ref greedyInit() or \ref matchingInit() must be
     /// called before using this function.
-    void startSparse() {
-      for(NodeIt n(_graph); n != INVALID; ++n) {
+    void startSparse(bool decomposition = true) {
+      int _unmatched_limit = decomposition ? 0 : 1;
+      for(NodeIt n(_graph); _unmatched > _unmatched_limit; ++n) {
         if ((*_status)[n] == UNMATCHED) {
           (*_blossom_rep)[_blossom_set->insert(n)] = n;
           _tree_set->insert(n);
           (*_status)[n] = EVEN;
+          --_unmatched;
           processSparse(n);
         }
       }
@@ -517,16 +530,20 @@ namespace lemon {
     /// for dense graphs
     ///
     /// This function runs Edmonds' algorithm with a heuristic of postponing
-    /// shrinks, therefore resulting in a faster algorithm for dense graphs.
+    /// shrinks, therefore resulting in a faster algorithm for dense graphs.  If
+    /// the \c decomposition parameter is set to false, then the Gallai-Edmonds
+    /// decomposition is not computed.
     ///
     /// \pre \ref init(), \ref greedyInit() or \ref matchingInit() must be
     /// called before using this function.
-    void startDense() {
-      for(NodeIt n(_graph); n != INVALID; ++n) {
+    void startDense(bool decomposition = true) {
+      int _unmatched_limit = decomposition ? 0 : 1;
+      for(NodeIt n(_graph); _unmatched > _unmatched_limit; ++n) {
         if ((*_status)[n] == UNMATCHED) {
           (*_blossom_rep)[_blossom_set->insert(n)] = n;
           _tree_set->insert(n);
           (*_status)[n] = EVEN;
+          --_unmatched;
           processDense(n);
         }
       }
@@ -536,15 +553,18 @@ namespace lemon {
     /// \brief Run Edmonds' algorithm
     ///
     /// This function runs Edmonds' algorithm. An additional heuristic of
-    /// postponing shrinks is used for relatively dense graphs
-    /// (for which <tt>m>=2*n</tt> holds).
-    void run() {
+    /// postponing shrinks is used for relatively dense graphs (for which
+    /// <tt>m>=2*n</tt> holds). If the \c decomposition parameter is set to
+    /// false, then the Gallai-Edmonds decomposition is not computed. In some
+    /// cases, this can speed up the algorithm significantly, especially when a
+    /// maximum matching is computed in a dense graph with odd number of nodes.
+    void run(bool decomposition = true) {
       if (countEdges(_graph) < 2 * countNodes(_graph)) {
         greedyInit();
-        startSparse();
+        startSparse(decomposition);
       } else {
         init();
-        startDense();
+        startDense(decomposition);
       }
     }
 
