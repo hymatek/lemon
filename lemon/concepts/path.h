@@ -71,7 +71,9 @@ namespace lemon {
 
       /// \brief Template copy constructor
       template <typename CPath>
-      Path(const CPath& cpath) {}
+      Path(const CPath& cpath) {
+        ::lemon::ignore_unused_variable_warning(cpath);
+      }
 
       /// \brief Template assigment operator
       template <typename CPath>

@@ -2,6 +2,7 @@
 #define LEMON_CONFIG_H
 
 #define LEMON_VERSION "@PROJECT_VERSION@"
+
 #cmakedefine LEMON_HAVE_LONG_LONG 1
 
 #cmakedefine LEMON_CXX11 1
@@ -27,5 +28,7 @@
 
 #cmakedefine LEMON_USE_PTHREAD 1
 #cmakedefine LEMON_USE_WIN32_THREADS 1
+
+#cmakedefine LEMON_NO_UNUSED_LOCAL_TYPEDEF_WARNINGS 1
 
 #endif

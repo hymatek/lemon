@@ -33,19 +33,21 @@
 // C4503: 'function' : decorated name length exceeded, name was truncated
 // C4800: 'type' : forcing value to bool 'true' or 'false' (performance warning)
 // C4996: 'function': was declared deprecated
+
+#include <lemon/config.h>
+
 #ifdef _MSC_VER
 #pragma warning( disable : 4250 4267 4355 4503 4800 4996 )
 #endif
 
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-// Needed by the [DI]GRAPH_TYPEDEFS marcos for gcc 4.8
+#if LEMON_NO_UNUSED_LOCAL_TYPEDEF_WARNINGS
+// Needed by the [DI]GRAPH_TYPEDEFS marcos for gcc >=4.8 and clang
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #include <vector>
 #include <algorithm>
 
-#include <lemon/config.h>
 #include <lemon/bits/enable_if.h>
 #include <lemon/bits/traits.h>
 #include <lemon/assert.h>
