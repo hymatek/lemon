@@ -77,6 +77,12 @@ namespace lemon {
         ///
         Node(const Node&) { }
 
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const Node &operator=(const Node&) { return *this; }
+
         /// %Invalid constructor \& conversion.
 
         /// Initializes the object to be invalid.
@@ -126,6 +132,12 @@ namespace lemon {
         /// Copy constructor.
         ///
         NodeIt(const NodeIt& n) : Node(n) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const NodeIt &operator=(const NodeIt&) { return *this; }
+
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -185,6 +197,12 @@ namespace lemon {
         /// Copy constructor.
         ///
         Arc(const Arc&) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const Arc &operator=(const Arc&) { return *this; }
+
         /// %Invalid constructor \& conversion.
 
         /// Initializes the object to be invalid.
@@ -235,6 +253,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         OutArcIt(const OutArcIt& e) : Arc(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const OutArcIt &operator=(const OutArcIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -301,6 +324,12 @@ namespace lemon {
         /// Copy constructor.
         ///
         InArcIt(const InArcIt& e) : Arc(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const InArcIt &operator=(const InArcIt&) { return *this; }
+
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -365,6 +394,12 @@ namespace lemon {
         /// Copy constructor.
         ///
         ArcIt(const ArcIt& e) : Arc(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const ArcIt &operator=(const ArcIt&) { return *this; }
+
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -521,7 +556,12 @@ namespace lemon {
         ///Copy constructor
         NodeMap(const NodeMap& nm) :
           ReferenceMap<Node, T, T&, const T&>(nm) { }
+      public:
         ///Assignment operator
+        NodeMap& operator=(const NodeMap&) {
+          return *this;
+        }
+        ///Template Assignment operator
         template <typename CMap>
         NodeMap& operator=(const CMap&) {
           checkConcept<ReadMap<Node, T>, CMap>();
@@ -547,6 +587,10 @@ namespace lemon {
         ArcMap(const ArcMap& em) :
           ReferenceMap<Arc, T, T&, const T&>(em) { }
         ///Assignment operator
+        ArcMap& operator=(const ArcMap&) {
+          return *this;
+        }
+        ///Template Assignment operator
         template <typename CMap>
         ArcMap& operator=(const CMap&) {
           checkConcept<ReadMap<Arc, T>, CMap>();

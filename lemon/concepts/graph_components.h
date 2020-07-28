@@ -219,6 +219,12 @@ namespace lemon {
         /// Copy constructor.
         Edge(const Edge &) : Parent() {}
 
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const Edge &operator=(const Edge&) { return *this; }
+
         /// \brief Constructor for conversion from \c INVALID.
         ///
         /// Constructor for conversion from \c INVALID.
@@ -336,6 +342,11 @@ namespace lemon {
         ///
         /// Copy constructor.
         RedNode(const RedNode &) : Parent() {}
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const RedNode &operator=(const RedNode&) { return *this; }
 
         /// \brief Constructor for conversion from \c INVALID.
         ///
@@ -365,6 +376,12 @@ namespace lemon {
         ///
         /// Copy constructor.
         BlueNode(const BlueNode &) : Parent() {}
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const BlueNode &operator=(const BlueNode&) { return *this; }
+
 
         /// \brief Constructor for conversion from \c INVALID.
         ///

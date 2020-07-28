@@ -61,6 +61,9 @@ public:
   typedef A argument_type;
   typedef B result_type;
 
+  F() {};
+  F(const F&) {};
+
   B operator()(const A&) const { return B(); }
 private:
   F& operator=(const F&);

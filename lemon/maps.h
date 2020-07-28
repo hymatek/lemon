@@ -294,9 +294,12 @@ namespace lemon {
 
   private:
 
-    RangeMap& operator=(const RangeMap&);
+    // RangeMap& operator=(const RangeMap&);
 
   public:
+
+    // ///\e
+    // RangeMap(const RangeMap&);
 
     ///\e
     Reference operator[](const Key &k) {

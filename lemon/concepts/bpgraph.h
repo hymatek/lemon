@@ -95,6 +95,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         Node(const Node&) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const Node &operator=(const Node&) { return *this; }
 
         /// %Invalid constructor \& conversion.
 
@@ -143,6 +148,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         RedNode(const RedNode&) : Node() { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const RedNode &operator=(const RedNode&) { return *this; }
 
         /// %Invalid constructor \& conversion.
 
@@ -170,6 +180,12 @@ namespace lemon {
         /// Copy constructor.
         ///
         BlueNode(const BlueNode&) : Node() { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const BlueNode &operator=(const BlueNode&) { return *this; }
+
 
         /// %Invalid constructor \& conversion.
 
@@ -200,6 +216,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         RedNodeIt(const RedNodeIt& n) : RedNode(n) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const RedNodeIt &operator=(const RedNodeIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -259,6 +280,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         BlueNodeIt(const BlueNodeIt& n) : BlueNode(n) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const BlueNodeIt &operator=(const BlueNodeIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -318,6 +344,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         NodeIt(const NodeIt& n) : Node(n) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const NodeIt &operator=(const NodeIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -374,6 +405,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         Edge(const Edge&) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const Edge &operator=(const Edge&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the object to be invalid.
@@ -422,6 +458,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         EdgeIt(const EdgeIt& e) : Edge(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const EdgeIt &operator=(const EdgeIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -487,6 +528,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         IncEdgeIt(const IncEdgeIt& e) : Edge(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const IncEdgeIt &operator=(const IncEdgeIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -545,6 +591,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         Arc(const Arc&) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const Arc &operator=(const Arc&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the object to be invalid.
@@ -599,6 +650,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         ArcIt(const ArcIt& e) : Arc(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const ArcIt &operator=(const ArcIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -664,6 +720,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         OutArcIt(const OutArcIt& e) : Arc(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const OutArcIt &operator=(const OutArcIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.
@@ -730,6 +791,11 @@ namespace lemon {
         /// Copy constructor.
         ///
         InArcIt(const InArcIt& e) : Arc(e) { }
+        /// Assignment operator
+
+        /// Assignment operator.
+        ///
+        const InArcIt &operator=(const InArcIt&) { return *this; }
         /// %Invalid constructor \& conversion.
 
         /// Initializes the iterator to be invalid.

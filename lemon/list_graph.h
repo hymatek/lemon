@@ -1657,6 +1657,7 @@ namespace lemon {
       RedNode() {}
       RedNode(const RedNode& node) : Node(node) {}
       RedNode(Invalid) : Node(INVALID){}
+      const RedNode& operator=(const RedNode& node) { Node::operator=(node); return *this;}
     };
 
     class BlueNode : public Node {
@@ -1669,6 +1670,7 @@ namespace lemon {
       BlueNode() {}
       BlueNode(const BlueNode& node) : Node(node) {}
       BlueNode(Invalid) : Node(INVALID){}
+      const BlueNode& operator=(const BlueNode& node) { Node::operator=(node); return *this;}
     };
 
     class Edge {
