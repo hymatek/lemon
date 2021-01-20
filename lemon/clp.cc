@@ -461,4 +461,14 @@ namespace lemon {
     }
   }
 
+   void ClpLp::_write(std::string file, std::string format) const
+  {
+    if(format == "LP")
+      _prob->writeLp(file.c_str(), "", 1e-5, 10, 5,
+                     sense()==ClpLp::MIN?1:-1,
+                     true
+                     );
+    else throw UnsupportedFormatError(format);
+  }
+ 
 } //END OF NAMESPACE LEMON
