@@ -158,7 +158,7 @@ namespace lemon {
     } else {
       const char s = 'R';
       double len = ub - lb;
-      CPXaddrows(cplexEnv(), _prob, 0, 1, values.size(), &ub, &s,
+      CPXaddrows(cplexEnv(), _prob, 0, 1, values.size(), &lb, &s,
                  &rmatbeg, &indices.front(), &values.front(), 0, 0);
       CPXchgrngval(cplexEnv(), _prob, 1, &i, &len);
     }

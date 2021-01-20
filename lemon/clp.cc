@@ -227,14 +227,14 @@ namespace lemon {
   }
 
   ClpLp::Value ClpLp::_getCoeff(int ix, int jx) const {
-    CoinBigIndex begin = _prob->clpMatrix()->getVectorStarts()[ix];
-    CoinBigIndex end = begin + _prob->clpMatrix()->getVectorLengths()[ix];
+    CoinBigIndex begin = _prob->clpMatrix()->getVectorStarts()[jx];
+    CoinBigIndex end = begin + _prob->clpMatrix()->getVectorLengths()[jx];
 
     const int* indices = _prob->clpMatrix()->getIndices();
     const double* elements = _prob->clpMatrix()->getElements();
 
-    const int* it = std::lower_bound(indices + begin, indices + end, jx);
-    if (it != indices + end && *it == jx) {
+    const int* it = std::lower_bound(indices + begin, indices + end, ix);
+    if (it != indices + end && *it == ix) {
       return elements[it - indices];
     } else {
       return 0.0;
