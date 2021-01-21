@@ -5,12 +5,12 @@ IF(POLICY CMP0048)
 ENDIF(POLICY CMP0048)
 
 IF(POLICY CMP0043) 
-  CMAKE_POLICY(SET CMP0043 OLD) 
+  CMAKE_POLICY(SET CMP0043 NEW)
 ENDIF(POLICY CMP0043)
 
 IF(POLICY CMP0026)
   #This is for copying the dll's needed by glpk (in lp_test and mip_test)
-  CMAKE_POLICY(SET CMP0026 OLD) 
+  CMAKE_POLICY(SET CMP0026 NEW)
 ENDIF(POLICY CMP0026)
 
 SET(PROJECT_NAME "LEMON")
@@ -196,36 +196,36 @@ SET(LEMON_CXX_WARNING_FLAGS ${CXX_WARNING} CACHE STRING "LEMON warning flags.")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LEMON_CXX_WARNING_FLAGS}")
 
 IF(MSVC)
-  SET(CMAKE_CXX_FLAGS "/bigobj ${CMAKE_CXX_FLAGS}")
+  SET( CMAKE_CXX_FLAGS "/bigobj ${CMAKE_CXX_FLAGS}")
   SET( CMAKE_CXX_FLAGS_MAINTAINER "/WX ${CMAKE_CXX_FLAGS_DEBUG}" CACHE STRING
-    "Flags used by the C++ compiler during maintainer builds."
+    "Flags used by the C++ compiler during maintainer builds." FORCE
     )
   SET( CMAKE_C_FLAGS_MAINTAINER "/WX ${CMAKE_CXX_FLAGS_DEBUG}" CACHE STRING
-    "Flags used by the C compiler during maintainer builds."
+    "Flags used by the C compiler during maintainer builds." FORCE
     )
   SET( CMAKE_EXE_LINKER_FLAGS_MAINTAINER
     "${CMAKE_EXE_LINKER_FLAGS_DEBUG}" CACHE STRING
-    "Flags used for linking binaries during maintainer builds."
+    "Flags used for linking binaries during maintainer builds." FORCE
     )
   SET( CMAKE_SHARED_LINKER_FLAGS_MAINTAINER
     "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}" CACHE STRING
     "Flags used by the shared libraries linker during maintainer builds."
+     FORCE
     )
 ELSE()
   SET( CMAKE_CXX_FLAGS_MAINTAINER "-Werror -ggdb -O0" CACHE STRING
-    "Flags used by the C++ compiler during maintainer builds."
+    "Flags used by the C++ compiler during maintainer builds." FORCE
     )
   SET( CMAKE_C_FLAGS_MAINTAINER "-Werror -O0" CACHE STRING
-    "Flags used by the C compiler during maintainer builds."
+    "Flags used by the C compiler during maintainer builds." FORCE
     )
   SET( CMAKE_EXE_LINKER_FLAGS_MAINTAINER
     "${CMAKE_EXE_LINKER_FLAGS_DEBUG}" CACHE STRING
-    "Flags used for linking binaries during maintainer builds."
+    "Flags used for linking binaries during maintainer builds." FORCE
     )
   SET( CMAKE_SHARED_LINKER_FLAGS_MAINTAINER
     "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}" CACHE STRING
-    "Flags used by the shared libraries linker during maintainer builds."
-    )
+    "Flags used by the shared libraries linker during maintainer builds." FORCE)
 ENDIF()
 
 MARK_AS_ADVANCED(
@@ -251,8 +251,8 @@ SET( CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
     FORCE )
 
 SET_DIRECTORY_PROPERTIES(PROPERTIES
-  COMPILE_DEFINITIONS_DEBUG "LEMON_ENABLE_DEBUG"
-  COMPILE_DEFINITIONS_MAINTAINER "LEMON_ENABLE_DEBUG"
+  COMPILE_DEFINITIONS
+  $<$<OR:$<CONFIG:Debug>,$<CONFIG:Maintainer>>:LEMON_ENABLE_DEBUG>
 )
 
 INCLUDE(CheckTypeSize)
