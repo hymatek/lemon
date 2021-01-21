@@ -139,6 +139,8 @@ namespace lemon {
 
     virtual void _messageLevel(MessageLevel);
 
+    void _write(std::string file, std::string format) const;
+
   public:
 
     ///Solves LP with primal simplex method.
